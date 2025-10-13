@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Services\EligibilityService;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
+class HomeController extends Controller
+{
+    protected $eligibilityService;
+
+        public function __construct(EligibilityService $eligibilityService)
+        {
+            $this->eligibilityService = $eligibilityService;
+        }
+
+        /**
+         * Show the homepage
+         *
+         * @return \Illuminate\View\View
+         */
+        public function index()
+        {
+            return view('homepage');
+        }
+
+        /**
+         * Check user eligibility and create/login user
+         *
+         * @param Request $request
+         * @return JsonResponse
+         */
+        public function checkUserEligibility(Request $request): JsonResponse
+        {
+            try {
+                $request->validate([
+                    'account' => 'required|string|max:255',
+                    'bank_account' => 'required|string|size:4|regex:/^[0-9]{4}$/',
+                ]);
+
+                $account = $request->input('account');
+                $bankAccount = $request->input('bank_account');
+
+                Log::info('Starting eligibility check', [
+                    'account' => $account,
+                    'bank_account' => $bankAccount,
+                ]);
+
+                // Call the eligibility API
+                $eligibilityResult = $this->eligibilityService->checkEligibility($account, $bankAccount);
+
+                Log::info('Eligibility result', $eligibilityResult);
+
+                if (!$eligibilityResult['success']) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $eligibilityResult['message']
+                    ], 400);
+                }
+
+                // Check if user already exists
+                $user = User::where('account', $account)
+                        ->where('bank_account', $bankAccount)
+                        ->first();
+
+                if (!$user) {
+                    // Create new user
+                    $user = User::create([
+                        'name' => $account,
+                        'email' => $account . '@j88.com', // Generate email
+                        'password' => Hash::make(Str::random(12)), // Random password
+                        'account' => $account,
+                        'bank_account' => $bankAccount,
+                        'platform' => 'u888',
+                        'user_type' => 'external_login', // Use correct enum value
+                        'api_response' => $this->eligibilityService->formatApiResponse($eligibilityResult['data']),
+                    ]);
+
+                    // Assign default role if using Spatie permissions
+                    try {
+                        if (method_exists($user, 'assignRole')) {
+                            $user->assignRole('Customer'); // Assuming you have a Customer role
+                        }
+                    } catch (\Exception $roleError) {
+                        Log::warning('Could not assign role to user', [
+                            'user_id' => $user->id,
+                            'error' => $roleError->getMessage()
+                        ]);
+                    }
+
+                    Log::info('New user created via eligibility check', [
+                        'user_id' => $user->id,
+                        'account' => $account,
+                        'bank_account' => $bankAccount,
+                    ]);
+                } else {
+                    // Update existing user's API response
+                    $user->update([
+                        'api_response' => $this->eligibilityService->formatApiResponse($eligibilityResult['data']),
+                    ]);
+
+                    Log::info('Existing user updated via eligibility check', [
+                        'user_id' => $user->id,
+                        'account' => $account,
+                        'bank_account' => $bankAccount,
+                    ]);
+                }
+
+                // Log the user in and regenerate session
+                Auth::login($user);
+                session()->regenerate();
+                
+                // Force save user_id to session database
+                $sessionId = session()->getId();
+                \DB::table('sessions')
+                    ->where('id', $sessionId)
+                    ->update(['user_id' => $user->id]);
+                
+                session()->save(); // Force save session immediately
+
+                Log::info('User logged in successfully', [
+                    'user_id' => $user->id,
+                    'session_id' => $sessionId,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Đăng nhập thành công!',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'account' => $user->account,
+                    ],
+                    'authenticated' => true,
+                    'session_id' => $sessionId
+                ]);
+
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                Log::warning('Validation failed', [
+                    'errors' => $e->errors(),
+                    'input' => $request->all(),
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Dữ liệu không hợp lệ: ' . implode(', ', array_flatten($e->errors()))
+                ], 422);
+
+            } catch (\Exception $e) {
+                Log::error('Error in checkUserEligibility', [
+                    'account' => $request->input('account'),
+                    'bank_account' => $request->input('bank_account'),
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Có lỗi xảy ra, vui lòng thử lại sau!',
+                    'debug' => config('app.debug') ? $e->getMessage() : null
+                ], 500);
+            }
+        }
+
+        /**
+         * Logout user
+         *
+         * @return JsonResponse
+         */
+        public function logout(): JsonResponse
+        {
+            Auth::logout();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng xuất thành công!'
+            ]);
+        }
+    }
