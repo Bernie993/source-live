@@ -15,6 +15,7 @@ class LiveSetting extends Model
         'default_video_url',
         'live_title',
         'live_description',
+        'assigned_to',
     ];
 
     protected function casts(): array
@@ -24,6 +25,14 @@ class LiveSetting extends Model
             'live_time' => 'datetime:H:i:s',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the user assigned to this live setting
+     */
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     /**

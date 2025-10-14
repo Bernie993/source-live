@@ -28,6 +28,7 @@
                                     <th>Link Play</th>
                                     <th>Ngày Live</th>
                                     <th>Giờ Live</th>
+                                    <th>Nhân viên</th>
                                     <th>Trạng thái</th>
                                     <th>Thao tác</th>
                                 </tr>
@@ -48,6 +49,15 @@
                                     </td>
                                     <td>{{ $setting->live_date->format('d/m/Y') }}</td>
                                     <td>{{ $setting->live_time->format('H:i') }}</td>
+                                    <td>
+                                        @if($setting->assignedUser)
+                                            <span class="badge bg-primary">
+                                                <i class="bi bi-person"></i> {{ $setting->assignedUser->name }}
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary">Chưa gán</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($setting->is_active)
                                             <span class="badge bg-success">Kích hoạt</span>

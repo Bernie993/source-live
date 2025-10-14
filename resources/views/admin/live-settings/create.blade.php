@@ -64,6 +64,25 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="assigned_to" class="form-label">Nhân viên Live</label>
+                        <select class="form-select @error('assigned_to') is-invalid @enderror" 
+                                id="assigned_to" name="assigned_to">
+                            <option value="">-- Chọn nhân viên --</option>
+                            @foreach($liveStaffUsers as $user)
+                                <option value="{{ $user->id }}" {{ old('assigned_to') == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ $user->email }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('assigned_to')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="form-text text-muted">
+                            Chọn nhân viên live sẽ được gán cho live stream này
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" 
                                    {{ old('is_active') ? 'checked' : '' }}>

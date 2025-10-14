@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LiveSetting;
+use App\Models\User;
 
 class LiveSettingController extends Controller
 {
@@ -19,7 +20,7 @@ class LiveSettingController extends Controller
      */
     public function index()
     {
-        $liveSettings = LiveSetting::latest()->paginate(10);
+        $liveSettings = LiveSetting::with('assignedUser')->latest()->paginate(10);
         return view('admin.live-settings.index', compact('liveSettings'));
     }
 
@@ -28,7 +29,9 @@ class LiveSettingController extends Controller
      */
     public function create()
     {
-        return view('admin.live-settings.create');
+        // Get all users with "Nhân viên Live" role
+        $liveStaffUsers = User::role('Nhân viên Live')->get();
+        return view('admin.live-settings.create', compact('liveStaffUsers'));
     }
 
     /**
@@ -44,7 +47,8 @@ class LiveSettingController extends Controller
             'is_active' => 'boolean',
             'default_video_url' => 'nullable|string|url',
             'live_title' => 'nullable|string|max:255',
-            'live_description' => 'nullable|string'
+            'live_description' => 'nullable|string',
+            'assigned_to' => 'nullable|exists:users,id'
         ]);
 
         // Deactivate all other live settings if this one is active
@@ -71,7 +75,9 @@ class LiveSettingController extends Controller
      */
     public function edit(LiveSetting $liveSetting)
     {
-        return view('admin.live-settings.edit', compact('liveSetting'));
+        // Get all users with "Nhân viên Live" role
+        $liveStaffUsers = User::role('Nhân viên Live')->get();
+        return view('admin.live-settings.edit', compact('liveSetting', 'liveStaffUsers'));
     }
 
     /**
@@ -87,7 +93,8 @@ class LiveSettingController extends Controller
             'is_active' => 'boolean',
             'default_video_url' => 'nullable|string|url',
             'live_title' => 'nullable|string|max:255',
-            'live_description' => 'nullable|string'
+            'live_description' => 'nullable|string',
+            'assigned_to' => 'nullable|exists:users,id'
         ]);
 
         // Deactivate all other live settings if this one is active

@@ -60,4 +60,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Keyword::class, 'created_by');
     }
+
+    /**
+     * Get live settings assigned to this user
+     */
+    public function liveSettings()
+    {
+        return $this->hasMany(LiveSetting::class, 'assigned_to');
+    }
 }
