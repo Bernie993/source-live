@@ -258,11 +258,183 @@
 
 @push('scripts')
 <script>
+// Use global Echo instance (already initialized by Vite)
+// Same as frontend - no need to create new Echo instance
+console.log('🔍 Checking Echo:', typeof Echo !== 'undefined' ? 'Echo is available ✅' : 'Echo is NOT available ❌');
+
 $(document).ready(function() {
     // Auto-submit form when date inputs change
     $('#date_from, #date_to').on('change', function() {
         $(this).closest('form').submit();
     });
+
+    // Listen for new chat messages using global Echo (same as frontend)
+    if (typeof Echo !== 'undefined') {
+        try {
+            console.log('🔌 Setting up realtime chat listener...');
+            
+            Echo.channel('live-chat')
+                .listen('.new-message', function(data) {
+                    console.log('📨 New message received in admin:', data);
+                    
+                    // Update statistics
+                    updateStatistics();
+                    
+                    // Add new message to table
+                    if (!isFiltered()) {
+                        addNewMessageToTable(data);
+                    }
+                    
+                    // Show notification
+                    showNotification('Có tin nhắn mới từ ' + data.username);
+                });
+            
+            console.log('✅ Realtime chat listener ready!');
+        } catch (error) {
+            console.error('❌ Error setting up realtime listener:', error);
+        }
+    } else {
+        console.warn('⚠️ Echo is not available. Realtime features will not work.');
+        console.warn('💡 Make sure @@vite is loaded in admin layout.');
+    }
+
+    // Update statistics
+    function updateStatistics() {
+        // Reload statistics without refreshing page
+        fetch('{{ route('admin.chat.stats') }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update stat numbers
+                    $('.text-primary + .h5').first().text(data.stats.total_messages || 0);
+                    $('.text-success + .h5').first().text(data.stats.active_messages || 0);
+                    $('.text-danger + .h5').first().text(data.stats.blocked_messages || 0);
+                    $('.text-info + .h5').first().text(data.stats.unique_users || 0);
+                }
+            })
+            .catch(error => console.error('Error updating statistics:', error));
+    }
+
+    // Check if there are active filters
+    function isFiltered() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.has('date_from') || urlParams.has('date_to') || 
+               urlParams.has('status') || urlParams.has('username');
+    }
+
+    // Add new message to table
+    function addNewMessageToTable(data) {
+        const tbody = $('#dataTable tbody');
+        
+        // Check if empty state exists
+        const emptyState = $('.text-center.py-4');
+        if (emptyState.length > 0) {
+            // Reload page if empty state exists
+            location.reload();
+            return;
+        }
+        
+        // Format date
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('vi-VN') + ' ' + 
+                            now.toLocaleTimeString('vi-VN');
+        
+        // Create status badge
+        const statusBadge = data.is_blocked 
+            ? '<span class="badge badge-danger">Bị chặn</span>'
+            : '<span class="badge badge-success">Hoạt động</span>';
+        
+        // Create new row
+        const newRow = `
+            <tr class="new-message-row" data-id="${data.id}">
+                <td>${data.id}</td>
+                <td><strong>${data.username}</strong></td>
+                <td>
+                    <div style="max-width: 300px; word-wrap: break-word;">
+                        ${data.message.substring(0, 100)}${data.message.length > 100 ? '...' : ''}
+                    </div>
+                </td>
+                <td>${statusBadge}</td>
+                <td>${formattedDate}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a href="/admin/chat/${data.id}" class="btn btn-info btn-sm" title="Xem chi tiết">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <form method="POST" action="/admin/chat/${data.id}/toggle-block" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-warning btn-sm" title="${data.is_blocked ? 'Bỏ chặn' : 'Chặn'}">
+                                <i class="fas fa-${data.is_blocked ? 'unlock' : 'ban'}"></i>
+                            </button>
+                        </form>
+                        <form method="POST" action="/admin/chat/${data.id}" style="display: inline;">
+                            @csrf
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Xóa" 
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa tin nhắn này?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        `;
+        
+        // Add to top of table with animation
+        tbody.prepend(newRow);
+        $('.new-message-row').addClass('table-success').delay(3000).queue(function() {
+            $(this).removeClass('table-success').dequeue();
+        });
+    }
+
+    // Show notification
+    function showNotification(message) {
+        // Check if browser supports notifications
+        if (!("Notification" in window)) {
+            return;
+        }
+        
+        // Check if permission is granted
+        if (Notification.permission === "granted") {
+            new Notification("Quản lý Chat", {
+                body: message,
+                icon: '/favicon.ico'
+            });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(function (permission) {
+                if (permission === "granted") {
+                    new Notification("Quản lý Chat", {
+                        body: message,
+                        icon: '/favicon.ico'
+                    });
+                }
+            });
+        }
+        
+        // Also show in-page toast notification
+        showToast(message);
+    }
+
+    // Show toast notification
+    function showToast(message) {
+        const toast = $(`
+            <div class="alert alert-info alert-dismissible fade show" role="alert" 
+                 style="position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 300px;">
+                <strong><i class="fas fa-bell"></i> Thông báo:</strong> ${message}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `);
+        
+        $('body').append(toast);
+        
+        setTimeout(function() {
+            toast.fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
 });
 </script>
 @endpush

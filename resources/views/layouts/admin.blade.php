@@ -28,6 +28,9 @@
         .text-gray-800 { color: #5a5c69 !important; }
         .text-gray-300 { color: #dddfeb !important; }
     </style>
+    
+    <!-- Vite - Load Laravel Echo for Realtime features -->
+    @vite(['resources/js/app.js'])
 </head>
 <body>
     <div id="app">
@@ -129,6 +132,8 @@
         </main>
     </div>
 
+    <!-- jQuery (required for admin scripts) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>
