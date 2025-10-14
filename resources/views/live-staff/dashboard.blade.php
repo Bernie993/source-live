@@ -67,43 +67,7 @@
 
 <!-- Statistics Cards -->
 <div class="row">
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Từ khóa tôi tạo
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['keywords_created'] }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="bi bi-filter fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Từ khóa kích hoạt
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['active_keywords'] }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="bi bi-check-circle fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -111,7 +75,7 @@
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                             Tổng tin nhắn
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_chat_messages'] }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_chat_messages'] ?? 0 }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="bi bi-chat-dots fa-2x text-gray-300"></i>
@@ -121,7 +85,7 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card border-left-danger shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -129,10 +93,34 @@
                         <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                             Tin nhắn bị chặn
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['blocked_messages'] }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['blocked_messages'] ?? 0 }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="bi bi-shield-x fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Live hôm nay
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @if($liveSetting)
+                                <i class="bi bi-check-circle"></i> Đã cài đặt
+                            @else
+                                <i class="bi bi-x-circle"></i> Chưa có
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-broadcast fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -152,8 +140,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <a href="{{ route('live-staff.keywords.index') }}" class="btn btn-primary btn-lg w-100">
-                            <i class="bi bi-filter"></i> Quản lý từ khóa chặn
+                        <a href="{{ route('live-staff.chat.index') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-chat-dots"></i> Quản lý Chat
                         </a>
                     </div>
                     <div class="col-md-6 mb-3">

@@ -71,9 +71,15 @@
                         @endcan
                         @can('manage-chat')
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.chat.index') }}">
-                                <i class="bi bi-chat-dots"></i> Quản lý Chat
-                            </a>
+                            @if(auth()->user()->hasRole('Nhân viên Live'))
+                                <a class="nav-link" href="{{ route('live-staff.chat.index') }}">
+                                    <i class="bi bi-chat-dots"></i> Quản lý Chat
+                                </a>
+                            @else
+                                <a class="nav-link" href="{{ route('admin.chat.index') }}">
+                                    <i class="bi bi-chat-dots"></i> Quản lý Chat
+                                </a>
+                            @endif
                         </li>
                         @endcan
                     </ul>

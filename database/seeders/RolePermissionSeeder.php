@@ -46,7 +46,7 @@ class RolePermissionSeeder extends Seeder
         $liveStaffRole = Role::firstOrCreate(['name' => 'Nhân viên Live']);
         $liveStaffRole->syncPermissions([
             'view-live-link',
-            'manage-keywords'
+            'manage-chat'
         ]);
 
         $cskhRole = Role::firstOrCreate(['name' => 'CSKH']);

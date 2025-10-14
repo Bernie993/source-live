@@ -20,8 +20,6 @@ class DashboardController extends Controller
     {
         $liveSetting = LiveSetting::where('is_active', true)->first();
         $stats = [
-            'keywords_created' => Keyword::where('created_by', auth()->id())->count(),
-            'active_keywords' => Keyword::where('created_by', auth()->id())->where('is_active', true)->count(),
             'total_chat_messages' => ChatMessage::count(),
             'blocked_messages' => ChatMessage::where('is_blocked', true)->count(),
         ];

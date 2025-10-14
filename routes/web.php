@@ -57,9 +57,14 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 // Live Staff routes
 Route::middleware(['auth', 'role:Nhân viên Live'])->prefix('live-staff')->name('live-staff.')->group(function () {
     Route::get('/dashboard', [LiveStaffDashboardController::class, 'index'])->name('dashboard');
-    Route::resource('keywords', KeywordController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::post('keywords/{keyword}/toggle', [KeywordController::class, 'toggle'])->name('keywords.toggle');
-    Route::post('keywords/test', [KeywordController::class, 'test'])->name('keywords.test');
+    
+    // Chat management routes for Live Staff (reuse Admin ChatManagementController)
+    Route::get('chat', [ChatManagementController::class, 'index'])->name('chat.index');
+    Route::get('chat/{message}', [ChatManagementController::class, 'show'])->name('chat.show');
+    Route::delete('chat/{message}', [ChatManagementController::class, 'destroy'])->name('chat.destroy');
+    Route::get('chat-stats', [ChatManagementController::class, 'stats'])->name('chat.stats');
+    Route::get('chat-export', [ChatManagementController::class, 'export'])->name('chat.export');
+    Route::post('chat/{message}/toggle-block', [ChatManagementController::class, 'toggleBlock'])->name('chat.toggle-block');
 });
 
 // CSKH routes
