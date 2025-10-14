@@ -55,12 +55,12 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'nullable|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'account' => 'nullable|string|max:255',
             'bank_account' => 'nullable|string|max:255',
             'platform' => 'nullable|string|max:255',
-            'user_type' => 'required|in:system,external_login',
+            'user_type' => 'required|in:admin_created,external_login',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name'
         ]);
@@ -104,12 +104,12 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'account' => 'nullable|string|max:255',
             'bank_account' => 'nullable|string|max:255',
             'platform' => 'nullable|string|max:255',
-            'user_type' => 'required|in:system,external_login',
+            'user_type' => 'required|in:admin_created,external_login',
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,name'
         ]);

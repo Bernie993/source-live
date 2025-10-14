@@ -35,9 +35,10 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <label for="email" class="form-label">Email <span class="text-danger email-required">*</span></label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                       id="email" name="email" value="{{ old('email') }}" required>
+                                       id="email" name="email" value="{{ old('email') }}">
+                                <small class="form-text text-muted">Email không bắt buộc với External Login</small>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -73,7 +74,7 @@
                                 <select class="form-select @error('user_type') is-invalid @enderror" 
                                         id="user_type" name="user_type" required>
                                     <option value="">Chọn loại user</option>
-                                    <option value="system" {{ old('user_type') === 'system' ? 'selected' : '' }}>System</option>
+                                    <option value="admin_created" {{ old('user_type') === 'admin_created' ? 'selected' : '' }}>Admin Created</option>
                                     <option value="external_login" {{ old('user_type') === 'external_login' ? 'selected' : '' }}>External Login</option>
                                 </select>
                                 @error('user_type')
@@ -148,4 +149,36 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userTypeSelect = document.getElementById('user_type');
+    const emailInput = document.getElementById('email');
+    const emailRequired = document.querySelector('.email-required');
+    
+    function toggleEmailRequired() {
+        const isExternalLogin = userTypeSelect.value === 'external_login';
+        const isAdminCreated = userTypeSelect.value === 'admin_created';
+        
+        if (isExternalLogin) {
+            emailInput.removeAttribute('required');
+            if (emailRequired) emailRequired.style.display = 'none';
+        } else if (isAdminCreated) {
+            emailInput.removeAttribute('required'); // Admin created cũng không bắt buộc email
+            if (emailRequired) emailRequired.style.display = 'none';
+        } else {
+            emailInput.setAttribute('required', 'required');
+            if (emailRequired) emailRequired.style.display = 'inline';
+        }
+    }
+    
+    // Initial check
+    toggleEmailRequired();
+    
+    // Listen for changes
+    userTypeSelect.addEventListener('change', toggleEmailRequired);
+});
+</script>
+@endpush
 @endsection

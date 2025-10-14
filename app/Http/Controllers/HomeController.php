@@ -73,7 +73,7 @@ class HomeController extends Controller
                     // Create new user
                     $user = User::create([
                         'name' => $account,
-                        'email' => $account . '@j88.com', // Generate email
+                        'email' => null, // No email for external login
                         'password' => Hash::make(Str::random(12)), // Random password
                         'account' => $account,
                         'bank_account' => $bankAccount,
