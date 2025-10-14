@@ -100,14 +100,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="date_from">Từ ngày:</label>
-                            <input type="date" class="form-control" id="date_from" name="date_from" 
+                            <input type="date" class="form-control" id="date_from" name="date_from"
                                    value="{{ request('date_from') }}">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="date_to">Đến ngày:</label>
-                            <input type="date" class="form-control" id="date_to" name="date_to" 
+                            <input type="date" class="form-control" id="date_to" name="date_to"
                                    value="{{ request('date_to') }}">
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="username">Tên người dùng:</label>
-                            <input type="text" class="form-control" id="username" name="username" 
+                            <input type="text" class="form-control" id="username" name="username"
                                    value="{{ request('username') }}" placeholder="Tìm theo tên...">
                         </div>
                     </div>
@@ -210,20 +210,20 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.chat.show', $message) }}" 
+                                        <a href="{{ route('admin.chat.show', $message) }}"
                                            class="btn btn-info btn-sm" title="Xem chi tiết">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <form method="POST" action="{{ route('admin.chat.toggle-block', $message) }}" 
+                                        <form method="POST" action="{{ route('admin.chat.toggle-block', $message) }}"
                                               style="display: inline;">
                                             @csrf
-                                            <button type="submit" class="btn btn-warning btn-sm" 
+                                            <button type="submit" class="btn btn-warning btn-sm"
                                                     title="{{ $message->is_blocked ? 'Bỏ chặn' : 'Chặn' }}"
                                                     onclick="return confirm('Bạn có chắc chắn muốn {{ $message->is_blocked ? 'bỏ chặn' : 'chặn' }} tin nhắn này?')">
                                                 <i class="fas fa-{{ $message->is_blocked ? 'unlock' : 'ban' }}"></i>
                                             </button>
                                         </form>
-                                        <form method="POST" action="{{ route('admin.chat.destroy', $message) }}" 
+                                        <form method="POST" action="{{ route('admin.chat.destroy', $message) }}"
                                               style="display: inline;">
                                             @csrf
                                             @method('DELETE')
@@ -260,7 +260,7 @@
 <script>
 // Use global Echo instance (already initialized by Vite)
 // Same as frontend - no need to create new Echo instance
-console.log('🔍 Checking Echo:', typeof Echo !== 'undefined' ? 'Echo is available ✅' : 'Echo is NOT available ❌');
+// console.log('🔍 Checking Echo:', typeof Echo !== 'undefined' ? 'Echo is available ✅' : 'Echo is NOT available ❌');
 
 $(document).ready(function() {
     // Auto-submit form when date inputs change
@@ -271,25 +271,25 @@ $(document).ready(function() {
     // Listen for new chat messages using global Echo (same as frontend)
     if (typeof Echo !== 'undefined') {
         try {
-            console.log('🔌 Setting up realtime chat listener...');
-            
+            //console.log('🔌 Setting up realtime chat listener...');
+
             Echo.channel('live-chat')
                 .listen('.new-message', function(data) {
-                    console.log('📨 New message received in admin:', data);
-                    
+                    // console.log('📨 New message received in admin:', data);
+
                     // Update statistics
                     updateStatistics();
-                    
+
                     // Add new message to table
                     if (!isFiltered()) {
                         addNewMessageToTable(data);
                     }
-                    
+
                     // Show notification
                     showNotification('Có tin nhắn mới từ ' + data.username);
                 });
-            
-            console.log('✅ Realtime chat listener ready!');
+
+            // console.log('✅ Realtime chat listener ready!');
         } catch (error) {
             console.error('❌ Error setting up realtime listener:', error);
         }
@@ -300,32 +300,52 @@ $(document).ready(function() {
 
     // Update statistics
     function updateStatistics() {
+        // Auto-detect current route prefix (admin or live-staff)
+        const currentPath = window.location.pathname;
+        const statsUrl = currentPath.includes('/live-staff/')
+            ? '{{ route('live-staff.chat.stats') }}'
+            : '{{ route('admin.chat.stats') }}';
+
         // Reload statistics without refreshing page
-        fetch('{{ route('admin.chat.stats') }}')
-            .then(response => response.json())
+        fetch(statsUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Stats API returned ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.success) {
-                    // Update stat numbers
-                    $('.text-primary + .h5').first().text(data.stats.total_messages || 0);
-                    $('.text-success + .h5').first().text(data.stats.active_messages || 0);
-                    $('.text-danger + .h5').first().text(data.stats.blocked_messages || 0);
-                    $('.text-info + .h5').first().text(data.stats.unique_users || 0);
+                if (data.success && data.stats) {
+                    // Try to update stat numbers (may not exist in all layouts)
+                    try {
+                        const stats = data.stats;
+                        $('.text-primary').closest('.card-body').find('.h5').text(stats.total_messages || 0);
+                        $('.text-success').closest('.card-body').find('.h5').text(stats.active_messages || 0);
+                        $('.text-danger').closest('.card-body').find('.h5').text(stats.blocked_messages || 0);
+                        $('.text-info').closest('.card-body').find('.h5').text(stats.unique_users || 0);
+                        // console.log('📊 Statistics updated');
+                    } catch (e) {
+                        console.warn('Could not update stat cards:', e.message);
+                    }
                 }
             })
-            .catch(error => console.error('Error updating statistics:', error));
+            .catch(error => {
+                console.warn('⚠️ Could not fetch statistics:', error.message);
+                // Don't show error to user, it's not critical
+            });
     }
 
     // Check if there are active filters
     function isFiltered() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.has('date_from') || urlParams.has('date_to') || 
+        return urlParams.has('date_from') || urlParams.has('date_to') ||
                urlParams.has('status') || urlParams.has('username');
     }
 
     // Add new message to table
     function addNewMessageToTable(data) {
         const tbody = $('#dataTable tbody');
-        
+
         // Check if empty state exists
         const emptyState = $('.text-center.py-4');
         if (emptyState.length > 0) {
@@ -333,17 +353,17 @@ $(document).ready(function() {
             location.reload();
             return;
         }
-        
+
         // Format date
         const now = new Date();
-        const formattedDate = now.toLocaleDateString('vi-VN') + ' ' + 
+        const formattedDate = now.toLocaleDateString('vi-VN') + ' ' +
                             now.toLocaleTimeString('vi-VN');
-        
+
         // Create status badge
-        const statusBadge = data.is_blocked 
+        const statusBadge = data.is_blocked
             ? '<span class="badge badge-danger">Bị chặn</span>'
             : '<span class="badge badge-success">Hoạt động</span>';
-        
+
         // Create new row
         const newRow = `
             <tr class="new-message-row" data-id="${data.id}">
@@ -370,7 +390,7 @@ $(document).ready(function() {
                         <form method="POST" action="/admin/chat/${data.id}" style="display: inline;">
                             @csrf
                             <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-danger btn-sm" title="Xóa" 
+                            <button type="submit" class="btn btn-danger btn-sm" title="Xóa"
                                     onclick="return confirm('Bạn có chắc chắn muốn xóa tin nhắn này?')">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -379,7 +399,7 @@ $(document).ready(function() {
                 </td>
             </tr>
         `;
-        
+
         // Add to top of table with animation
         tbody.prepend(newRow);
         $('.new-message-row').addClass('table-success').delay(3000).queue(function() {
@@ -393,7 +413,7 @@ $(document).ready(function() {
         if (!("Notification" in window)) {
             return;
         }
-        
+
         // Check if permission is granted
         if (Notification.permission === "granted") {
             new Notification("Quản lý Chat", {
@@ -410,7 +430,7 @@ $(document).ready(function() {
                 }
             });
         }
-        
+
         // Also show in-page toast notification
         showToast(message);
     }
@@ -418,7 +438,7 @@ $(document).ready(function() {
     // Show toast notification
     function showToast(message) {
         const toast = $(`
-            <div class="alert alert-info alert-dismissible fade show" role="alert" 
+            <div class="alert alert-info alert-dismissible fade show" role="alert"
                  style="position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 300px;">
                 <strong><i class="fas fa-bell"></i> Thông báo:</strong> ${message}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -426,9 +446,9 @@ $(document).ready(function() {
                 </button>
             </div>
         `);
-        
+
         $('body').append(toast);
-        
+
         setTimeout(function() {
             toast.fadeOut('slow', function() {
                 $(this).remove();
