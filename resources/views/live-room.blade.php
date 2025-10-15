@@ -235,11 +235,19 @@
         }
 
         .video-header {
-            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
-            padding: 15px 20px;
+            background: linear-gradient(135deg, #FF6A3D 0%, #FF4419 100%);
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
         }
 
         .host-info {
@@ -249,55 +257,146 @@
         }
 
         .host-avatar {
-            width: 45px;
-            height: 45px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: 3px solid white;
             object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .host-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .host-name-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .streamer-badge {
+            background: #7C3AED;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .host-name {
             color: white;
             font-weight: 700;
-            font-size: 17px;
+            font-size: 18px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .live-badge {
-            background: #FF0000;
+        .host-description {
             color: white;
-            padding: 6px 16px;
-            border-radius: 25px;
-            font-size: 13px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        .video-header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .social-icons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .social-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .social-icon.telegram {
+            background: #0088cc;
+        }
+
+        .social-icon.twitter {
+            background: #000000;
+        }
+
+        .social-icon.whatsapp {
+            background: #25D366;
+        }
+
+        .social-icon.facebook {
+            background: #1877F2;
+        }
+
+        .social-icon.messenger {
+            background: linear-gradient(135deg, #00B2FF 0%, #006AFF 100%);
+        }
+
+        .copy-button {
+            background: white;
+            color: #FF4500;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .copy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .viewer-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-item i {
+            font-size: 16px;
+        }
+
+        .viewer-count {
+            font-size: 16px;
+            font-weight: 700;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.05); }
-        }
-
-        .close-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
         }
 
         .video-player-wrapper {
@@ -1021,16 +1120,57 @@
             <!-- Video Player Section (Left) -->
             <div class="video-section">
                 <div class="video-header">
-                    <div class="host-info">
-                        <img src="{{ $liveSetting->assignedUser->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($liveSetting->assignedUser->name ?? 'Host') . '&background=FF4500&color=fff' }}" 
-                             alt="Host Avatar" 
-                             class="host-avatar">
-                        <span class="host-name">{{ $liveSetting->assignedUser->name ?? 'Admin U888' }}</span>
-                        <span class="live-badge">● LIVE</span>
+                    <div class="video-header-left">
+                        <div class="host-info">
+                            <img src="{{ $liveSetting->assignedUser->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($liveSetting->assignedUser->name ?? 'Host') . '&background=FF4500&color=fff' }}"
+                                 alt="Host Avatar"
+                                 class="host-avatar">
+                            <div class="host-details">
+                                <div class="host-name-row">
+                                    <span class="streamer-badge">Streamer</span>
+                                    <span class="host-name">{{ $liveSetting->assignedUser->name ?? 'Viruss' }}</span>
+                                </div>
+                                <div class="host-description">
+                                    88CLB phát code siêu khủng
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button class="close-button" onclick="window.close()">
-                        <i class="fas fa-times"></i>
-                    </button>
+
+                    <div class="video-header-right">
+                        <div class="social-icons">
+                            <a href="http://t.me/ABC8LIVE" target="_blank" class="social-icon telegram" title="Telegram">
+                                <i class="fab fa-telegram-plane"></i>
+                            </a>
+                            <a href="#" class="social-icon twitter" title="Twitter/X">
+                                <i class="fab fa-x-twitter"></i>
+                            </a>
+                            <a href="#" class="social-icon whatsapp" title="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="#" class="social-icon facebook" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-icon messenger" title="Messenger">
+                                <i class="fab fa-facebook-messenger"></i>
+                            </a>
+                        </div>
+
+                        <button class="copy-button" onclick="copyLiveUrl()">
+                            Sao chép
+                        </button>
+
+                        <div class="viewer-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-share-nodes"></i>
+                                <span>Chia sẻ</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-eye"></i>
+                                <span class="viewer-count" id="live-viewer-count">0</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="video-player-wrapper">
                     <video id="live-video-player" controls autoplay muted playsinline></video>
@@ -1098,55 +1238,6 @@
             </div>
         </div>
     </div>
-
-    <!-- News Section -->
-    <div class="news-section">
-        <div class="section-title">
-            <div class="section-title-line left">
-                <img src="{{ asset('images/Group 1597881358.png') }}" alt="Line">
-            </div>
-            <h2 class="section-title-text">TIN TỨC</h2>
-            <div class="section-title-line right">
-                <img src="{{ asset('images/Group 2087325152.png') }}" alt="Line">
-            </div>
-        </div>
-
-        <div class="news-grid">
-            <div class="news-main">
-                <img src="{{ asset('images/image 77.png') }}" alt="Main News">
-            </div>
-            <div class="news-list">
-                <div class="news-item">
-                    <div class="news-item-image">
-                        <img src="{{ asset('images/image 78.png') }}" alt="News 1">
-                    </div>
-                    <div class="news-item-content">
-                        <h3 class="news-item-title">Khuyến Mãi Đặc Biệt Tháng 10</h3>
-                        <p class="news-item-description">Nhận ngay ưu đãi lên đến 8.888K khi tham gia các trò chơi hấp dẫn tại U888!</p>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="news-item-image">
-                        <img src="{{ asset('images/image 79.png') }}" alt="News 2">
-                    </div>
-                    <div class="news-item-content">
-                        <h3 class="news-item-title">Giải Đua Top Tháng</h3>
-                        <p class="news-item-description">Tham gia đua top và nhận thưởng khủng mỗi tuần cùng U888!</p>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="news-item-image">
-                        <img src="{{ asset('images/image 77.png') }}" alt="News 3">
-                    </div>
-                    <div class="news-item-content">
-                        <h3 class="news-item-title">Live Stream Mỗi Ngày</h3>
-                        <p class="news-item-description">Tham gia live stream hàng ngày để nhận quà và tương tác cùng cộng đồng!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- App Download Section -->
     <div class="app-download-section">
         <div class="app-download-banner">
@@ -1372,18 +1463,18 @@
 
         function addMessageToChat(data) {
             const chatMessages = document.getElementById('chat-messages');
-            
+
             // Track last message ID
             if (data.id && data.id > lastMessageId) {
                 lastMessageId = data.id;
             }
-            
+
             // Check if message already exists (prevent duplicates)
             const existingMsg = chatMessages.querySelector(`[data-message-id="${data.id}"]`);
             if (existingMsg) {
                 return;
             }
-            
+
             const messageDiv = document.createElement('div');
             messageDiv.className = 'chat-message';
             messageDiv.setAttribute('data-message-id', data.id || Date.now());
@@ -1426,9 +1517,84 @@
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
             const seconds = String(date.getSeconds()).padStart(2, '0');
-            
+
             return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`;
         }
+
+        // Copy Live URL function
+        function copyLiveUrl() {
+            const url = window.location.href;
+
+            // Modern API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Đã sao chép link live vào clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                    fallbackCopy(url);
+                });
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                alert('Đã sao chép link live vào clipboard!');
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('Không thể sao chép. Vui lòng copy thủ công: ' + text);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // Track and update viewer count for this specific live
+        const liveId = {{ $liveSetting->id }};
+        let viewerTrackingInterval;
+
+        function updateViewerCount() {
+            fetch(`/api/live/${liveId}/viewer-count`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.viewer_count !== undefined) {
+                    document.getElementById('live-viewer-count').textContent = data.viewer_count;
+                    console.log('👥 Viewers:', data.viewer_count);
+                }
+            })
+            .catch(error => {
+                console.warn('⚠️ Could not update viewer count:', error);
+            });
+        }
+
+        // Initial viewer count
+        updateViewerCount();
+
+        // Update viewer count every 10 seconds
+        viewerTrackingInterval = setInterval(updateViewerCount, 10000);
+
+        // Mark viewer as left when page unloads
+        window.addEventListener('beforeunload', function() {
+            navigator.sendBeacon(`/api/live/${liveId}/viewer-leave`, JSON.stringify({
+                _token: document.querySelector('meta[name="csrf-token"]').content
+            }));
+        });
 
         // Chat is ready
         console.log('✅ Chat initialized successfully');
@@ -1530,7 +1696,7 @@
                     console.log('Response data:', data);
                     if (data.success && data.authenticated) {
                         alert('Đăng nhập thành công!');
-                        
+
                         // Close modal using vanilla JS
                         const loginModal = document.getElementById('loginModal');
                         if (loginModal) {
@@ -1545,7 +1711,7 @@
                             document.body.style.removeProperty('overflow');
                             document.body.style.removeProperty('padding-right');
                         }
-                        
+
                         // Wait a bit for session to be saved, then reload
                         setTimeout(() => {
                             window.location.reload();

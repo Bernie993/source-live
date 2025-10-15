@@ -6,6 +6,7 @@ use App\Models\LiveSetting;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class LiveStreamController extends Controller
@@ -246,6 +247,113 @@ class LiveStreamController extends Controller
                 'main_live' => null,
                 'other_lives' => [],
                 'error' => 'Có lỗi xảy ra khi tải danh sách live'
+            ], 500);
+        }
+    }
+
+    /**
+     * Track viewer for specific live stream
+     */
+    public function trackViewer(Request $request, $id): JsonResponse
+    {
+        try {
+            // Validate live exists
+            $live = LiveSetting::find($id);
+            if (!$live) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Live not found'
+                ], 404);
+            }
+
+            // Get unique session/user identifier
+            $sessionId = session()->getId();
+            $cacheKey = "live_viewers_{$id}";
+            $viewerKey = "live_viewer_{$id}_{$sessionId}";
+            
+            // Get current viewers set from cache
+            $viewers = Cache::get($cacheKey, []);
+            
+            // Add this viewer with timestamp
+            $viewers[$sessionId] = now()->timestamp;
+            
+            // Clean up old viewers (inactive for more than 30 seconds)
+            $currentTime = now()->timestamp;
+            $viewers = array_filter($viewers, function($timestamp) use ($currentTime) {
+                return ($currentTime - $timestamp) < 30;
+            });
+            
+            // Store updated viewers list (expire in 60 seconds)
+            Cache::put($cacheKey, $viewers, 60);
+            
+            // Store individual viewer timestamp (expire in 30 seconds)
+            Cache::put($viewerKey, now()->timestamp, 30);
+            
+            $viewerCount = count($viewers);
+            
+            Log::info("Viewer tracked for live {$id}", [
+                'session_id' => $sessionId,
+                'viewer_count' => $viewerCount
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'viewer_count' => $viewerCount,
+                'session_id' => $sessionId
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error tracking viewer', [
+                'live_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'viewer_count' => 0,
+                'message' => 'Error tracking viewer'
+            ], 500);
+        }
+    }
+
+    /**
+     * Mark viewer as left
+     */
+    public function viewerLeave(Request $request, $id): JsonResponse
+    {
+        try {
+            $sessionId = session()->getId();
+            $cacheKey = "live_viewers_{$id}";
+            $viewerKey = "live_viewer_{$id}_{$sessionId}";
+            
+            // Remove viewer from the set
+            $viewers = Cache::get($cacheKey, []);
+            unset($viewers[$sessionId]);
+            
+            // Update cache
+            Cache::put($cacheKey, $viewers, 60);
+            Cache::forget($viewerKey);
+            
+            Log::info("Viewer left live {$id}", [
+                'session_id' => $sessionId,
+                'remaining_viewers' => count($viewers)
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Viewer removed'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error removing viewer', [
+                'live_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error removing viewer'
             ], 500);
         }
     }

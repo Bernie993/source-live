@@ -27,6 +27,10 @@ Route::prefix('live')->group(function () {
     Route::get('/status', [LiveStreamController::class, 'getStreamStatus']);
     Route::get('/viewer-count', [LiveStreamController::class, 'updateViewerCount']);
     Route::get('/all-streams', [LiveStreamController::class, 'getAllLiveStreams']);
+    
+    // Viewer tracking for specific live
+    Route::post('/{id}/viewer-count', [LiveStreamController::class, 'trackViewer'])->middleware('web');
+    Route::post('/{id}/viewer-leave', [LiveStreamController::class, 'viewerLeave'])->middleware('web');
 });
 
 // User info route
