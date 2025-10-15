@@ -906,6 +906,32 @@
             }
         }
 
+        /* ============ APP DOWNLOAD SECTION ============ */
+        .app-download-section {
+            padding: 40px 40px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        .app-download-banner {
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .app-download-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .app-download-section {
+                padding: 30px 15px;
+            }
+        }
+
         .livestream-container {
             background: rgba(0, 0, 0, 0.8);
             border-radius: 12px;
@@ -1480,6 +1506,13 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- App Download Section -->
+    <div class="app-download-section">
+        <div class="app-download-banner">
+            <img src="{{ asset('images/Frame 2147224090.png') }}" alt="U888 - Tải App Android & iOS">
         </div>
     </div>
 
