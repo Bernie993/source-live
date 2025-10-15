@@ -36,7 +36,7 @@ class LiveSetting extends Model
     }
 
     /**
-     * Check if live is accessible (30 minutes before live time)
+     * Check if live is accessible (30 minutes before live time and during live)
      */
     public function isAccessible(): bool
     {
@@ -47,8 +47,10 @@ class LiveSetting extends Model
         try {
             $liveDateTime = $this->live_date->copy()->setTimeFromTimeString($this->live_time->format('H:i:s'));
             $accessTime = $liveDateTime->copy()->subMinutes(30);
+            $endTime = $liveDateTime->copy()->addHours(4); // Live lasts 4 hours
             
-            return now()->gte($accessTime) && now()->lte($liveDateTime);
+            // Accessible from 30 minutes before until 4 hours after
+            return now()->gte($accessTime) && now()->lte($endTime);
         } catch (\Exception $e) {
             return false;
         }

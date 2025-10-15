@@ -35,10 +35,10 @@
                         @if($liveSetting->isAccessible())
                             <div class="d-grid gap-2">
                                 <a href="{{ $liveSetting->live_url }}" target="_blank" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-link-45deg"></i> Truy cập Live
+                                    <i class="bi bi-link-45deg"></i> Link OBS/Stream
                                 </a>
-                                <a href="{{ $liveSetting->play_url }}" target="_blank" class="btn btn-success btn-lg">
-                                    <i class="bi bi-play-circle"></i> Link Play
+                                <a href="{{ route('live.room', $liveSetting->id) }}" target="_blank" class="btn btn-success btn-lg">
+                                    <i class="bi bi-play-circle"></i> Vào Phòng Live
                                 </a>
                             </div>
                         @else
@@ -146,7 +146,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         @if($liveSetting && $liveSetting->isAccessible())
-                            <a href="{{ $liveSetting->live_url }}" target="_blank" class="btn btn-success btn-lg w-100">
+                            <a href="{{ route('live.room', $liveSetting->id) }}" target="_blank" class="btn btn-success btn-lg w-100">
                                 <i class="bi bi-broadcast"></i> Vào phòng Live
                             </a>
                         @else

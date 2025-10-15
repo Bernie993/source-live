@@ -1,367 +1,12 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J88 - Trang chủ</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <style>
-        body {
-            background: #000000;
-            min-height: 100vh;
-            font-family: 'Arial', sans-serif;
-        }
+@extends('layouts.app')
 
-        /* ============ NEW U888 HEADER DESIGN ============ */
-        .header {
-            background: linear-gradient(180deg, #1F1F1F 0%, #000000 100%);
-            height: 99px;
-            box-shadow: 0px 5px 5.8px 0px rgba(0, 0, 0, 0.55);
-            position: relative;
-            z-index: 1000;
-        }
+@section('title', 'U888 - Trang chủ giải trí hàng đầu')
 
-        .header .container-fluid {
-            max-width: 1920px;
-            height: 100%;
-            padding: 0 40px;
-        }
+@push('styles')
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 100%;
-            gap: 40px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-            flex: 1;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-
-        .logo-u888 {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-
-        .logo-u888:hover {
-            transform: scale(1.02);
-        }
-
-        .logo-u888 img {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-
-        .tagline {
-            color: #FF4500;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-left: 10px;
-            text-shadow: 0 0 8px rgba(255, 69, 0, 0.3);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 35px;
-            align-items: center;
-        }
-
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 8px 0;
-            white-space: nowrap;
-        }
-
-        .nav-item:hover {
-            color: #FF4500;
-        }
-
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #FF4500;
-            transition: width 0.3s ease;
-        }
-
-        .nav-item:hover::after {
-            width: 100%;
-        }
-
-        .nav-item.active {
-            color: #FF4500;
-        }
-
-        .nav-item.active::after {
-            width: 100%;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
-            color: white;
-            border: none;
-            padding: 12px 32px;
-            border-radius: 25px;
-            font-weight: 700;
-            font-size: 15px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
-        }
-
-        .btn-login:hover {
-            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
-            color: white;
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        /* Dropdown Menu for Logged In User */
-        .header .dropdown {
-            position: relative;
-        }
-
-        .header .dropdown-menu {
-            background: linear-gradient(180deg, #1F1F1F 0%, #0a0a0a 100%);
-            border: 1px solid rgba(255, 69, 0, 0.2);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 69, 0, 0.1);
-            margin-top: 12px;
-            min-width: 220px;
-            padding: 8px 0;
-            animation: dropdownFadeIn 0.2s ease-out;
-        }
-
-        @keyframes dropdownFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header .dropdown-item {
-            color: white;
-            padding: 12px 20px;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header .dropdown-item i {
-            width: 18px;
-            text-align: center;
-        }
-
-        .header .dropdown-item:hover {
-            background: rgba(255, 69, 0, 0.15);
-            color: #FF4500;
-            padding-left: 24px;
-        }
-
-        .header .dropdown-item:active {
-            background: rgba(255, 69, 0, 0.25);
-        }
-
-        .header .dropdown-divider {
-            border-color: rgba(255, 255, 255, 0.1);
-            margin: 8px 0;
-        }
-
-        /* Logout specific styling */
-        .header .dropdown-item[onclick*="logout"] {
-            color: #ff6b6b;
-        }
-
-        .header .dropdown-item[onclick*="logout"]:hover {
-            color: #ff4444;
-            background: rgba(255, 69, 0, 0.15);
-        }
-
-        /* User button when logged in */
-        .header .btn-login.dropdown-toggle {
-            padding-right: 20px;
-            position: relative;
-        }
-
-        .header .btn-login.dropdown-toggle::after {
-            margin-left: 8px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1400px) {
-            .header-left {
-                gap: 35px;
-            }
-
-            .nav-menu {
-                gap: 25px;
-            }
-
-            .tagline {
-                font-size: 11px;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .header-left {
-                gap: 25px;
-            }
-
-            .tagline {
-                display: none;
-            }
-
-            .nav-menu {
-                gap: 20px;
-            }
-
-            .nav-item {
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .header {
-                height: auto;
-                padding: 15px 0;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .header-left {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-
-            .logo-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .logo-u888 img {
-                height: 40px;
-            }
-
-            .nav-menu {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-            }
-
-            .header-right {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .btn-login {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-
-        .main-content {
-            padding: 0;
-            margin: 0;
-        }
-
-        /* ============ NOTIFICATION BANNER ============ */
-        .notification-banner {
-            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .notification-icon {
-            flex-shrink: 0;
-            width: 36px;
-            height: 36px;
-            object-fit: contain;
-            animation: bell-ring 2s ease-in-out infinite;
-        }
-
-        @keyframes bell-ring {
-            0%, 100% { transform: rotate(0deg); }
-            10%, 30% { transform: rotate(-10deg); }
-            20%, 40% { transform: rotate(10deg); }
-        }
-
-        .notification-text {
-            flex: 1;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .notification-text span {
-            display: inline-block;
-            padding-left: 100%;
-            animation: scroll-left 30s linear infinite;
-        }
-
-        @keyframes scroll-left {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* ============ LIVE STREAMS GRID ============ */
+<style>
         .live-streams-section {
             padding: 30px 40px;
             max-width: 1920px;
@@ -529,9 +174,9 @@
 
         .side-live-badge {
             position: absolute;
-            bottom: 10px;
+            top: 10px;
             right: 10px;
-            background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
             color: white;
             padding: 5px 10px;
             border-radius: 14px;
@@ -545,9 +190,44 @@
             letter-spacing: 0.5px;
         }
 
+        .side-live-badge.live-now {
+            background: linear-gradient(135deg, #00FF00 0%, #00CC00 100%);
+            animation: pulse-badge 1.5s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
         .side-live-badge i {
             color: #FFD700;
             font-size: 8px;
+        }
+
+        /* Button for side live boxes */
+        .side-live-enter-btn {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.5);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .side-live-enter-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 6px 16px rgba(255, 69, 0, 0.7);
         }
 
         /* Responsive */
@@ -579,42 +259,31 @@
 
         /* ============ PROMOTIONAL BANNER SLIDER ============ */
         .promo-banner-section {
-            padding: 30px 40px 60px;
+            padding: 40px 40px 60px;
             max-width: 1920px;
             margin: 0 auto;
             position: relative;
+            background: #000;
         }
 
         .hot-badge {
             position: absolute;
-            top: -10px;
-            left: 50px;
+            top: 0px;
+            left: 40px;
             z-index: 10;
             width: auto;
-            max-width: 150px;
+            max-width: 70px;
         }
 
         .hot-badge img {
             width: 100%;
             height: auto;
             display: block;
-            filter: drop-shadow(0 6px 20px rgba(255, 69, 0, 0.6));
-            animation: float-badge 3s ease-in-out infinite;
-        }
-
-        @keyframes float-badge {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-
-        @keyframes flame {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
+            filter: drop-shadow(0 4px 12px rgba(255, 69, 0, 0.5));
         }
 
         .promo-swiper-container {
-            margin-top: 20px;
+            margin-top: 0px;
             padding: 0 50px;
             position: relative;
         }
@@ -707,13 +376,13 @@
         /* Responsive */
         @media (max-width: 768px) {
             .promo-banner-section {
-                padding: 20px 15px 50px;
+                padding: 30px 20px 50px;
             }
 
             .hot-badge {
-                left: 15px;
-                font-size: 16px;
-                padding: 6px 15px;
+                left: 20px;
+                top: 5px;
+                max-width: 50px;
             }
 
             .promo-swiper-container {
@@ -724,6 +393,10 @@
             .promo-button-next {
                 width: 35px;
                 height: 35px;
+            }
+
+            .promo-pagination {
+                bottom: -25px !important;
             }
         }
 
@@ -1272,76 +945,10 @@
             margin-top: 10px;
             cursor: pointer;
         }
-    </style>
-    @vite(['resources/js/app.js'])
-    <!-- HLS.js for HLS stream support -->
-    <script src="{{ asset('js/hls.min.js') }}"></script>
-</head>
-<body>
-    <!-- U888 Header -->
-    <header class="header">
-        <div class="container-fluid">
-            <div class="header-content">
-                <!-- Left: Logo + Menu -->
-                <div class="header-left">
-                    <div class="logo-container">
-                        <!-- U888 Logo Image -->
-                        <a href="/" class="logo-u888">
-                            <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 - ABC VIP">
-                        </a>
-                </div>
+</style>
+@endpush
 
-                    <!-- Navigation Menu -->
-                    <nav class="nav-menu">
-                        <a href="#" class="nav-item active">Trang chủ</a>
-                        <a href="#" class="nav-item">Quà tặng</a>
-                        <a href="#" class="nav-item">Tải APP</a>
-                        <a href="#" class="nav-item">Nhận Code</a>
-                        <a href="#" class="nav-item">Phần hồi</a>
-                    </nav>
-                </div>
-
-                <!-- Right: Login Button -->
-                <div class="header-right">
-                        @guest
-                            <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                Đăng nhập
-                            </button>
-                        @else
-                        <div class="dropdown">
-                            <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-2"></i>{{ Auth::user()->name }}
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Thông tin</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                        @endguest
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Notification Banner -->
-    <div class="notification-banner">
-        <img src="{{ asset('images/image_2025-07-05_16-38-07 1.png') }}" alt="Notification" class="notification-icon">
-        <div class="notification-text">
-            <span id="notification-scroll">
-                🎁 THỂ THAO BẢO HIỂM CƯỢC THUA LÊN ĐẾN 5% 🎁 THỂ THAO THẮNG LIÊN TIẾP NHẬN THƯỞNG LÊN ĐẾN 8.888K 🎁 HÃY CÙNG BẠN BÈ THAM GIA ABC8 VÀ NHẬN THƯỞNG NHÉ 🎁
-            </span>
-                                </div>
-                            </div>
-
+@section('content')
     <!-- Live Streams Section -->
     <div class="live-streams-section">
         <div class="streams-grid">
@@ -1366,7 +973,7 @@
             <!-- Side Live Streams -->
             <div class="side-live-boxes" id="side-live-boxes">
                 <!-- Will be populated by JavaScript -->
-                <div class="side-live-box">
+                <div class="side-live-box" data-live-index="0">
                     <div class="side-live-content">
                         <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
                         <div class="side-live-host">
@@ -1375,12 +982,13 @@
                             <span class="side-live-host-name">Đang cập nhật...</span>
                         </div>
                         <div class="side-live-badge">
-                            <i class="fas fa-gift"></i>
-                            <span>Sắp diễn ra</span>
+                            <i class="fas fa-clock"></i>
+                            <span class="badge-text">Sắp diễn ra</span>
                         </div>
+                        <button class="side-live-enter-btn">VÀO PHÒNG</button>
                     </div>
                 </div>
-                <div class="side-live-box">
+                <div class="side-live-box" data-live-index="1">
                     <div class="side-live-content">
                         <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
                         <div class="side-live-host">
@@ -1389,12 +997,13 @@
                             <span class="side-live-host-name">Đang cập nhật...</span>
                         </div>
                         <div class="side-live-badge">
-                            <i class="fas fa-gift"></i>
-                            <span>Sắp diễn ra</span>
+                            <i class="fas fa-clock"></i>
+                            <span class="badge-text">Sắp diễn ra</span>
                         </div>
+                        <button class="side-live-enter-btn">VÀO PHÒNG</button>
                     </div>
                 </div>
-                <div class="side-live-box">
+                <div class="side-live-box" data-live-index="2">
                     <div class="side-live-content">
                         <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
                         <div class="side-live-host">
@@ -1403,14 +1012,15 @@
                             <span class="side-live-host-name">Đang cập nhật...</span>
                         </div>
                         <div class="side-live-badge">
-                            <i class="fas fa-gift"></i>
-                            <span>Sắp diễn ra</span>
+                            <i class="fas fa-clock"></i>
+                            <span class="badge-text">Sắp diễn ra</span>
                         </div>
+                        <button class="side-live-enter-btn">VÀO PHÒNG</button>
                     </div>
                 </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Promotional Banner Slider -->
     <div class="promo-banner-section">
@@ -1579,698 +1189,203 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="j88-logo">J88</div>
-                    <h4 class="text-center mb-4">Đăng Nhập</h4>
+@endsection
 
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="accountName" class="form-label">Tên tài khoản của bạn</label>
-                            <input type="text" class="form-control" id="accountName" placeholder="Vui Lòng Nhập Tên Tài Khoản" required>
-                        </div>
+@push('scripts')
+<!-- HLS.js -->
+<script src="{{ asset('js/hls.min.js') }}"></script>
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-                        <div class="mb-4">
-                            <label class="form-label">Xác nhận 4 số cuối tài khoản ngân hàng</label>
-                            <div class="bank-account-inputs justify-content-center">
-                                <input type="text" class="form-control bank-digit" maxlength="1" id="digit1" required>
-                                <input type="text" class="form-control bank-digit" maxlength="1" id="digit2" required>
-                                <input type="text" class="form-control bank-digit" maxlength="1" id="digit3" required>
-                                <input type="text" class="form-control bank-digit" maxlength="1" id="digit4" required>
-                            </div>
-                        </div>
+<script>
+    // Global variables
+    let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+    let currentUser = @json(Auth::user());
+    let currentLiveData = null;
 
-                        <button type="submit" class="btn btn-confirm">
-                            <span class="btn-text">XÁC NHẬN</span>
-                            <span class="loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                Đang xác thực...
-                            </span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pusher for realtime (if needed for fallback) -->
-    <script src="https://cdn.jsdelivr.net/npm/pusher-js@8.4.0-rc2/dist/web/pusher.min.js"></script>
-
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <script>
-        // Global variables
-        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
-        let currentUser = @json(Auth::user());
-        let echo = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Swiper for Promotional Banners
-            const promoSwiper = new Swiper('.promoSwiper', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                loop: true,
-                autoplay: {
-                    delay: 5000,
-                    disableOnInteraction: false,
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Homepage initializing...');
+        
+        // Initialize Swiper for Promotional Banners - Always show 3 slides
+        const promoSwiper = new Swiper('.promoSwiper', {
+            slidesPerView: 3,
+            spaceBetween: 20,
+            loop: true,
+            centeredSlides: false,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.promo-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.promo-button-next',
+                prevEl: '.promo-button-prev',
+            },
+            breakpoints: {
+                320: {
+                    slidesPerView: 1,
+                    spaceBetween: 10,
                 },
-                pagination: {
-                    el: '.promo-pagination',
-                    clickable: true,
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 15,
                 },
-                navigation: {
-                    nextEl: '.promo-button-next',
-                    prevEl: '.promo-button-prev',
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
                 },
-                breakpoints: {
-                    768: {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                    },
-                    1024: {
-                        slidesPerView: 3,
-                        spaceBetween: 30,
-                    },
-                },
-            });
-            console.log('✅ Swiper initialized:', promoSwiper);
-            // Initialize Bootstrap Dropdown (ensure it works)
-            if (typeof bootstrap !== 'undefined') {
-                console.log('✅ Bootstrap loaded successfully');
-                // Initialize all dropdowns
-                const dropdowns = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-                dropdowns.forEach(dropdown => {
-                    new bootstrap.Dropdown(dropdown);
-                });
-            } else {
-                console.warn('⚠️ Bootstrap not loaded');
-            }
-
-            // Initialize
-            initializeApp();
-
-            // Handle bank account digit inputs
-            const bankDigits = document.querySelectorAll('.bank-digit');
-
-            bankDigits.forEach((digit, index) => {
-                digit.addEventListener('input', function(e) {
-                    if (e.target.value.length === 1 && index < bankDigits.length - 1) {
-                        bankDigits[index + 1].focus();
-                    }
-                });
-
-                digit.addEventListener('keydown', function(e) {
-                    if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
-                        bankDigits[index - 1].focus();
-                    }
-                });
-            });
-
-            // Handle form submission
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-
-            // Handle chat functionality if logged in
-            if (isLoggedIn) {
-                initializeChat();
-            }
-
-            // Check auth status periodically (in case of session changes)
-            setInterval(checkAuthStatus, 30000);
+            },
         });
+        console.log('✅ Swiper initialized');
 
-        function checkAuthStatus() {
-            // Only check if user is not currently logged in
-            if (!isLoggedIn) {
-                fetch('/api/user', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Not authenticated');
-                })
-                .then(user => {
-                    // User is now authenticated, reload to update UI
-                    if (user && user.id) {
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    // User still not authenticated, continue
-                    console.log('User not authenticated');
-                });
-            }
+        // Initialize Bootstrap Dropdown
+        if (typeof bootstrap !== 'undefined') {
+            const dropdowns = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            dropdowns.forEach(dropdown => {
+                new bootstrap.Dropdown(dropdown);
+            });
         }
 
-        function initializeApp() {
-            // Load all live streams
-            loadAllLiveStreams();
+        // Initialize app
+        initializeApp();
+    });
 
-            // Load online count
-            updateOnlineCount();
+    function initializeApp() {
+        console.log('📱 Initializing app...');
+        loadAllLiveStreams();
+    }
 
-            // Set up intervals
-            setInterval(loadAllLiveStreams, 30000); // Check streams every 30 seconds
-            setInterval(updateOnlineCount, 15000); // Update online count every 15 seconds
-        }
-
-        function loadAllLiveStreams() {
-            fetch('/api/live/all-streams')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+    function loadAllLiveStreams() {
+        console.log('🔄 Loading live streams...');
+        fetch('/api/live/all-streams')
+            .then(response => response.json())
+            .then(data => {
+                console.log('📺 Live streams API response:', data);
+                
+                if (data.success) {
+                    // Update main live display
+                    if (data.main_live) {
+                        console.log('🎯 Main live:', data.main_live);
+                        console.log('🕐 Is live now?', data.main_live.is_live_now);
+                        console.log('⏰ Minutes until live:', data.main_live.minutes_until_live);
                         updateMainLiveDisplay(data.main_live);
+                    } else {
+                        console.warn('⚠️ No main live found');
+                    }
+                    
+                    // Update side live boxes
+                    if (data.other_lives && data.other_lives.length > 0) {
+                        console.log('📋 Other lives:', data.other_lives);
                         updateSideLiveBoxes(data.other_lives);
                     }
-                })
-                .catch(error => {
-                    console.error('Error loading live streams:', error);
-                });
-        }
-
-        function updateMainLiveDisplay(mainLive) {
-            const mainLiveBox = document.getElementById('main-live-box');
-            const mainLiveContent = document.getElementById('main-live-content');
-            const mainLiveImage = document.getElementById('main-live-image');
-            const btnEnterLive = document.getElementById('btn-enter-live');
-
-            if (!mainLive) {
-                // No live scheduled
-                mainLiveImage.src = "{{ asset('images/738x512 3.png') }}";
-                btnEnterLive.style.display = 'none';
-                return;
-            }
-
-            console.log('Main Live:', mainLive);
-
-            if (mainLive.is_live_now) {
-                // Live is happening NOW - Show "VÀO PHÒNG LIVE" button
-                mainLiveImage.src = mainLive.default_video_url ? mainLive.default_video_url : "{{ asset('images/738x512 3.png') }}";
-                btnEnterLive.style.display = 'block';
-                btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
-
-                // Add click handler to enter live room
-                btnEnterLive.onclick = function() {
-                    enterLiveRoom(mainLive);
-                };
-            } else {
-                // Live not started yet - Show default image/video
-                if (mainLive.default_video_url && mainLive.default_video_url.match(/\.(mp4|webm|ogg)$/i)) {
-                    // Replace image with video
-                    mainLiveContent.innerHTML = `
-                        <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
-                            <source src="${mainLive.default_video_url}" type="video/mp4">
-                        </video>
-                        <div class="live-overlay" id="main-live-overlay">
-                            <div class="live-logo-badge">
-                                <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 Logo">
-                            </div>
-                            <button class="btn-enter-live" id="btn-enter-live-countdown" disabled>
-                                Sắp bắt đầu: ${mainLive.live_time} - ${mainLive.live_date}
-                            </button>
-                        </div>
-                    `;
                 } else {
-                    mainLiveImage.src = "{{ asset('images/738x512 3.png') }}";
-                    btnEnterLive.style.display = 'block';
-                    btnEnterLive.disabled = true;
-                    btnEnterLive.textContent = `Sắp bắt đầu: ${mainLive.live_time} - ${mainLive.live_date}`;
-                    btnEnterLive.style.opacity = '0.7';
-                    btnEnterLive.style.cursor = 'not-allowed';
-                }
-            }
-        }
-
-        function updateSideLiveBoxes(otherLives) {
-            const sideBoxesContainer = document.getElementById('side-live-boxes');
-
-            if (!otherLives || otherLives.length === 0) {
-                // Keep default placeholders
-                return;
-            }
-
-            sideBoxesContainer.innerHTML = '';
-
-            // Always show 3 boxes
-            for (let i = 0; i < 3; i++) {
-                const live = otherLives[i];
-                const box = document.createElement('div');
-                box.className = 'side-live-box';
-
-                if (live) {
-                    const hostAvatar = live.host && live.host.avatar
-                        ? live.host.avatar
-                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(live.host?.name || 'Host')}&background=FF4500&color=fff`;
-
-                    const hostName = live.host ? live.host.name : 'Đang cập nhật...';
-                    const badgeText = live.is_live_now ? 'ĐANG LIVE' : `${live.live_time} - ${live.live_date}`;
-                    const badgeIcon = live.is_live_now ? 'fa-circle' : 'fa-clock';
-
-                    box.innerHTML = `
-                        <div class="side-live-content">
-                            <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
-                            <div class="side-live-host">
-                                <img src="${hostAvatar}" alt="${hostName}" class="side-live-host-avatar">
-                                <span class="side-live-host-name">${hostName}</span>
-                            </div>
-                            <div class="side-live-badge">
-                                <i class="fas ${badgeIcon}"></i>
-                                <span>${badgeText}</span>
-                            </div>
-                        </div>
-                    `;
-
-                    // Add click handler if live is happening
-                    if (live.is_live_now) {
-                        box.style.cursor = 'pointer';
-                        box.onclick = function() {
-                            enterLiveRoom(live);
-                        };
-                    }
-                } else {
-                    // Placeholder
-                    box.innerHTML = `
-                        <div class="side-live-content">
-                            <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
-                            <div class="side-live-host">
-                                <img src="https://ui-avatars.com/api/?name=Host&background=FF4500&color=fff"
-                                     alt="Host" class="side-live-host-avatar">
-                                <span class="side-live-host-name">Đang cập nhật...</span>
-                            </div>
-                            <div class="side-live-badge">
-                                <i class="fas fa-gift"></i>
-                                <span>Sắp diễn ra</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                sideBoxesContainer.appendChild(box);
-            }
-        }
-
-        function enterLiveRoom(liveData) {
-            console.log('Entering live room:', liveData);
-
-            // Open live room in new tab
-            const liveRoomUrl = `{{ url('/live-room') }}/${liveData.id}`;
-            window.open(liveRoomUrl, '_blank');
-        }
-
-        function loadStreamStatus() {
-            // Legacy function - now using loadAllLiveStreams
-            fetch('/api/live/status')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        updateStreamDisplay(data);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading stream status:', error);
-                });
-        }
-
-        function updateStreamDisplay(streamData) {
-            const streamContainer = document.getElementById('stream-container');
-            const streamTitle = document.getElementById('stream-title');
-
-            // Kiểm tra element tồn tại trước khi sử dụng
-            if (!streamContainer || !streamTitle) {
-                console.error('Stream elements not found');
-                return;
-            }
-
-            if (streamData.is_live && streamData.stream_url) {
-                // Show live stream
-                streamContainer.innerHTML = `
-                    <div class="video-player">
-                        <video id="live-video" controls autoplay muted>
-                            Trình duyệt của bạn không hỗ trợ video.
-                        </video>
-                    </div>
-                `;
-                streamTitle.textContent = streamData.live_title || 'ĐANG LIVE';
-
-                // Initialize video player with HLS support
-                initializeVideoPlayer(streamData.stream_url);
-            } else if (streamData.video_url) {
-                // Show default video
-                streamContainer.innerHTML = `
-                    <div class="video-player">
-                        <video controls autoplay muted loop>
-                            <source src="${streamData.video_url}" type="video/mp4">
-                            Trình duyệt của bạn không hỗ trợ video.
-                        </video>
-                    </div>
-                `;
-                streamTitle.textContent = 'ĐẶC BIỆT';
-            } else {
-                // Show placeholder
-                streamContainer.innerHTML = `
-                    <div class="stream-placeholder">
-                        <div class="decorative-elements"></div>
-                        <div class="livestream-title">ĐẶC BIỆT</div>
-                    </div>
-                `;
-            }
-        }
-
-        // New function to initialize video player with HLS support
-        function initializeVideoPlayer(streamUrl) {
-            const video = document.getElementById('live-video');
-            if (!video) return;
-
-            // Check if stream URL is HLS (.m3u8)
-            if (streamUrl.includes('.m3u8') || streamUrl.includes('m3u8')) {
-                // Use HLS.js for HLS streams
-                if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                    const hls = new Hls({
-                        debug: false,
-                        enableWorker: true,
-                        lowLatencyMode: true,
-                        backBufferLength: 90
-                    });
-
-                    hls.loadSource(streamUrl);
-                    hls.attachMedia(video);
-
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        console.log('HLS manifest parsed, starting playback');
-                        video.play().catch(e => console.log('Autoplay prevented:', e));
-                    });
-
-                    hls.on(Hls.Events.ERROR, function(event, data) {
-                        console.error('HLS error:', data);
-                        if (data.fatal) {
-                            switch(data.type) {
-                                case Hls.ErrorTypes.NETWORK_ERROR:
-                                    console.log('Fatal network error, trying to recover...');
-                                    hls.startLoad();
-                                    break;
-                                case Hls.ErrorTypes.MEDIA_ERROR:
-                                    console.log('Fatal media error, trying to recover...');
-                                    hls.recoverMediaError();
-                                    break;
-                                default:
-                                    console.log('Fatal error, cannot recover');
-                                    hls.destroy();
-                                    break;
-                            }
-                        }
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    // Native HLS support (Safari)
-                    video.src = streamUrl;
-                    video.addEventListener('loadedmetadata', function() {
-                        video.play().catch(e => console.log('Autoplay prevented:', e));
-                    });
-                } else {
-                    console.error('HLS is not supported in this browser');
-                    video.innerHTML = 'Trình duyệt của bạn không hỗ trợ HLS stream.';
-                }
-            } else {
-                // Regular MP4 or other formats
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.log('Autoplay prevented:', e));
-                });
-            }
-        }
-
-        function updateViewerCount() {
-            fetch('/api/live/viewer-count')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('viewer-count').textContent = data.viewer_count;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating viewer count:', error);
-                });
-        }
-
-        function updateOnlineCount() {
-            fetch('/api/chat/online-count')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('online-count').textContent = data.count;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating online count:', error);
-                });
-        }
-
-        function initializeChat() {
-            // Initialize Reverb (Laravel Echo with Pusher protocol) for real-time chat
-            try {
-                Echo.channel('live-chat').listen('.new-message', function(data) {
-                    console.log('Received new message:', data);
-                    addMessageToChat(data);
-                })
-
-                console.log('Reverb WebSocket connected successfully');
-            } catch (error) {
-                console.error('Reverb connection error:', error);
-                console.log('Falling back to polling for messages');
-                // Fallback to polling for messages
-                setInterval(loadChatMessages, 5000);
-            }
-
-            // Load initial messages
-            loadChatMessages();
-
-            // Set up chat input handlers
-            const chatInput = document.getElementById('chat-input');
-            const sendBtn = document.getElementById('send-btn');
-
-            if (chatInput && sendBtn) {
-                chatInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        sendMessage();
-                    }
-                });
-
-                sendBtn.addEventListener('click', sendMessage);
-            }
-        }
-
-        function loadChatMessages() {
-            fetch('/api/chat/messages')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        displayMessages(data.messages);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading chat messages:', error);
-                });
-        }
-
-        function displayMessages(messages) {
-            const chatMessages = document.getElementById('chat-messages');
-            if (!chatMessages) return;
-
-            chatMessages.innerHTML = '';
-            messages.forEach(message => {
-                addMessageToChat(message);
-            });
-
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function addMessageToChat(message) {
-            const chatMessages = document.getElementById('chat-messages');
-            if (!chatMessages) return;
-
-            const messageElement = document.createElement('div');
-            messageElement.className = 'chat-message';
-
-            const timeStr = new Date(message.sent_at || message.created_at).toLocaleTimeString('vi-VN', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            messageElement.innerHTML = `
-                <span class="username">${escapeHtml(message.username)}:</span>
-                <span class="message-text">${escapeHtml(message.message)}</span>
-                <small class="text-muted ms-2">${timeStr}</small>
-            `;
-
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-       function sendMessage() {
-    const chatInput = document.getElementById('chat-input');
-    const sendBtn = document.getElementById('send-btn');
-
-    if (!chatInput || !sendBtn) return;
-
-    const message = chatInput.value.trim();
-    if (!message) return;
-
-    chatInput.disabled = true;
-    sendBtn.disabled = true;
-
-    fetch('/api/chat/send', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => {
-        if (response.status === 401) {
-            // Session expired, reload page
-            window.location.reload();
-            throw new Error('Phiên đăng nhập đã hết hạn');
-        }
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            chatInput.value = '';
-        }
-    })
-    .catch(error => {
-        alert('Có lỗi xảy ra khi gửi tin nhắn: ' + error.message);
-    })
-    .finally(() => {
-        chatInput.disabled = false;
-        sendBtn.disabled = false;
-        chatInput.focus();
-    });
-}
-function checkSession() {
-    fetch('/api/check-session', {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            window.location.reload();
-        }
-    });
-}
-
-// Add this to your initializeApp function:
-if (isLoggedIn) {
-    setInterval(checkSession, 60000); // Check session every minute
-}
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-
-            const accountName = document.getElementById('accountName').value.trim();
-            const bankAccount = Array.from(document.querySelectorAll('.bank-digit')).map(digit => digit.value).join('');
-
-            if (!accountName || bankAccount.length !== 4) {
-                alert('Vui lòng nhập đầy đủ thông tin!');
-                return;
-            }
-
-            // Show loading state
-            const btnText = document.querySelector('.btn-text');
-            const loading = document.querySelector('.loading');
-            const submitBtn = document.querySelector('.btn-confirm');
-
-            btnText.style.display = 'none';
-            loading.classList.add('show');
-            submitBtn.disabled = true;
-
-            // Call API
-            fetch('/api/check-user-eligibility', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    account: accountName,
-                    bank_account: bankAccount
-                })
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Response data:', data);
-                if (data.success && data.authenticated) {
-                    currentUser = data.user; // Add this line
-                    alert('Đăng nhập thành công!');
-                    
-                    // Close modal using jQuery
-                    const loginModal = document.getElementById('loginModal');
-                    if (loginModal) {
-                        // Remove backdrop manually
-                        const backdrop = document.querySelector('.modal-backdrop');
-                        if (backdrop) {
-                            backdrop.remove();
-                        }
-                        loginModal.classList.remove('show');
-                        loginModal.style.display = 'none';
-                        document.body.classList.remove('modal-open');
-                        document.body.style.removeProperty('overflow');
-                        document.body.style.removeProperty('padding-right');
-                    }
-                    
-                    // Wait a bit for session to be saved, then reload
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
-                } else {
-                    alert(data.message || 'Tài khoản không hợp lệ!');
+                    console.error('❌ API returned success: false');
                 }
             })
             .catch(error => {
-                console.error('Detailed error:', error);
-                alert('Có lỗi xảy ra, vui lòng thử lại! Chi tiết: ' + error.message);
-            })
-            .finally(() => {
-                // Reset loading state
-                btnText.style.display = 'inline';
-                loading.classList.remove('show');
-                submitBtn.disabled = false;
+                console.error('❌ Error loading live streams:', error);
             });
+    }
+
+    function updateMainLiveDisplay(liveData) {
+        console.log('🎬 Updating main live display with data:', liveData);
+        currentLiveData = liveData;
+        const btnEnterLive = document.getElementById('btn-enter-live');
+        const mainLiveImage = document.getElementById('main-live-image');
+
+        console.log('🔘 Button element:', btnEnterLive);
+
+        // Always show button if there's a live setting
+        if (btnEnterLive && liveData) {
+            console.log('✅ Showing button');
+            btnEnterLive.style.display = 'block';
+            btnEnterLive.onclick = function() {
+                enterLiveRoom(liveData);
+            };
+            
+            // Update button text based on live status
+            if (liveData.is_live_now) {
+                btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
+                btnEnterLive.classList.add('live-active');
+                console.log('🔴 Live is active now!');
+            } else {
+                btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
+                btnEnterLive.classList.remove('live-active');
+                console.log('⏰ Live scheduled for:', liveData.live_time);
+            }
+        } else {
+            console.warn('⚠️ Cannot show button - btnEnterLive:', btnEnterLive, 'liveData:', liveData);
         }
-    </script>
-</body>
-</html>
+    }
+
+    function updateSideLiveBoxes(otherLives) {
+        const sideLiveBoxes = document.querySelectorAll('.side-live-box');
+        
+        otherLives.forEach((live, index) => {
+            if (sideLiveBoxes[index]) {
+                const box = sideLiveBoxes[index];
+                const hostAvatar = box.querySelector('.side-live-host-avatar');
+                const hostName = box.querySelector('.side-live-host-name');
+                const badge = box.querySelector('.side-live-badge');
+                const badgeText = box.querySelector('.badge-text');
+                const badgeIcon = badge ? badge.querySelector('i') : null;
+                const enterBtn = box.querySelector('.side-live-enter-btn');
+                
+                // Update host info
+                if (live.host) {
+                    if (hostAvatar) {
+                        hostAvatar.src = live.host.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(live.host.name)}&background=FF4500&color=fff`;
+                    }
+                    if (hostName) {
+                        hostName.textContent = live.host.name;
+                    }
+                }
+                
+                // Update badge based on live status
+                if (badge && badgeText) {
+                    if (live.is_live_now) {
+                        badge.classList.add('live-now');
+                        badgeText.textContent = 'Đang diễn ra';
+                        if (badgeIcon) {
+                            badgeIcon.className = 'fas fa-circle';
+                        }
+                        console.log(`✅ Live ${index} is LIVE NOW!`);
+                    } else {
+                        badge.classList.remove('live-now');
+                        badgeText.textContent = 'Sắp diễn ra';
+                        if (badgeIcon) {
+                            badgeIcon.className = 'fas fa-clock';
+                        }
+                        console.log(`⏰ Live ${index} scheduled for:`, live.live_time);
+                    }
+                }
+                
+                // Add click handler to button
+                if (enterBtn) {
+                    enterBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        enterLiveRoom(live);
+                    };
+                }
+            }
+        });
+    }
+
+    function enterLiveRoom(liveData) {
+        console.log('🎬 Entering live room:', liveData);
+        const liveRoomUrl = `{{ url('/live-room') }}/${liveData.id}`;
+        window.location.href = liveRoomUrl;
+    }
+
+    // Utility function to format time
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+</script>
+@endpush

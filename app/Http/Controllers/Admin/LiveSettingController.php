@@ -51,11 +51,6 @@ class LiveSettingController extends Controller
             'assigned_to' => 'nullable|exists:users,id'
         ]);
 
-        // Deactivate all other live settings if this one is active
-        if ($validated['is_active'] ?? false) {
-            LiveSetting::where('is_active', true)->update(['is_active' => false]);
-        }
-
         LiveSetting::create($validated);
 
         return redirect()->route('admin.live-settings.index')
@@ -96,13 +91,6 @@ class LiveSettingController extends Controller
             'live_description' => 'nullable|string',
             'assigned_to' => 'nullable|exists:users,id'
         ]);
-
-        // Deactivate all other live settings if this one is active
-        if ($validated['is_active'] ?? false) {
-            LiveSetting::where('id', '!=', $liveSetting->id)
-                ->where('is_active', true)
-                ->update(['is_active' => false]);
-        }
 
         $liveSetting->update($validated);
 

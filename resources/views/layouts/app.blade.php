@@ -1,84 +1,456 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'U888 - Trang chủ')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
-    <!-- Bootstrap CSS -->
+    
+    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Additional CSS -->
+    @stack('styles')
+    
+    <!-- Common Styles -->
+    <style>
+        body {
+            background: #000000;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* ============ HEADER STYLES ============ */
+        .header {
+            background: linear-gradient(180deg, #1F1F1F 0%, #000000 100%);
+            height: 99px;
+            box-shadow: 0px 5px 5.8px 0px rgba(0, 0, 0, 0.55);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .header .container-fluid {
+            max-width: 1920px;
+            height: 100%;
+            padding: 0 40px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            gap: 40px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-u888 {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-u888:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-u888 img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover {
+            color: #FF4500;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FF4500;
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        .nav-item.active {
+            color: #FF4500;
+        }
+
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .dropdown-menu {
+            background: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #FF4500;
+            color: white;
+        }
+
+        /* ============ NOTIFICATION BANNER ============ */
+        .notification-banner {
+            background: linear-gradient(90deg, #FF4500 0%, #FF6347 100%);
+            padding: 10px 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 999;
+        }
+
+        .notification-icon {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .notification-text {
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        #notification-scroll {
+            display: inline-block;
+            animation: scroll-left 25s linear infinite;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ============ MODAL STYLES ============ */
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 30px;
+            background: #f9fafb;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .j88-logo {
+            background: #dc2626;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            padding: 12px 16px;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+
+        .btn-confirm {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .btn-confirm:hover {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .bank-account-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .bank-digit {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+        }
+
+        .bank-digit:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline-block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-left {
+                gap: 20px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .nav-item {
+                font-size: 13px;
+            }
+
+            .btn-login {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+        }
+    </style>
+    
+    @vite(['resources/js/app.js'])
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <main class="py-4">
-            @yield('content')
-        </main>
-    </div>
+    <!-- Header Component -->
+    @include('components.header')
     
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main Content -->
+    <main>
+        @yield('content')
+    </main>
+    
+    <!-- Footer Component -->
+    @include('components.footer')
+    
+    <!-- Login Modal Component -->
+    @include('components.login-modal')
+    
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    @stack('scripts')
+    
+    <!-- Common Login Script -->
+    <script>
+        // Bank digit auto-focus
+        const bankDigits = document.querySelectorAll('.bank-digit');
+        bankDigits.forEach((digit, index) => {
+            digit.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (value && index < bankDigits.length - 1) {
+                    bankDigits[index + 1].focus();
+                }
+            });
+
+            digit.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    bankDigits[index - 1].focus();
+                }
+            });
+        });
+
+        // Login form handling
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const accountName = document.getElementById('accountName').value.trim();
+            const bankAccount = Array.from(document.querySelectorAll('.bank-digit')).map(digit => digit.value).join('');
+
+            if (!accountName || bankAccount.length !== 4) {
+                alert('Vui lòng nhập đầy đủ thông tin!');
+                return;
+            }
+
+            // Show loading state
+            const btnText = document.querySelector('.btn-text');
+            const loading = document.querySelector('.loading');
+            const submitBtn = document.querySelector('.btn-confirm');
+
+            btnText.style.display = 'none';
+            loading.classList.add('show');
+            submitBtn.disabled = true;
+
+            // Call API
+            fetch('/api/check-user-eligibility', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    account: accountName,
+                    bank_account: bankAccount
+                })
+            })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success && data.authenticated) {
+                        alert('Đăng nhập thành công!');
+
+                        // Close modal using vanilla JS
+                        const loginModal = document.getElementById('loginModal');
+                        if (loginModal) {
+                            // Remove backdrop manually
+                            const backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) {
+                                backdrop.remove();
+                            }
+                            loginModal.classList.remove('show');
+                            loginModal.style.display = 'none';
+                            document.body.classList.remove('modal-open');
+                            document.body.style.removeProperty('overflow');
+                            document.body.style.removeProperty('padding-right');
+                        }
+
+                        // Wait a bit for session to be saved, then reload
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
+                    } else {
+                        alert(data.message || 'Tài khoản không hợp lệ!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Detailed error:', error);
+                    alert('Có lỗi xảy ra, vui lòng thử lại! Chi tiết: ' + error.message);
+                })
+                .finally(() => {
+                    // Reset loading state
+                    btnText.style.display = 'inline';
+                    loading.classList.remove('show');
+                    submitBtn.disabled = false;
+                });
+        }
+
+        // Initialize Bootstrap dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+            dropdownElementList.forEach(dropdown => {
+                new bootstrap.Dropdown(dropdown);
+            });
+        });
+    </script>
 </body>
 </html>

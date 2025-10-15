@@ -18,7 +18,23 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $liveSetting = LiveSetting::where('is_active', true)->first();
+        // Get live settings assigned to current user
+        $liveSetting = LiveSetting::where('is_active', true)
+            ->where('assigned_to', auth()->id())
+            ->where('live_date', '>=', now()->startOfDay())
+            ->orderBy('live_date')
+            ->orderBy('live_time')
+            ->first();
+        
+        // If no assigned live, get any active live
+        if (!$liveSetting) {
+            $liveSetting = LiveSetting::where('is_active', true)
+                ->where('live_date', '>=', now()->startOfDay())
+                ->orderBy('live_date')
+                ->orderBy('live_time')
+                ->first();
+        }
+        
         $stats = [
             'total_chat_messages' => ChatMessage::count(),
             'blocked_messages' => ChatMessage::where('is_blocked', true)->count(),
