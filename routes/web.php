@@ -12,6 +12,9 @@ use App\Http\Controllers\CSKH\DashboardController as CSKHDashboardController;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('homepage');
 
+// Live Room (open in new tab when clicking "VÀO PHÒNG LIVE")
+Route::get('/live-room/{id}', [App\Http\Controllers\HomeController::class, 'liveRoom'])->name('live.room');
+
 // Authentication routes
 Auth::routes();
 

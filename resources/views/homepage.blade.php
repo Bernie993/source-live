@@ -1884,27 +1884,9 @@
         function enterLiveRoom(liveData) {
             console.log('Entering live room:', liveData);
 
-            // TODO: Implement full-screen live room with video player and chat
-            // For now, just play the video in the main box
-            if (liveData.play_url) {
-                const mainLiveContent = document.getElementById('main-live-content');
-                mainLiveContent.innerHTML = `
-                    <video id="live-video" controls autoplay style="width: 100%; height: 100%; object-fit: cover;">
-                        <source src="${liveData.play_url}" type="application/x-mpegURL">
-                        Trình duyệt của bạn không hỗ trợ video.
-                    </video>
-                    <div class="live-overlay" style="background: rgba(0,0,0,0.3); pointer-events: none;">
-                        <div class="live-logo-badge">
-                            <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 Logo">
-                        </div>
-                    </div>
-                `;
-
-                // Initialize HLS player if URL is HLS
-                if (liveData.play_url.includes('.m3u8')) {
-                    initializeVideoPlayer(liveData.play_url);
-                }
-            }
+            // Open live room in new tab
+            const liveRoomUrl = `{{ url('/live-room') }}/${liveData.id}`;
+            window.open(liveRoomUrl, '_blank');
         }
 
         function loadStreamStatus() {
@@ -2252,13 +2234,24 @@ if (isLoggedIn) {
             .then(data => {
                 console.log('Response data:', data);
                 if (data.success && data.authenticated) {
-                        currentUser = data.user; // Add this line
+                    currentUser = data.user; // Add this line
                     alert('Đăng nhập thành công!');
-                    // Close modal first
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                    if (modal) {
-                        modal.hide();
+                    
+                    // Close modal using jQuery
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        // Remove backdrop manually
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.remove();
+                        }
+                        loginModal.classList.remove('show');
+                        loginModal.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                        document.body.style.removeProperty('overflow');
+                        document.body.style.removeProperty('padding-right');
                     }
+                    
                     // Wait a bit for session to be saved, then reload
                     setTimeout(() => {
                         window.location.reload();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\LiveSetting;
 use App\Services\EligibilityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -28,6 +29,19 @@ class HomeController extends Controller
         public function index()
         {
             return view('homepage');
+        }
+
+        /**
+         * Show live room with video player and chat
+         *
+         * @param int $id
+         * @return \Illuminate\View\View
+         */
+        public function liveRoom($id)
+        {
+            $liveSetting = LiveSetting::with('assignedUser')->findOrFail($id);
+            
+            return view('live-room', compact('liveSetting'));
         }
 
         /**
