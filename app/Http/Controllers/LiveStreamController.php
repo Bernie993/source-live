@@ -165,4 +165,88 @@ class LiveStreamController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get all live streams with schedule information
+     */
+    public function getAllLiveStreams(): JsonResponse
+    {
+        try {
+            $now = now();
+            
+            // Get all active live settings, ordered by live date/time
+            $liveSettings = LiveSetting::with('assignedUser')
+                ->where('is_active', true)
+                ->whereNotNull('live_date')
+                ->whereNotNull('live_time')
+                ->orderBy('live_date')
+                ->orderBy('live_time')
+                ->get()
+                ->map(function ($live) use ($now) {
+                    $liveDateTime = $live->live_date->copy()->setTimeFromTimeString(
+                        $live->live_time->format('H:i:s')
+                    );
+                    
+                    // Check if live is happening now (30 min before to 4 hours after)
+                    $liveStartTime = $liveDateTime->copy()->subMinutes(30);
+                    $liveEndTime = $liveDateTime->copy()->addHours(4);
+                    $isLiveNow = $now->gte($liveStartTime) && $now->lte($liveEndTime);
+                    
+                    // Calculate time until live starts
+                    $minutesUntilLive = $now->diffInMinutes($liveDateTime, false);
+                    
+                    return [
+                        'id' => $live->id,
+                        'title' => $live->live_title ?? 'Live Stream',
+                        'description' => $live->live_description,
+                        'live_date' => $liveDateTime->format('d/m/Y'),
+                        'live_time' => $liveDateTime->format('H:i'),
+                        'live_datetime' => $liveDateTime->toISOString(),
+                        'is_live_now' => $isLiveNow,
+                        'minutes_until_live' => $minutesUntilLive,
+                        'play_url' => $live->play_url,
+                        'default_video_url' => $live->default_video_url,
+                        'host' => $live->assignedUser ? [
+                            'id' => $live->assignedUser->id,
+                            'name' => $live->assignedUser->name,
+                            'avatar' => $live->assignedUser->avatar ?? null,
+                        ] : null,
+                    ];
+                })
+                ->filter(function ($live) use ($now) {
+                    // Only show lives that haven't ended yet
+                    return $live['minutes_until_live'] > -240; // -240 min = 4 hours ago
+                });
+            
+            // Find the main live (currently live or next upcoming)
+            $mainLive = $liveSettings->first(function ($live) {
+                return $live['is_live_now'];
+            }) ?? $liveSettings->first();
+            
+            // Get 3 other upcoming lives
+            $otherLives = $liveSettings->filter(function ($live) use ($mainLive) {
+                return $mainLive && $live['id'] !== $mainLive['id'];
+            })->take(3)->values();
+            
+            return response()->json([
+                'success' => true,
+                'main_live' => $mainLive,
+                'other_lives' => $otherLives,
+                'total_count' => $liveSettings->count()
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error getting all live streams', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'main_live' => null,
+                'other_lives' => [],
+                'error' => 'Có lỗi xảy ra khi tải danh sách live'
+            ], 500);
+        }
+    }
 }

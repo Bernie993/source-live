@@ -26,6 +26,7 @@ Route::prefix('chat')->middleware(['web', 'disable.csrf.api'])->group(function (
 Route::prefix('live')->group(function () {
     Route::get('/status', [LiveStreamController::class, 'getStreamStatus']);
     Route::get('/viewer-count', [LiveStreamController::class, 'updateViewerCount']);
+    Route::get('/all-streams', [LiveStreamController::class, 'getAllLiveStreams']);
 });
 
 // User info route

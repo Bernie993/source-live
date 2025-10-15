@@ -7,31 +7,89 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            background: #000000;
             min-height: 100vh;
             font-family: 'Arial', sans-serif;
         }
 
+        /* ============ NEW U888 HEADER DESIGN ============ */
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(180deg, #1F1F1F 0%, #000000 100%);
+            height: 99px;
+            box-shadow: 0px 5px 5.8px 0px rgba(0, 0, 0, 0.55);
+            position: relative;
+            z-index: 1000;
         }
 
-        .logo {
-            background: #dc2626;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 24px;
+        .header .container-fluid {
+            max-width: 1920px;
+            height: 100%;
+            padding: 0 40px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            gap: 40px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-u888 {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-u888:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-u888 img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .tagline {
+            color: #FF4500;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-left: 10px;
+            text-shadow: 0 0 8px rgba(255, 69, 0, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .nav-menu {
             display: flex;
-            gap: 30px;
+            gap: 35px;
             align-items: center;
         }
 
@@ -39,31 +97,813 @@
             color: white;
             text-decoration: none;
             font-weight: 500;
-            transition: opacity 0.3s;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 0;
+            white-space: nowrap;
         }
 
         .nav-item:hover {
-            opacity: 0.8;
-            color: white;
+            color: #FF4500;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FF4500;
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        .nav-item.active {
+            color: #FF4500;
+        }
+
+        .nav-item.active::after {
+            width: 100%;
         }
 
         .btn-login {
-            background: #dc2626;
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: background 0.3s;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
         }
 
         .btn-login:hover {
-            background: #b91c1c;
+            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
             color: white;
         }
 
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        /* Dropdown Menu for Logged In User */
+        .header .dropdown {
+            position: relative;
+        }
+
+        .header .dropdown-menu {
+            background: linear-gradient(180deg, #1F1F1F 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255, 69, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 69, 0, 0.1);
+            margin-top: 12px;
+            min-width: 220px;
+            padding: 8px 0;
+            animation: dropdownFadeIn 0.2s ease-out;
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header .dropdown-item {
+            color: white;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .dropdown-item i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .header .dropdown-item:hover {
+            background: rgba(255, 69, 0, 0.15);
+            color: #FF4500;
+            padding-left: 24px;
+        }
+
+        .header .dropdown-item:active {
+            background: rgba(255, 69, 0, 0.25);
+        }
+
+        .header .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
+
+        /* Logout specific styling */
+        .header .dropdown-item[onclick*="logout"] {
+            color: #ff6b6b;
+        }
+
+        .header .dropdown-item[onclick*="logout"]:hover {
+            color: #ff4444;
+            background: rgba(255, 69, 0, 0.15);
+        }
+
+        /* User button when logged in */
+        .header .btn-login.dropdown-toggle {
+            padding-right: 20px;
+            position: relative;
+        }
+
+        .header .btn-login.dropdown-toggle::after {
+            margin-left: 8px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .header-left {
+                gap: 35px;
+            }
+
+            .nav-menu {
+                gap: 25px;
+            }
+
+            .tagline {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .header-left {
+                gap: 25px;
+            }
+
+            .tagline {
+                display: none;
+            }
+
+            .nav-menu {
+                gap: 20px;
+            }
+
+            .nav-item {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header {
+                height: auto;
+                padding: 15px 0;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo-u888 img {
+                height: 40px;
+            }
+
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-login {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
         .main-content {
-            padding: 60px 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* ============ NOTIFICATION BANNER ============ */
+        .notification-banner {
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .notification-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            animation: bell-ring 2s ease-in-out infinite;
+        }
+
+        @keyframes bell-ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(-10deg); }
+            20%, 40% { transform: rotate(10deg); }
+        }
+
+        .notification-text {
+            flex: 1;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .notification-text span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-left 30s linear infinite;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ============ LIVE STREAMS GRID ============ */
+        .live-streams-section {
+            padding: 30px 40px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        .streams-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* Main Live Stream Box */
+        .main-live-box {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #8B4513 0%, #4a2409 100%);
+            box-shadow: 0 10px 40px rgba(255, 69, 0, 0.4);
+            aspect-ratio: 16/9;
+        }
+
+        .main-live-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-live-content img,
+        .main-live-content video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .live-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .live-logo-badge {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .live-logo-badge img {
+            height: 40px;
+            width: auto;
+        }
+
+        .btn-enter-live {
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255, 69, 0, 0.5);
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn-enter-live:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 32px rgba(255, 69, 0, 0.7);
+        }
+
+        /* Side Live Boxes */
+        .side-live-boxes {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .side-live-box {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #2a2a2a;
+            border: 3px solid #FF4500;
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.3);
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .side-live-box:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 28px rgba(255, 69, 0, 0.5);
+            border-color: #FF6347;
+        }
+
+        .side-live-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .side-live-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .side-live-host {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 4px 10px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .side-live-host-avatar {
+            width: 22px !important;
+            height: 22px !important;
+            border-radius: 50%;
+            border: 2px solid #FF4500;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .side-live-host-name {
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+        }
+
+        .side-live-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 14px;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .side-live-badge i {
+            color: #FFD700;
+            font-size: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .streams-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .side-live-boxes {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .side-live-box {
+                min-width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .live-streams-section {
+                padding: 20px 15px;
+            }
+
+            .btn-enter-live {
+                padding: 12px 32px;
+                font-size: 16px;
+            }
+        }
+
+        /* ============ PROMOTIONAL BANNER SLIDER ============ */
+        .promo-banner-section {
+            padding: 30px 40px 60px;
+            max-width: 1920px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hot-badge {
+            position: absolute;
+            top: -10px;
+            left: 50px;
+            z-index: 10;
+            width: auto;
+            max-width: 150px;
+        }
+
+        .hot-badge img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 6px 20px rgba(255, 69, 0, 0.6));
+            animation: float-badge 3s ease-in-out infinite;
+        }
+
+        @keyframes float-badge {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+
+        @keyframes flame {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .promo-swiper-container {
+            margin-top: 20px;
+            padding: 0 50px;
+            position: relative;
+        }
+
+        .promo-slide {
+            border-radius: 16px;
+            overflow: visible;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .promo-slide:hover {
+            transform: translateY(-5px);
+        }
+
+        .promo-slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .promo-slide:hover img {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4),
+                        0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Swiper Navigation Buttons */
+        .promo-button-prev,
+        .promo-button-next {
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            border: 2px solid #FF4500;
+        }
+
+        .promo-button-prev {
+            left: 0;
+        }
+
+        .promo-button-next {
+            right: 0;
+        }
+
+        .promo-button-prev:hover,
+        .promo-button-next:hover {
+            background: #FF4500;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .promo-button-prev::after,
+        .promo-button-next::after {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Swiper Pagination */
+        .promo-pagination {
+            bottom: -30px !important;
+        }
+
+        .promo-pagination .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background: #666;
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        .promo-pagination .swiper-pagination-bullet-active {
+            background: #FF4500;
+            width: 30px;
+            border-radius: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .promo-banner-section {
+                padding: 20px 15px 50px;
+            }
+
+            .hot-badge {
+                left: 15px;
+                font-size: 16px;
+                padding: 6px 15px;
+            }
+
+            .promo-swiper-container {
+                padding: 0 40px;
+            }
+
+            .promo-button-prev,
+            .promo-button-next {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        /* ============ NEWS SECTION ============ */
+        .news-section {
+            padding: 40px 40px 60px;
+            max-width: 1920px;
+            margin: 0 auto;
+            background: transparent;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .section-title-text {
+            color: #FF4500;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 4px 8px rgba(255, 69, 0, 0.3);
+            padding: 0 20px;
+        }
+
+        .section-title-line {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-title-line img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .section-title-line.left img {
+            transform: scaleX(1);
+        }
+
+        .section-title-line.right img {
+            transform: scaleX(-1);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            border: 3px solid #FF3C00;
+            border-radius: 24px;
+            padding: 10px;
+        }
+
+        .news-main {
+            background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-main:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-main img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .news-item {
+            background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px dashed #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        .news-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+            border-color: #FFD700;
+        }
+
+        .news-item-image {
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        .news-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .news-item-content {
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .news-item-title {
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .news-item-description {
+            color: white;
+            font-size: 13px;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-item-image {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .news-section {
+                padding: 30px 15px 50px;
+            }
+
+            .section-title-text {
+                font-size: 24px;
+            }
+
+            .news-item {
+                flex-direction: column;
+            }
+
+            .news-item-image {
+                width: 100%;
+                height: 200px;
+            }
+
+            .section-title-line {
+                display: none;
+            }
+
+            .section-title {
+                gap: 0;
+            }
         }
 
         .livestream-container {
@@ -157,7 +997,7 @@
         }
 
         .news-section h3 {
-            color: #dc2626;
+            color: #ffffff;
             margin-bottom: 20px;
             font-weight: bold;
         }
@@ -177,14 +1017,14 @@
         }
 
         .news-item p {
-            color: #6b7280;
+            color: #ffffff;
             font-size: 14px;
             margin: 0;
         }
 
         .app-download {
             background: linear-gradient(135deg, #dc2626, #b91c1c);
-            color: white;
+            color: #ffffff;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
@@ -412,71 +1252,239 @@
     <script src="{{ asset('js/hls.min.js') }}"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header py-3">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="logo">J88</div>
+    <!-- U888 Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="header-content">
+                <!-- Left: Logo + Menu -->
+                <div class="header-left">
+                    <div class="logo-container">
+                        <!-- U888 Logo Image -->
+                        <a href="/" class="logo-u888">
+                            <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 - ABC VIP">
+                        </a>
                 </div>
-                <div class="col-md-6">
-                    <div class="nav-menu justify-content-end">
-                        <a href="#" class="nav-item">Trang chủ</a>
-                        <a href="#" class="nav-item">Live</a>
-                        <a href="#" class="nav-item">Liveshow</a>
-                        <a href="#" class="nav-item">Game+</a>
-                        <a href="#" class="nav-item">Tải App</a>
+
+                    <!-- Navigation Menu -->
+                    <nav class="nav-menu">
+                        <a href="#" class="nav-item active">Trang chủ</a>
+                        <a href="#" class="nav-item">Quà tặng</a>
+                        <a href="#" class="nav-item">Tải APP</a>
+                        <a href="#" class="nav-item">Nhận Code</a>
+                        <a href="#" class="nav-item">Phần hồi</a>
+                    </nav>
+                </div>
+
+                <!-- Right: Login Button -->
+                <div class="header-right">
                         @guest
                             <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                Đăng ký
-                            </button>
-                            <button class="btn btn-login ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">
                                 Đăng nhập
                             </button>
                         @else
-
+                        <div class="dropdown">
+                            <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-2"></i>{{ Auth::user()->name }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Thông tin</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
                         @endguest
-                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container">
-            <div class="row">
-                <!-- Livestream Section -->
-                <div class="col-lg-8 mb-4">
-                    <div class="livestream-container">
-                        <div class="livestream-header">
-                            <div class="admin-info">
-                                <i class="fas fa-circle text-success me-2"></i>
-                                <span>Admin J88</span>
-                                <div class="viewer-count ms-3">
-                                    <i class="fas fa-eye me-1"></i>
-                                    <span id="viewer-count">0</span>
+    <!-- Notification Banner -->
+    <div class="notification-banner">
+        <img src="{{ asset('images/image_2025-07-05_16-38-07 1.png') }}" alt="Notification" class="notification-icon">
+        <div class="notification-text">
+            <span id="notification-scroll">
+                🎁 THỂ THAO BẢO HIỂM CƯỢC THUA LÊN ĐẾN 5% 🎁 THỂ THAO THẮNG LIÊN TIẾP NHẬN THƯỞNG LÊN ĐẾN 8.888K 🎁 HÃY CÙNG BẠN BÈ THAM GIA ABC8 VÀ NHẬN THƯỞNG NHÉ 🎁
+            </span>
                                 </div>
                             </div>
-                            <div>
-                                <i class="fas fa-share-alt"></i>
-                                <span class="ms-2">Chia sẻ</span>
+
+    <!-- Live Streams Section -->
+    <div class="live-streams-section">
+        <div class="streams-grid">
+            <!-- Main Live Stream Box -->
+            <div class="main-live-box" id="main-live-box">
+                <div class="main-live-content" id="main-live-content">
+                    <!-- Default placeholder image -->
+                    <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream" id="main-live-image">
+
+                    <!-- Overlay with button/info -->
+                    <div class="live-overlay" id="main-live-overlay">
+                        <div class="live-logo-badge">
+                            <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 Logo">
                             </div>
+                        <button class="btn-enter-live" id="btn-enter-live" style="display: none;">
+                            VÀO PHÒNG LIVE
+                        </button>
                         </div>
-                        <div class="livestream-content" id="stream-container">
-                            <!-- Video player will be inserted here -->
-                            <div class="stream-placeholder" id="stream-placeholder">
-                                <div class="decorative-elements"></div>
-                                <div class="livestream-title" id="stream-title">
-                                    ĐẶC BIỆT
                                 </div>
                             </div>
+
+            <!-- Side Live Streams -->
+            <div class="side-live-boxes" id="side-live-boxes">
+                <!-- Will be populated by JavaScript -->
+                <div class="side-live-box">
+                    <div class="side-live-content">
+                        <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
+                        <div class="side-live-host">
+                            <img src="https://ui-avatars.com/api/?name=Host&background=FF4500&color=fff"
+                                 alt="Host" class="side-live-host-avatar">
+                            <span class="side-live-host-name">Đang cập nhật...</span>
+                        </div>
+                        <div class="side-live-badge">
+                            <i class="fas fa-gift"></i>
+                            <span>Sắp diễn ra</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-live-box">
+                    <div class="side-live-content">
+                        <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
+                        <div class="side-live-host">
+                            <img src="https://ui-avatars.com/api/?name=Host&background=FF4500&color=fff"
+                                 alt="Host" class="side-live-host-avatar">
+                            <span class="side-live-host-name">Đang cập nhật...</span>
+                        </div>
+                        <div class="side-live-badge">
+                            <i class="fas fa-gift"></i>
+                            <span>Sắp diễn ra</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-live-box">
+                    <div class="side-live-content">
+                        <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
+                        <div class="side-live-host">
+                            <img src="https://ui-avatars.com/api/?name=Host&background=FF4500&color=fff"
+                                 alt="Host" class="side-live-host-avatar">
+                            <span class="side-live-host-name">Đang cập nhật...</span>
+                        </div>
+                        <div class="side-live-badge">
+                            <i class="fas fa-gift"></i>
+                            <span>Sắp diễn ra</span>
+                        </div>
+                    </div>
+                </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sidebar -->
-                <div class="col-lg-4">
+    <!-- Promotional Banner Slider -->
+    <div class="promo-banner-section">
+        <div class="hot-badge">
+            <img src="{{ asset('images/Frame 2147223991.png') }}" alt="Vui Tết Trung Thu - Phát Thưởng 15.000 Tỷ">
+        </div>
+
+        <div class="promo-swiper-container">
+            <div class="swiper promoSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide promo-slide">
+                        <img src="{{ asset('images/image 77.png') }}" alt="Vui Tết Trung Thu - Phát Thưởng 15.000 Tỷ">
+                    </div>
+                    <div class="swiper-slide promo-slide">
+                        <img src="{{ asset('images/image 78.png') }}" alt="Đua Top Đặt Cược - Thưởng Lớn Đêm Trắng">
+                    </div>
+                    <div class="swiper-slide promo-slide">
+                        <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
+                    </div>
+                    <div class="swiper-slide promo-slide">
+                        <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
+                    </div>
+                    <div class="swiper-slide promo-slide">
+                        <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
+                    </div>
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="swiper-button-prev promo-button-prev"></div>
+                <div class="swiper-button-next promo-button-next"></div>
+
+                <!-- Pagination -->
+                <div class="swiper-pagination promo-pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Section -->
+    <div class="news-section">
+        <!-- Section Title -->
+        <div class="section-title">
+            <div class="section-title-line left">
+                <img src="{{ asset('images/Group 2087325152.png') }}" alt="Decorative Line">
+            </div>
+            <h2 class="section-title-text">TIN TỨC</h2>
+            <div class="section-title-line right">
+                <img src="{{ asset('images/Group 2087325152.png') }}" alt="Decorative Line">
+            </div>
+        </div>
+
+        <!-- News Grid -->
+        <div class="news-grid">
+            <!-- Main News (Left) -->
+            <div class="news-main">
+                <img src="{{ asset('images/738x512 4.png') }}" alt="Sinh Nhật Vàng - MEGALIVE Rinh Xe Sang">
+            </div>
+
+            <!-- News List (Right) -->
+            <div class="news-list">
+                <div class="news-item">
+                    <div class="news-item-image">
+                        <img src="{{ asset('images/738x512 3.png') }}" alt="News 1">
+                    </div>
+                    <div class="news-item-content">
+                        <h3 class="news-item-title">SINH NHẬT VÀNG - MEGALIVE RINH XE SANG</h3>
+                        <p class="news-item-description">
+                            Chào mừng sinh nhật đặc biệt, chương trình MEGALIVE hoành tráng trở lại với hàng loạt quà tặng giá trị! Đừng bỏ lỡ cơ hội nhận ngay chiếc xe sang đẳng cấp, cùng hàng ngàn phần quà hấp dẫn khác. Chỉ cần tham gia livestream, bạn có thể trở thành chủ nhân may mắn tiếp theo. Hãy cùng chúng tôi đón sinh nhật tưng bừng - quà rinh liền tay!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-item-image">
+                        <img src="{{ asset('images/738x512 3.png') }}" alt="News 2">
+                    </div>
+                    <div class="news-item-content">
+                        <h3 class="news-item-title">SINH NHẬT VÀNG - MEGALIVE RINH XE SANG</h3>
+                        <p class="news-item-description">
+                            Chào mừng sinh nhật đặc biệt, chương trình MEGALIVE hoành tráng trở lại với hàng loạt quà tặng giá trị! Đừng bỏ lỡ cơ hội nhận ngay chiếc xe sang đẳng cấp, cùng hàng ngàn phần quà hấp dẫn khác. Chỉ cần tham gia livestream, bạn có thể trở thành chủ nhân may mắn tiếp theo. Hãy cùng chúng tôi đón sinh nhật tưng bừng - quà rinh liền tay!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-item-image">
+                        <img src="{{ asset('images/738x512 3.png') }}" alt="News 3">
+                    </div>
+                    <div class="news-item-content">
+                        <h3 class="news-item-title">SINH NHẬT VÀNG - MEGALIVE RINH XE SANG</h3>
+                        <p class="news-item-description">
+                            Chào mừng sinh nhật đặc biệt, chương trình MEGALIVE hoành tráng trở lại với hàng loạt quà tặng giá trị! Đừng bỏ lỡ cơ hội nhận ngay chiếc xe sang đẳng cấp, cùng hàng ngàn phần quà hấp dẫn khác. Chỉ cần tham gia livestream, bạn có thể trở thành chủ nhân may mắn tiếp theo. Hãy cùng chúng tôi đón sinh nhật tưng bừng - quà rinh liền tay!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Chat Container (will be shown in modal when clicking live) -->
+    <div class="col-lg-4" style="display: none;">
                     <!-- Chat Section -->
                     <div class="chat-container mb-4">
                         <div class="chat-header">
@@ -578,8 +1586,12 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Pusher for realtime (if needed for fallback) -->
     <script src="https://cdn.jsdelivr.net/npm/pusher-js@8.4.0-rc2/dist/web/pusher.min.js"></script>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script>
         // Global variables
         let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
@@ -587,6 +1599,47 @@
         let echo = null;
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Swiper for Promotional Banners
+            const promoSwiper = new Swiper('.promoSwiper', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.promo-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.promo-button-next',
+                    prevEl: '.promo-button-prev',
+                },
+                breakpoints: {
+                    768: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                    },
+                    1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                    },
+                },
+            });
+            console.log('✅ Swiper initialized:', promoSwiper);
+            // Initialize Bootstrap Dropdown (ensure it works)
+            if (typeof bootstrap !== 'undefined') {
+                console.log('✅ Bootstrap loaded successfully');
+                // Initialize all dropdowns
+                const dropdowns = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+                dropdowns.forEach(dropdown => {
+                    new bootstrap.Dropdown(dropdown);
+                });
+            } else {
+                console.warn('⚠️ Bootstrap not loaded');
+            }
+
             // Initialize
             initializeApp();
 
@@ -649,22 +1702,180 @@
         }
 
         function initializeApp() {
-            // Load stream status
-            loadStreamStatus();
-
-            // Load viewer count
-            updateViewerCount();
+            // Load all live streams
+            loadAllLiveStreams();
 
             // Load online count
             updateOnlineCount();
 
             // Set up intervals
-            setInterval(loadStreamStatus, 30000); // Check stream status every 30 seconds
-            setInterval(updateViewerCount, 10000); // Update viewer count every 10 seconds
+            setInterval(loadAllLiveStreams, 30000); // Check streams every 30 seconds
             setInterval(updateOnlineCount, 15000); // Update online count every 15 seconds
         }
 
+        function loadAllLiveStreams() {
+            fetch('/api/live/all-streams')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateMainLiveDisplay(data.main_live);
+                        updateSideLiveBoxes(data.other_lives);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading live streams:', error);
+                });
+        }
+
+        function updateMainLiveDisplay(mainLive) {
+            const mainLiveBox = document.getElementById('main-live-box');
+            const mainLiveContent = document.getElementById('main-live-content');
+            const mainLiveImage = document.getElementById('main-live-image');
+            const btnEnterLive = document.getElementById('btn-enter-live');
+
+            if (!mainLive) {
+                // No live scheduled
+                mainLiveImage.src = "{{ asset('images/738x512 3.png') }}";
+                btnEnterLive.style.display = 'none';
+                return;
+            }
+
+            console.log('Main Live:', mainLive);
+
+            if (mainLive.is_live_now) {
+                // Live is happening NOW - Show "VÀO PHÒNG LIVE" button
+                mainLiveImage.src = mainLive.default_video_url ? mainLive.default_video_url : "{{ asset('images/738x512 3.png') }}";
+                btnEnterLive.style.display = 'block';
+                btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
+
+                // Add click handler to enter live room
+                btnEnterLive.onclick = function() {
+                    enterLiveRoom(mainLive);
+                };
+            } else {
+                // Live not started yet - Show default image/video
+                if (mainLive.default_video_url && mainLive.default_video_url.match(/\.(mp4|webm|ogg)$/i)) {
+                    // Replace image with video
+                    mainLiveContent.innerHTML = `
+                        <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="${mainLive.default_video_url}" type="video/mp4">
+                        </video>
+                        <div class="live-overlay" id="main-live-overlay">
+                            <div class="live-logo-badge">
+                                <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 Logo">
+                            </div>
+                            <button class="btn-enter-live" id="btn-enter-live-countdown" disabled>
+                                Sắp bắt đầu: ${mainLive.live_time} - ${mainLive.live_date}
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    mainLiveImage.src = "{{ asset('images/738x512 3.png') }}";
+                    btnEnterLive.style.display = 'block';
+                    btnEnterLive.disabled = true;
+                    btnEnterLive.textContent = `Sắp bắt đầu: ${mainLive.live_time} - ${mainLive.live_date}`;
+                    btnEnterLive.style.opacity = '0.7';
+                    btnEnterLive.style.cursor = 'not-allowed';
+                }
+            }
+        }
+
+        function updateSideLiveBoxes(otherLives) {
+            const sideBoxesContainer = document.getElementById('side-live-boxes');
+
+            if (!otherLives || otherLives.length === 0) {
+                // Keep default placeholders
+                return;
+            }
+
+            sideBoxesContainer.innerHTML = '';
+
+            // Always show 3 boxes
+            for (let i = 0; i < 3; i++) {
+                const live = otherLives[i];
+                const box = document.createElement('div');
+                box.className = 'side-live-box';
+
+                if (live) {
+                    const hostAvatar = live.host && live.host.avatar
+                        ? live.host.avatar
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(live.host?.name || 'Host')}&background=FF4500&color=fff`;
+
+                    const hostName = live.host ? live.host.name : 'Đang cập nhật...';
+                    const badgeText = live.is_live_now ? 'ĐANG LIVE' : `${live.live_time} - ${live.live_date}`;
+                    const badgeIcon = live.is_live_now ? 'fa-circle' : 'fa-clock';
+
+                    box.innerHTML = `
+                        <div class="side-live-content">
+                            <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
+                            <div class="side-live-host">
+                                <img src="${hostAvatar}" alt="${hostName}" class="side-live-host-avatar">
+                                <span class="side-live-host-name">${hostName}</span>
+                            </div>
+                            <div class="side-live-badge">
+                                <i class="fas ${badgeIcon}"></i>
+                                <span>${badgeText}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add click handler if live is happening
+                    if (live.is_live_now) {
+                        box.style.cursor = 'pointer';
+                        box.onclick = function() {
+                            enterLiveRoom(live);
+                        };
+                    }
+                } else {
+                    // Placeholder
+                    box.innerHTML = `
+                        <div class="side-live-content">
+                            <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream">
+                            <div class="side-live-host">
+                                <img src="https://ui-avatars.com/api/?name=Host&background=FF4500&color=fff"
+                                     alt="Host" class="side-live-host-avatar">
+                                <span class="side-live-host-name">Đang cập nhật...</span>
+                            </div>
+                            <div class="side-live-badge">
+                                <i class="fas fa-gift"></i>
+                                <span>Sắp diễn ra</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                sideBoxesContainer.appendChild(box);
+            }
+        }
+
+        function enterLiveRoom(liveData) {
+            console.log('Entering live room:', liveData);
+
+            // TODO: Implement full-screen live room with video player and chat
+            // For now, just play the video in the main box
+            if (liveData.play_url) {
+                const mainLiveContent = document.getElementById('main-live-content');
+                mainLiveContent.innerHTML = `
+                    <video id="live-video" controls autoplay style="width: 100%; height: 100%; object-fit: cover;">
+                        <source src="${liveData.play_url}" type="application/x-mpegURL">
+                        Trình duyệt của bạn không hỗ trợ video.
+                    </video>
+                    <div class="live-overlay" style="background: rgba(0,0,0,0.3); pointer-events: none;">
+                        <div class="live-logo-badge">
+                            <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 Logo">
+                        </div>
+                    </div>
+                `;
+
+                // Initialize HLS player if URL is HLS
+                if (liveData.play_url.includes('.m3u8')) {
+                    initializeVideoPlayer(liveData.play_url);
+                }
+            }
+        }
+
         function loadStreamStatus() {
+            // Legacy function - now using loadAllLiveStreams
             fetch('/api/live/status')
                 .then(response => response.json())
                 .then(data => {
@@ -697,7 +1908,7 @@
                     </div>
                 `;
                 streamTitle.textContent = streamData.live_title || 'ĐANG LIVE';
-                
+
                 // Initialize video player with HLS support
                 initializeVideoPlayer(streamData.stream_url);
             } else if (streamData.video_url) {
@@ -737,15 +1948,15 @@
                         lowLatencyMode: true,
                         backBufferLength: 90
                     });
-                    
+
                     hls.loadSource(streamUrl);
                     hls.attachMedia(video);
-                    
+
                     hls.on(Hls.Events.MANIFEST_PARSED, function() {
                         console.log('HLS manifest parsed, starting playback');
                         video.play().catch(e => console.log('Autoplay prevented:', e));
                     });
-                    
+
                     hls.on(Hls.Events.ERROR, function(event, data) {
                         console.error('HLS error:', data);
                         if (data.fatal) {
