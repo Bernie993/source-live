@@ -13,19 +13,19 @@
 
         .streams-grid {
             display: grid;
-            grid-template-columns: 1fr 380px;
+            grid-template-columns: 1fr 360px;
             gap: 20px;
-            align-items: start;
         }
 
         /* Main Live Stream Box */
         .main-live-box {
             position: relative;
-            border-radius: 20px;
+            border-radius: 40px;
             overflow: hidden;
             background: linear-gradient(135deg, #8B4513 0%, #4a2409 100%);
             box-shadow: 0 10px 40px rgba(255, 69, 0, 0.4);
             aspect-ratio: 16/9;
+            border: 8px solid #FF4500;
         }
 
         .main-live-content {
@@ -60,17 +60,18 @@
 
         .live-logo-badge {
             position: absolute;
-            top: 20px;
+            top: 25px;
             left: 50%;
             transform: translateX(-50%);
             background: white;
-            padding: 10px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            padding: 12px 40px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            border: 3px solid rgba(255, 255, 255, 0.5);
         }
 
         .live-logo-badge img {
-            height: 40px;
+            height: 45px;
             width: auto;
         }
 
@@ -78,16 +79,17 @@
             background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
             color: white;
             border: none;
-            padding: 16px 48px;
+            padding: 18px 55px;
             border-radius: 50px;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(255, 69, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.6);
             transition: all 0.3s ease;
             animation: pulse 2s ease-in-out infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
         }
 
         @keyframes pulse {
@@ -95,40 +97,37 @@
             50% { transform: scale(1.05); }
         }
 
-        .btn-enter-live:hover {
-            transform: scale(1.08);
-            box-shadow: 0 12px 32px rgba(255, 69, 0, 0.7);
-        }
 
         /* Side Live Boxes */
         .side-live-boxes {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-rows: 1fr 1fr 1fr;
             gap: 15px;
+            height: 100%;
         }
 
         .side-live-box {
             position: relative;
-            border-radius: 12px;
+            border-radius: 20px;
             overflow: hidden;
             background: #2a2a2a;
-            border: 3px solid #FF4500;
+            border: 5px solid #FF4500;
             box-shadow: 0 6px 20px rgba(255, 69, 0, 0.3);
-            aspect-ratio: 16/9;
+            width: 100%;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .side-live-box:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 8px 28px rgba(255, 69, 0, 0.5);
-            border-color: #FF6347;
-        }
 
         .side-live-content {
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .side-live-content img {
@@ -139,21 +138,21 @@
 
         .side-live-host {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 8px;
+            left: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 4px 10px;
-            border-radius: 16px;
+            padding: 3px 8px;
+            border-radius: 12px;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .side-live-host-avatar {
-            width: 22px !important;
-            height: 22px !important;
+            width: 18px !important;
+            height: 18px !important;
             border-radius: 50%;
             border: 2px solid #FF4500;
             object-fit: cover;
@@ -162,27 +161,27 @@
 
         .side-live-host-name {
             color: white;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 120px;
+            max-width: 100px;
         }
 
         .side-live-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
             color: white;
-            padding: 5px 10px;
-            border-radius: 14px;
-            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 9px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.4);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -206,15 +205,15 @@
         /* Button for side live boxes */
         .side-live-enter-btn {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 6px 16px;
+            border-radius: 18px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
@@ -223,10 +222,6 @@
             white-space: nowrap;
         }
 
-        .side-live-enter-btn:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 6px 16px rgba(255, 69, 0, 0.7);
-        }
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -235,12 +230,16 @@
             }
 
             .side-live-boxes {
+                display: flex;
                 flex-direction: row;
                 overflow-x: auto;
+                height: auto;
             }
 
             .side-live-box {
                 min-width: 300px;
+                aspect-ratio: 16/9;
+                flex: none;
             }
         }
 
@@ -280,7 +279,7 @@
 
         .promo-swiper-container {
             margin-top: 0px;
-            padding: 0 50px;
+            /*padding: 0 50px;*/
             position: relative;
         }
 
@@ -291,10 +290,6 @@
             position: relative;
         }
 
-        .promo-slide:hover {
-            transform: translateY(-5px);
-        }
-
         .promo-slide img {
             width: 100%;
             height: auto;
@@ -303,11 +298,6 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
                         0 0 20px rgba(255, 215, 0, 0.3);
             transition: all 0.3s ease;
-        }
-
-        .promo-slide:hover img {
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4),
-                        0 0 30px rgba(255, 215, 0, 0.5);
         }
 
         /* Swiper Navigation Buttons */
@@ -338,11 +328,6 @@
             right: 0;
         }
 
-        .promo-button-prev:hover,
-        .promo-button-next:hover {
-            background: #FF4500;
-            transform: translateY(-50%) scale(1.1);
-        }
 
         .promo-button-prev::after,
         .promo-button-next::after {
@@ -430,8 +415,8 @@
         }
 
         .section-title-line img {
-            width: 100%;
-            max-width: 500px;
+            width: 50%;
+            /*max-width: 500px;*/
             height: auto;
             object-fit: contain;
         }
@@ -461,9 +446,6 @@
             cursor: pointer;
         }
 
-        .news-main:hover {
-            transform: translateY(-5px);
-        }
 
         .news-main img {
             width: 100%;
@@ -489,11 +471,6 @@
             margin-bottom: 25px;
         }
 
-        .news-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
-            border-color: #FFD700;
-        }
 
         .news-item-image {
             width: 180px;
@@ -743,10 +720,6 @@
             transition: background 0.3s;
         }
 
-        .download-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-        }
 
         /* Modal Styles */
         .modal-content {
@@ -804,10 +777,6 @@
             transition: background 0.3s;
         }
 
-        .btn-confirm:hover {
-            background: #b91c1c;
-            color: white;
-        }
 
         .bank-account-inputs {
             display: flex;
@@ -913,9 +882,6 @@
             font-size: 14px;
         }
 
-        .chat-send-btn:hover {
-            background: #b91c1c;
-        }
 
         .chat-send-btn:disabled {
             background: #9ca3af;
@@ -941,6 +907,18 @@
 @endpush
 
 @section('content')
+
+    <!-- Notification Banner -->
+    <div class="notification-banner">
+        <div class="notification-banner-content">
+            <img src="{{ asset('images/image_2025-07-05_16-38-07 1.png') }}" alt="Notification" class="notification-icon">
+            <div class="notification-text">
+            <span id="notification-scroll">
+                🎁 THỂ THAO BẢO HIỂM CƯỢC THUA LÊN ĐẾN 5% 🎁 THỂ THAO THẮNG LIÊN TIẾP NHẬN THƯỞNG LÊN ĐẾN 8.888K 🎁 HÃY CÙNG BẠN BÈ THAM GIA ABC8 VÀ NHẬN THƯỞNG NHÉ 🎁
+            </span>
+            </div>
+        </div>
+    </div>
     <!-- Live Streams Section -->
     <div class="live-streams-section">
         <div class="streams-grid">
@@ -1070,7 +1048,7 @@
                 <div class="news-main">
                     <a href="{{ route('posts.show', $mainPost->slug) }}">
                         @if($mainPost->featured_image)
-                            <img src="{{ asset('storage/' . $mainPost->featured_image) }}" 
+                            <img src="{{ asset('storage/' . $mainPost->featured_image) }}"
                                  alt="{{ $mainPost->title }}"
                                  style="width: 100%; height: 100%; object-fit: cover;">
                         @else
@@ -1087,7 +1065,7 @@
                             <div class="news-item-image">
                                 <a href="{{ route('posts.show', $post->slug) }}">
                                     @if($post->featured_image)
-                                        <img src="{{ asset('storage/' . $post->featured_image) }}" 
+                                        <img src="{{ asset('storage/' . $post->featured_image) }}"
                                              alt="{{ $post->title }}"
                                              style="width: 100%; height: 100%; object-fit: cover;">
                                     @else
@@ -1226,7 +1204,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 Homepage initializing...');
-        
+
         // Initialize Swiper for Promotional Banners - Always show 3 slides
         const promoSwiper = new Swiper('.promoSwiper', {
             slidesPerView: 3,
@@ -1285,7 +1263,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('📺 Live streams API response:', data);
-                
+
                 if (data.success) {
                     // Update main live display
                     if (data.main_live) {
@@ -1296,7 +1274,7 @@
                     } else {
                         console.warn('⚠️ No main live found');
                     }
-                    
+
                     // Update side live boxes
                     if (data.other_lives && data.other_lives.length > 0) {
                         console.log('📋 Other lives:', data.other_lives);
@@ -1326,7 +1304,7 @@
             btnEnterLive.onclick = function() {
                 enterLiveRoom(liveData);
             };
-            
+
             // Update button text based on live status
             if (liveData.is_live_now) {
                 btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
@@ -1344,7 +1322,7 @@
 
     function updateSideLiveBoxes(otherLives) {
         const sideLiveBoxes = document.querySelectorAll('.side-live-box');
-        
+
         otherLives.forEach((live, index) => {
             if (sideLiveBoxes[index]) {
                 const box = sideLiveBoxes[index];
@@ -1354,7 +1332,7 @@
                 const badgeText = box.querySelector('.badge-text');
                 const badgeIcon = badge ? badge.querySelector('i') : null;
                 const enterBtn = box.querySelector('.side-live-enter-btn');
-                
+
                 // Update host info
                 if (live.host) {
                     if (hostAvatar) {
@@ -1364,7 +1342,7 @@
                         hostName.textContent = live.host.name;
                     }
                 }
-                
+
                 // Update badge based on live status
                 if (badge && badgeText) {
                     if (live.is_live_now) {
@@ -1383,7 +1361,7 @@
                         console.log(`⏰ Live ${index} scheduled for:`, live.live_time);
                     }
                 }
-                
+
                 // Add click handler to button
                 if (enterBtn) {
                     enterBtn.onclick = function(e) {

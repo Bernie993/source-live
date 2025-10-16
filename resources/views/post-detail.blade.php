@@ -80,9 +80,6 @@
         text-decoration: underline;
     }
 
-    .post-detail-content a:hover {
-        color: #FF6347;
-    }
 
     .post-detail-back {
         display: inline-block;
@@ -97,11 +94,6 @@
         box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
     }
 
-    .post-detail-back:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
-        color: #fff;
-    }
 
     @media (max-width: 768px) {
         .post-detail-title {

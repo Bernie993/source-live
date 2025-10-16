@@ -16,23 +16,40 @@
             grid-template-columns: 1fr 400px;
             gap: 20px;
             margin-bottom: 40px;
+            align-items: start;
         }
 
-        /* Video Player Section (Left) */
-        .video-section {
-            background: #000;
-            border-radius: 16px;
-            overflow: hidden;
+        /* Video Column - Contains both header and player */
+        .video-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Video Header Box (Separate) */
+        .video-header-box {
+            background: linear-gradient(#EC6612 0%, #F50000 100%);
+            border-radius: 24px;
+            overflow: visible;
             box-shadow: 0 10px 40px rgba(255, 69, 0, 0.3);
+            border: 1px solid #ffffff;
         }
 
         .video-header {
-            background: linear-gradient(135deg, #FF6A3D 0%, #FF4419 100%);
             padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+        }
+
+        /* Video Player Section (Separate) */
+        .video-section {
+            background: #000;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(255, 69, 0, 0.3);
+            border: 6px solid #FF4500;
         }
 
         .video-header-left {
@@ -120,9 +137,6 @@
             color: white;
         }
 
-        .social-icon:hover {
-            transform: scale(1.1);
-        }
 
         .social-icon.telegram {
             background: #0088cc;
@@ -157,10 +171,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .copy-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
 
         .viewer-stats {
             display: flex;
@@ -175,6 +185,11 @@
             color: white;
             font-size: 14px;
             font-weight: 600;
+            position: relative;
+        }
+
+        .stat-item.share-trigger {
+            cursor: pointer;
         }
 
         .stat-item i {
@@ -184,6 +199,63 @@
         .viewer-count {
             font-size: 16px;
             font-weight: 700;
+        }
+
+        /* Share Popup Styles */
+        .share-popup {
+            position: absolute;
+            bottom: calc(100% + 15px);
+            right: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .share-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .share-popup-content {
+            background: white;
+            border-radius: 30px;
+            padding: 12px 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .share-popup-arrow {
+            position: absolute;
+            bottom: -8px;
+            right: 30px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            transform: rotate(45deg);
+        }
+
+        .social-icons-popup {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-button-popup {
+            background: #FF4500;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         @keyframes pulse {
@@ -208,24 +280,29 @@
 
         /* Chat Section (Right) - New Design */
         .chat-section {
-            background: linear-gradient(135deg, #FF6A3D 0%, #FF4419 100%);
-            border-radius: 30px;
+            background: linear-gradient(#EC6612 0%, #F50000 100%);
+            border-radius: 24px;
             box-shadow: 0 10px 40px rgba(255, 69, 0, 0.5);
             display: flex;
             flex-direction: column;
-            height: fit-content;
+            height: 100%;
             overflow: hidden;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-header-wrapper {
+            padding: 10px;
         }
 
         .chat-header {
-            background: linear-gradient(135deg, #CC3300 0%, #991100 100%);
-            padding: 20px;
+            background: #380000;
+            border-radius: 12px;
+            padding: 15px;
             color: white;
             font-weight: 700;
             font-size: 15px;
             line-height: 1.5;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .chat-header-title {
@@ -235,8 +312,10 @@
             margin-bottom: 8px;
         }
 
-        .chat-header-title i {
-            color: #FFD700;
+        .chat-header-title img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
         }
 
         .chat-header-info {
@@ -247,7 +326,7 @@
         }
 
         .chat-messages {
-            height: 520px;
+            flex: 1;
             overflow-y: auto;
             padding: 10px;
             display: flex;
@@ -270,9 +349,6 @@
             border-radius: 3px;
         }
 
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
 
         .chat-message {
             background: rgba(139, 0, 0, 0.5);
@@ -420,9 +496,6 @@
             transition: transform 0.3s ease;
         }
 
-        .chat-input-icon:hover {
-            transform: scale(1.1);
-        }
 
         #chat-input {
             flex: 1;
@@ -451,10 +524,6 @@
             box-shadow: 0 4px 12px rgba(255, 69, 0, 0.4);
         }
 
-        .chat-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 69, 0, 0.6);
-        }
 
         .chat-send-btn:disabled {
             opacity: 0.5;
@@ -477,57 +546,84 @@
         .promo-banner-section {
             padding: 40px 20px 60px;
             position: relative;
+            background: #000;
         }
 
         .hot-badge {
             position: absolute;
-            top: 25px;
-            left: 25px;
+            top: 0px;
+            left: 20px;
             z-index: 10;
+            width: auto;
+            max-width: 70px;
         }
 
         .hot-badge img {
-            height: 60px;
-            width: auto;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(255, 69, 0, 0.5));
         }
 
         .promo-swiper-container {
-            padding: 0 60px;
+            margin-top: 0px;
+            position: relative;
         }
 
         .promo-slide {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            overflow: visible;
             transition: transform 0.3s ease;
-        }
-
-        .promo-slide:hover {
-            transform: translateY(-5px);
+            position: relative;
         }
 
         .promo-slide img {
             width: 100%;
             height: auto;
             display: block;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
         }
 
+        /* Swiper Navigation Buttons */
         .promo-button-prev,
         .promo-button-next {
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 50%;
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             transition: all 0.3s ease;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            border: 2px solid #FF4500;
         }
 
-        .promo-button-prev:hover,
-        .promo-button-next:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
+        .promo-button-prev {
+            left: 0;
+        }
+
+        .promo-button-next {
+            right: 0;
+        }
+
+        .promo-button-prev::after,
+        .promo-button-next::after {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Swiper Pagination */
+        .promo-pagination {
+            bottom: -30px !important;
         }
 
         .promo-pagination .swiper-pagination-bullet {
@@ -535,12 +631,40 @@
             height: 12px;
             background: #666;
             opacity: 1;
+            transition: all 0.3s ease;
         }
 
         .promo-pagination .swiper-pagination-bullet-active {
             background: #FF4500;
             width: 30px;
             border-radius: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .promo-banner-section {
+                padding: 30px 20px 50px;
+            }
+
+            .hot-badge {
+                left: 20px;
+                top: 5px;
+                max-width: 50px;
+            }
+
+            .promo-swiper-container {
+                padding: 0 40px;
+            }
+
+            .promo-button-prev,
+            .promo-button-next {
+                width: 35px;
+                height: 35px;
+            }
+
+            .promo-pagination {
+                bottom: -25px !important;
+            }
         }
 
         /* ============ NEWS SECTION ============ */
@@ -606,9 +730,6 @@
             cursor: pointer;
         }
 
-        .news-main:hover {
-            transform: translateY(-5px);
-        }
 
         .news-main img {
             width: 100%;
@@ -634,11 +755,6 @@
             margin-bottom: 25px;
         }
 
-        .news-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
-            border-color: #FFD700;
-        }
 
         .news-item-image {
             width: 180px;
@@ -688,9 +804,6 @@
             transition: transform 0.3s ease;
         }
 
-        .app-download-banner:hover {
-            transform: translateY(-5px);
-        }
 
         .app-download-banner img {
             width: 100%;
@@ -754,10 +867,6 @@
             transition: background 0.3s;
         }
 
-        .btn-confirm:hover {
-            background: #b91c1c;
-            color: white;
-        }
 
         .bank-account-inputs {
             display: flex;
@@ -786,6 +895,7 @@
         .loading.show {
             display: inline-block;
         }
+
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -836,76 +946,90 @@
 @section('content')
     <div class="live-room-section">
         <div class="live-room-grid">
-            <!-- Video Player Section (Left) -->
-            <div class="video-section">
-                <div class="video-header">
-                    <div class="video-header-left">
-                        <div class="host-info">
-                            <img src="{{ $liveSetting->assignedUser->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($liveSetting->assignedUser->name ?? 'Host') . '&background=FF4500&color=fff' }}"
-                                 alt="Host Avatar"
-                                 class="host-avatar">
-                            <div class="host-details">
-                                <div class="host-name-row">
-                                    <span class="streamer-badge">Streamer</span>
-                                    <span class="host-name">{{ $liveSetting->assignedUser->name ?? 'Viruss' }}</span>
-                                </div>
-                                <div class="host-description">
-                                    88CLB phát code siêu khủng
+            <!-- Left Column: Video Header + Video Player -->
+            <div class="video-column">
+                <!-- Video Header (Separate Box) -->
+                <div class="video-header-box">
+                    <div class="video-header">
+                        <div class="video-header-left">
+                            <div class="host-info">
+                                <img src="{{ $liveSetting->assignedUser->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($liveSetting->assignedUser->name ?? 'Host') . '&background=FF4500&color=fff' }}"
+                                     alt="Host Avatar"
+                                     class="host-avatar">
+                                <div class="host-details">
+                                    <div class="host-name-row">
+                                        <span class="streamer-badge">Streamer</span>
+                                        <span class="host-name">{{ $liveSetting->assignedUser->name ?? 'Viruss' }}</span>
+                                    </div>
+                                    <div class="host-description">
+                                        88CLB phát code siêu khủng
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="video-header-right">
-                        <div class="social-icons">
-                            <a href="http://t.me/ABC8LIVE" target="_blank" class="social-icon telegram" title="Telegram">
-                                <i class="fab fa-telegram-plane"></i>
-                            </a>
-                            <a href="#" class="social-icon twitter" title="Twitter/X">
-                                <i class="fab fa-x-twitter"></i>
-                            </a>
-                            <a href="#" class="social-icon whatsapp" title="WhatsApp">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                            <a href="#" class="social-icon facebook" title="Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="social-icon messenger" title="Messenger">
-                                <i class="fab fa-facebook-messenger"></i>
-                            </a>
-                        </div>
+                        <div class="video-header-right">
+                            <div class="viewer-stats">
+                                <div class="stat-item share-trigger" onclick="toggleSharePopup()">
+                                    <i class="fas fa-share-nodes"></i>
+                                    <span>Chia sẻ</span>
 
-                        <button class="copy-button" onclick="copyLiveUrl()">
-                            Sao chép
-                        </button>
-
-                        <div class="viewer-stats">
-                            <div class="stat-item">
-                                <i class="fas fa-share-nodes"></i>
-                                <span>Chia sẻ</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fas fa-eye"></i>
-                                <span class="viewer-count" id="live-viewer-count">0</span>
+                                    <!-- Share Popup -->
+                                    <div class="share-popup" id="sharePopup">
+                                        <div class="share-popup-content">
+                                            <div class="social-icons-popup">
+                                                <a href="http://t.me/ABC8LIVE" target="_blank" class="social-icon telegram" title="Telegram">
+                                                    <i class="fab fa-telegram-plane"></i>
+                                                </a>
+                                                <a href="#" class="social-icon twitter" title="Twitter/X">
+                                                    <i class="fab fa-x-twitter"></i>
+                                                </a>
+                                                <a href="#" class="social-icon whatsapp" title="WhatsApp">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </a>
+                                                <a href="#" class="social-icon facebook" title="Facebook">
+                                                    <i class="fab fa-facebook-f"></i>
+                                                </a>
+                                                <a href="#" class="social-icon messenger" title="Messenger">
+                                                    <i class="fab fa-facebook-messenger"></i>
+                                                </a>
+                                            </div>
+                                            <button class="copy-button-popup" onclick="copyLiveUrl(event)">
+                                                Sao chép
+                                            </button>
+                                        </div>
+                                        <div class="share-popup-arrow"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="viewer-count" id="live-viewer-count">0</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="video-player-wrapper">
-                    <video id="live-video-player" controls autoplay muted playsinline></video>
+
+                <!-- Video Player (Separate Box) -->
+                <div class="video-section">
+                    <div class="video-player-wrapper">
+                        <video id="live-video-player" controls autoplay muted playsinline></video>
+                    </div>
                 </div>
             </div>
 
             <!-- Chat Section (Right) -->
             <div class="chat-section">
-                <div class="chat-header">
-                    <div class="chat-header-title">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Streamer {{ $liveSetting->assignedUser->name ?? 'Viruss' }}:</span>
-                    </div>
-                    <div class="chat-header-info">
-                        Cập nhật thông tin ABC8 tại: http://t.me/ABC8LIVE<br>
-                        Telegram CSKH hỗ trợ 24/7: http://t.me/ABC8LIVE
+                <div class="chat-header-wrapper">
+                    <div class="chat-header">
+                        <div class="chat-header-title">
+                            <img src="{{ asset('images/Vector.png') }}" alt="Streamer Icon">
+                            <span style="background: linear-gradient(#EC6612 0%, #F50000 100%); border-radius: 20px; padding: 0 10px;">Streamer</span> <span>{{ $liveSetting->assignedUser->name ?? 'Viruss' }}:</span>
+                        </div>
+                        <div class="chat-header-info">
+                            Cập nhật thông tin ABC8 tại: http://t.me/ABC8LIVE<br>
+                            Telegram CSKH hỗ trợ 24/7: http://t.me/ABC8LIVE
+                        </div>
                     </div>
                 </div>
                 <div class="chat-messages" id="chat-messages">
@@ -1219,13 +1343,38 @@
         }
 
         // Copy Live URL function
-        function copyLiveUrl() {
+        // Toggle share popup
+        function toggleSharePopup() {
+            const popup = document.getElementById('sharePopup');
+            popup.classList.toggle('show');
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(event) {
+            const sharePopup = document.getElementById('sharePopup');
+            const shareTrigger = document.querySelector('.share-trigger');
+
+            if (sharePopup && shareTrigger && !shareTrigger.contains(event.target)) {
+                sharePopup.classList.remove('show');
+            }
+        });
+
+        function copyLiveUrl(event) {
+            if (event) {
+                event.stopPropagation(); // Prevent popup from closing
+            }
+
             const url = window.location.href;
 
             // Modern API
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(url).then(() => {
                     alert('Đã sao chép link live vào clipboard!');
+                    // Close popup after copying
+                    const sharePopup = document.getElementById('sharePopup');
+                    if (sharePopup) {
+                        sharePopup.classList.remove('show');
+                    }
                 }).catch(err => {
                     console.error('Failed to copy:', err);
                     fallbackCopy(url);
@@ -1247,6 +1396,11 @@
             try {
                 document.execCommand('copy');
                 alert('Đã sao chép link live vào clipboard!');
+                // Close popup after copying
+                const sharePopup = document.getElementById('sharePopup');
+                if (sharePopup) {
+                    sharePopup.classList.remove('show');
+                }
             } catch (err) {
                 console.error('Fallback copy failed:', err);
                 alert('Không thể sao chép. Vui lòng copy thủ công: ' + text);
@@ -1298,9 +1452,10 @@
 
         // Initialize Swiper for promotional banners
         const promoSwiper = new Swiper('.promoSwiper', {
-            slidesPerView: 1,
+            slidesPerView: 3,
             spaceBetween: 20,
             loop: true,
+            centeredSlides: false,
             autoplay: {
                 delay: 5000,
                 disableOnInteraction: false,
@@ -1314,14 +1469,17 @@
                 prevEl: '.promo-button-prev',
             },
             breakpoints: {
-                640: {
+                320: {
                     slidesPerView: 1,
+                    spaceBetween: 10,
                 },
-                768: {
+                640: {
                     slidesPerView: 2,
+                    spaceBetween: 15,
                 },
                 1024: {
                     slidesPerView: 3,
+                    spaceBetween: 20,
                 },
             },
         });

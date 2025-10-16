@@ -180,9 +180,6 @@
         display: inline-block;
     }
 
-    .footer-read-more:hover {
-        color: #FF6347;
-    }
 
     .footer-certificates {
         margin-top: 10px;
@@ -224,9 +221,6 @@
         white-space: nowrap;
     }
 
-    .footer-menu-item:hover {
-        color: #FF4500;
-    }
 
     .footer-separator {
         color: rgba(255, 255, 255, 0.3);

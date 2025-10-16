@@ -73,9 +73,6 @@
             transition: transform 0.3s ease;
         }
 
-        .logo-u888:hover {
-            transform: scale(1.02);
-        }
 
         .logo-u888 img {
             height: 50px;
@@ -107,10 +104,6 @@
             white-space: nowrap;
         }
 
-        .nav-item:hover {
-            color: #FF4500;
-        }
-
         .nav-item::after {
             content: '';
             position: absolute;
@@ -120,10 +113,6 @@
             height: 2px;
             background: #FF4500;
             transition: width 0.3s ease;
-        }
-
-        .nav-item:hover::after {
-            width: 100%;
         }
 
         .nav-item.active {
@@ -149,11 +138,6 @@
             box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
         }
 
-        .btn-login:hover {
-            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
-            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
-            transform: translateY(-2px);
-        }
 
         .dropdown-menu {
             background: white;
@@ -170,10 +154,6 @@
             transition: all 0.3s ease;
         }
 
-        .dropdown-item:hover {
-            background: #FF4500;
-            color: white;
-        }
 
         /* ============ NOTIFICATION BANNER ============ */
         .notification-banner {
@@ -281,10 +261,6 @@
             transition: background 0.3s;
         }
 
-        .btn-confirm:hover {
-            background: #b91c1c;
-            color: white;
-        }
 
         .bank-account-inputs {
             display: flex;
