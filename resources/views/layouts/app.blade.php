@@ -443,6 +443,165 @@
         .loading.show {
             display: inline-block;
         }
+
+        /* Mobile Menu Styles */
+        .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger-menu span {
+            width: 100%;
+            height: 3px;
+            background: #FF4500;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            z-index: 1002;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-sidebar.active {
+            left: 0;
+        }
+
+        .mobile-sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-logo {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+        }
+
+        .mobile-menu {
+            padding: 0;
+        }
+
+        .mobile-menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-item:first-child {
+            background: linear-gradient(135deg, #FF6A3D 0%, #FF4419 100%);
+            border-bottom: none;
+        }
+
+        .mobile-menu-item:hover,
+        .mobile-menu-item.active {
+            background: rgba(255, 69, 0, 0.1);
+            padding-left: 30px;
+        }
+
+        .mobile-sidebar-footer {
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .btn-mobile-login {
+            background: linear-gradient(135deg, #FF6A3D 0%, #FF4419 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 16px;
+            width: 100%;
+            letter-spacing: 1px;
+        }
+
+        .mobile-user-info {
+            color: white;
+            text-align: center;
+        }
+
+        .mobile-user-info p {
+            margin-bottom: 10px;
+        }
+
+        .mobile-user-info a {
+            color: #FF4500;
+            text-decoration: none;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+        }
+
+        .mobile-overlay.active {
+            display: block;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hamburger-menu {
+                display: flex;
+            }
+
+            .desktop-menu {
+                display: none !important;
+            }
+
+            .desktop-only {
+                display: none !important;
+            }
+
+            .header-left {
+                justify-content: center;
+                flex: 1;
+            }
+
+            .logo-container {
+                margin-left: 0;
+            }
+        }
     </style>
 
     @vite(['resources/js/app.js'])
@@ -577,6 +736,41 @@
             const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
             dropdownElementList.forEach(dropdown => {
                 new bootstrap.Dropdown(dropdown);
+            });
+        });
+
+        // Mobile Menu Toggle
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        function toggleMobileMenu() {
+            hamburgerMenu.classList.toggle('active');
+            mobileSidebar.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+            document.body.style.overflow = mobileSidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeMobileMenu() {
+            hamburgerMenu.classList.remove('active');
+            mobileSidebar.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (hamburgerMenu) {
+            hamburgerMenu.addEventListener('click', toggleMobileMenu);
+        }
+
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', closeMobileMenu);
+        }
+
+        // Close mobile menu when clicking on a menu item
+        const mobileMenuItems = document.querySelectorAll('.mobile-menu-item');
+        mobileMenuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                setTimeout(closeMobileMenu, 300);
             });
         });
     </script>
