@@ -601,6 +601,24 @@
             .logo-container {
                 margin-left: 0;
             }
+
+            .notification-banner {
+                padding: 8px 10px;
+            }
+
+            .notification-banner-content {
+                padding: 8px 12px;
+                gap: 10px;
+            }
+
+            .main-content-wrapper {
+                padding: 0;
+            }
+
+            body {
+                padding: 0;
+                margin: 0;
+            }
         }
     </style>
 

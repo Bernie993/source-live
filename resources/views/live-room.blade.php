@@ -652,9 +652,6 @@
                 max-width: 50px;
             }
 
-            .promo-swiper-container {
-                padding: 0 40px;
-            }
 
             .promo-button-prev,
             .promo-button-next {
@@ -1017,6 +1014,10 @@
             box-shadow: none;
         }
 
+        .notification-banner {
+            display: none !important;
+        }
+
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -1059,6 +1060,12 @@
             .news-section,
             .app-download-section {
                 padding: 30px 15px;
+            }
+            .video-header {
+                display: none;
+            }
+            .notification-banner {
+                display: block !important;
             }
         }
 </style>
@@ -1591,7 +1598,7 @@
             },
             breakpoints: {
                 320: {
-                    slidesPerView: 1,
+                    slidesPerView: 2,
                     spaceBetween: 10,
                 },
                 640: {
@@ -1671,7 +1678,7 @@
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.authenticated) {
-                        alert('Đăng nhập thành công!');
+                        // alert('Đăng nhập thành công!');
 
                         // Close modal using vanilla JS
                         const loginModal = document.getElementById('loginModal');
