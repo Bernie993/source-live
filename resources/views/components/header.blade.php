@@ -65,11 +65,13 @@
 
 <!-- Notification Banner -->
 <div class="notification-banner">
-    <img src="{{ asset('images/image_2025-07-05_16-38-07 1.png') }}" alt="Notification" class="notification-icon">
-    <div class="notification-text">
-        <span id="notification-scroll">
-            🎁 THỂ THAO BẢO HIỂM CƯỢC THUA LÊN ĐẾN 5% 🎁 THỂ THAO THẮNG LIÊN TIẾP NHẬN THƯỞNG LÊN ĐẾN 8.888K 🎁 HÃY CÙNG BẠN BÈ THAM GIA ABC8 VÀ NHẬN THƯỞNG NHÉ 🎁
-        </span>
+    <div class="notification-banner-content">
+        <img src="{{ asset('images/image_2025-07-05_16-38-07 1.png') }}" alt="Notification" class="notification-icon">
+        <div class="notification-text">
+            <span id="notification-scroll">
+                🎁 THỂ THAO BẢO HIỂM CƯỢC THUA LÊN ĐẾN 5% 🎁 THỂ THAO THẮNG LIÊN TIẾP NHẬN THƯỞNG LÊN ĐẾN 8.888K 🎁 HÃY CÙNG BẠN BÈ THAM GIA ABC8 VÀ NHẬN THƯỞNG NHÉ 🎁
+            </span>
+        </div>
     </div>
 </div>
 

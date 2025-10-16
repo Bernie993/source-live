@@ -127,9 +127,9 @@
     }
 
     .footer-container {
-        max-width: 1920px;
+        max-width: 1422px;
         margin: 0 auto;
-        padding: 0 40px;
+        padding: 0 20px;
     }
 
     /* Footer Top - 3 Columns */
@@ -341,7 +341,7 @@
         }
 
         .footer-container {
-            padding: 0 20px;
+            padding: 0 15px;
         }
 
         .footer-top {

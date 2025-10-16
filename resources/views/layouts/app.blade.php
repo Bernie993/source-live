@@ -38,9 +38,10 @@
         }
 
         .header .container-fluid {
-            max-width: 1920px;
+            max-width: 1422px;
             height: 100%;
-            padding: 0 40px;
+            padding: 0 20px;
+            margin: 0 auto;
         }
 
         .header-content {
@@ -176,14 +177,24 @@
 
         /* ============ NOTIFICATION BANNER ============ */
         .notification-banner {
+            position: relative;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            padding: 15px 20px;
+        }
+
+        .notification-banner-content {
+            max-width: 1422px;
+            width: 100%;
             background: linear-gradient(#EC6612 0%, #F50000 100%);
-            padding: 10px 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             gap: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 999;
+            border-radius: 8px;
+            border: 2px solid #D84500;
         }
 
         .notification-icon {
