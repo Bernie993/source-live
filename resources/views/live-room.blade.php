@@ -845,7 +845,8 @@
 
         .form-control {
             border-radius: 8px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #ffffff;
+            background-color: #2d2d2d !important;
             padding: 12px 16px;
             font-size: 16px;
         }
@@ -894,6 +895,126 @@
 
         .loading.show {
             display: inline-block;
+        }
+
+        /* Custom Login Modal Styles */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.9) !important;
+        }
+
+        .modal-content.login-modal-custom {
+            background: rgba(240, 240, 240, 0.98);
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .login-modal-custom .modal-body {
+            padding: 0;
+            position: relative;
+        }
+
+        .login-modal-title {
+            color: #000;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .login-label {
+            color: #000;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: block;
+            text-align: left;
+        }
+
+        .login-input {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 15px;
+            color: #000;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .login-input::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .login-input:focus {
+            background: white;
+            border-color: #999;
+            color: #000;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .btn-login-submit {
+            background: linear-gradient(135deg, #FF6A3D 0%, #FF4419 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-close-custom {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close-custom i {
+            color: #1a1a1a;
+            font-size: 20px;
+        }
+
+        .login-modal-custom .bank-account-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .login-modal-custom .bank-digit {
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            background: white;
+            color: #000;
+        }
+
+        .login-modal-custom .bank-digit:focus {
+            border-color: #999;
+            background: white;
+            outline: none;
+            box-shadow: none;
         }
 
 

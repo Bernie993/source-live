@@ -755,7 +755,8 @@
 
         .form-control {
             border-radius: 8px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #ffffff;
+            background-color: #2d2d2d !important;
             padding: 12px 16px;
             font-size: 16px;
         }
