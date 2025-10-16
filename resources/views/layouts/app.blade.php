@@ -5,20 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'U888 - Trang chủ')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <!-- Additional CSS -->
     @stack('styles')
-    
+
     <!-- Common Styles -->
     <style>
         body {
             background: #000000;
             min-height: 100vh;
             font-family: 'Arial', sans-serif;
+        }
+
+        /* Main Content Wrapper - Max width 1422px, centered */
+        .main-content-wrapper {
+            max-width: 1422px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         /* ============ HEADER STYLES ============ */
@@ -169,7 +176,7 @@
 
         /* ============ NOTIFICATION BANNER ============ */
         .notification-banner {
-            background: linear-gradient(90deg, #FF4500 0%, #FF6347 100%);
+            background: linear-gradient(#EC6612 0%, #F50000 100%);
             padding: 10px 40px;
             display: flex;
             align-items: center;
@@ -316,29 +323,29 @@
             }
         }
     </style>
-    
+
     @vite(['resources/js/app.js'])
 </head>
 <body>
     <!-- Header Component -->
     @include('components.header')
-    
+
     <!-- Main Content -->
-    <main>
+    <main class="main-content-wrapper">
         @yield('content')
     </main>
-    
+
     <!-- Footer Component -->
     @include('components.footer')
-    
+
     <!-- Login Modal Component -->
     @include('components.login-modal')
-    
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    
+
     @stack('scripts')
-    
+
     <!-- Common Login Script -->
     <script>
         // Bank digit auto-focus

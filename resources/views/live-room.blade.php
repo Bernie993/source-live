@@ -8,9 +8,7 @@
 
 <style>
         .live-room-section {
-            max-width: 1920px;
-            margin: 0 auto;
-            padding: 30px 40px;
+            padding: 30px 20px;
         }
 
         .live-room-grid {
@@ -477,9 +475,7 @@
 
         /* ============ PROMOTIONAL BANNER SLIDER ============ */
         .promo-banner-section {
-            padding: 40px 40px 60px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 40px 20px 60px;
             position: relative;
         }
 
@@ -549,9 +545,7 @@
 
         /* ============ NEWS SECTION ============ */
         .news-section {
-            padding: 40px 40px 60px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 40px 20px 60px;
         }
 
         .section-title {
@@ -683,9 +677,7 @@
 
         /* ============ APP DOWNLOAD SECTION ============ */
         .app-download-section {
-            padding: 40px 40px 60px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 40px 20px 60px;
         }
 
         .app-download-banner {

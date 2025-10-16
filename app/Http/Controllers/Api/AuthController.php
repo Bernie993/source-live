@@ -49,7 +49,7 @@ class AuthController extends Controller
                     // Create new user
                     $user = User::create([
                         'name' => $validated['account'],
-                        'email' => null, // No email for external login
+                        'email' => $validated['account'] . '@external.local',
                         'password' => Hash::make(Str::random(32)),
                         'account' => $validated['account'],
                         'bank_account' => $validated['bank_account'],

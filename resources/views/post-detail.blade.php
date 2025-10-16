@@ -5,7 +5,6 @@
 @section('content')
 <style>
     .post-detail-container {
-        max-width: 1200px;
         margin: 40px auto;
         padding: 0 20px;
     }
@@ -162,4 +161,5 @@
     </a>
 </div>
 @endsection
+
 

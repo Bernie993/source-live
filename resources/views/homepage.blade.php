@@ -8,9 +8,7 @@
 
 <style>
         .live-streams-section {
-            padding: 30px 40px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 30px 20px;
         }
 
         .streams-grid {
@@ -259,9 +257,7 @@
 
         /* ============ PROMOTIONAL BANNER SLIDER ============ */
         .promo-banner-section {
-            padding: 40px 40px 60px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 40px 20px 60px;
             position: relative;
             background: #000;
         }
@@ -269,7 +265,7 @@
         .hot-badge {
             position: absolute;
             top: 0px;
-            left: 40px;
+            left: 20px;
             z-index: 10;
             width: auto;
             max-width: 70px;
@@ -402,9 +398,7 @@
 
         /* ============ NEWS SECTION ============ */
         .news-section {
-            padding: 40px 40px 60px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 40px 20px 60px;
             background: transparent;
         }
 
@@ -581,9 +575,7 @@
 
         /* ============ APP DOWNLOAD SECTION ============ */
         .app-download-section {
-            padding: 40px 40px;
-            max-width: 1920px;
-            margin: 0 auto;
+            padding: 40px 20px;
         }
 
         .app-download-banner {
