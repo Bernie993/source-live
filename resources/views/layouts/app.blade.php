@@ -642,6 +642,36 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+    <!-- Mobile Menu Functions - MUST be defined before @stack('scripts') -->
+    <script>
+        // Mobile Menu Functions
+        function toggleMobileMenu() {
+            var hamburgerMenu = document.getElementById('hamburgerMenu');
+            var mobileSidebar = document.getElementById('mobileSidebar');
+            var mobileOverlay = document.getElementById('mobileOverlay');
+            
+            if (hamburgerMenu && mobileSidebar && mobileOverlay) {
+                hamburgerMenu.classList.toggle('active');
+                mobileSidebar.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                document.body.style.overflow = mobileSidebar.classList.contains('active') ? 'hidden' : '';
+            }
+        }
+
+        function closeMobileMenu() {
+            var hamburgerMenu = document.getElementById('hamburgerMenu');
+            var mobileSidebar = document.getElementById('mobileSidebar');
+            var mobileOverlay = document.getElementById('mobileOverlay');
+            
+            if (hamburgerMenu && mobileSidebar && mobileOverlay) {
+                hamburgerMenu.classList.remove('active');
+                mobileSidebar.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    </script>
+
     @stack('scripts')
 
     <!-- Common Login Script -->
@@ -751,44 +781,9 @@
 
         // Initialize Bootstrap dropdowns
         document.addEventListener('DOMContentLoaded', function() {
-            const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
-            dropdownElementList.forEach(dropdown => {
+            var dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+            dropdownElementList.forEach(function(dropdown) {
                 new bootstrap.Dropdown(dropdown);
-            });
-        });
-
-        // Mobile Menu Toggle
-        const hamburgerMenu = document.getElementById('hamburgerMenu');
-        const mobileSidebar = document.getElementById('mobileSidebar');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-
-        function toggleMobileMenu() {
-            hamburgerMenu.classList.toggle('active');
-            mobileSidebar.classList.toggle('active');
-            mobileOverlay.classList.toggle('active');
-            document.body.style.overflow = mobileSidebar.classList.contains('active') ? 'hidden' : '';
-        }
-
-        function closeMobileMenu() {
-            hamburgerMenu.classList.remove('active');
-            mobileSidebar.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        if (hamburgerMenu) {
-            hamburgerMenu.addEventListener('click', toggleMobileMenu);
-        }
-
-        if (mobileOverlay) {
-            mobileOverlay.addEventListener('click', closeMobileMenu);
-        }
-
-        // Close mobile menu when clicking on a menu item
-        const mobileMenuItems = document.querySelectorAll('.mobile-menu-item');
-        mobileMenuItems.forEach(item => {
-            item.addEventListener('click', () => {
-                setTimeout(closeMobileMenu, 300);
             });
         });
     </script>
