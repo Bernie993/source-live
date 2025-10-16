@@ -1051,13 +1051,18 @@
             // Try to use Echo for realtime
             if (typeof Echo !== 'undefined') {
                 try {
-                    Echo.channel('live-chat')
+                    const liveId = {{ $liveSetting->id }};
+                    // Listen to this specific live room's channel
+                    Echo.channel(`live-chat.${liveId}`)
                         .listen('.new-message', function(data) {
-                            console.log('📨 New message via Echo:', data);
-                            addMessageToChat(data);
-                            isRealtimeActive = true;
+                            console.log('📨 New message via Echo for live room ' + liveId + ':', data);
+                            // Only add message if it belongs to this live room
+                            if (data.live_setting_id == liveId) {
+                                addMessageToChat(data);
+                                isRealtimeActive = true;
+                            }
                         });
-                    console.log('✅ Echo realtime listener set up');
+                    console.log('✅ Echo realtime listener set up for live room ' + liveId);
                 } catch (error) {
                     console.warn('⚠️ Echo setup failed:', error);
                     startPolling();
@@ -1080,7 +1085,8 @@
         }
 
         function loadNewMessages() {
-            fetch('/api/chat/messages?after=' + lastMessageId)
+            const liveId = {{ $liveSetting->id }};
+            fetch(`/api/chat/messages?after=${lastMessageId}&live_setting_id=${liveId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.messages && data.messages.length > 0) {
@@ -1095,7 +1101,8 @@
         }
 
         function loadChatMessages() {
-            fetch('/api/chat/messages')
+            const liveId = {{ $liveSetting->id }};
+            fetch(`/api/chat/messages?live_setting_id=${liveId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.messages) {
@@ -1109,6 +1116,7 @@
         function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
+            const liveId = {{ $liveSetting->id }};
 
             if (!message) return;
 
@@ -1123,7 +1131,10 @@
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({ 
+                    message: message,
+                    live_setting_id: liveId
+                })
             })
                 .then(response => {
                     if (response.status === 401) {

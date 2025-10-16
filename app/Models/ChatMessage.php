@@ -9,6 +9,8 @@ class ChatMessage extends Model
     protected $fillable = [
         'username',
         'message',
+        'user_id',
+        'live_setting_id',
         'is_blocked',
         'blocked_keywords',
         'sent_at',
@@ -21,6 +23,22 @@ class ChatMessage extends Model
             'blocked_keywords' => 'json',
             'sent_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the live setting this chat belongs to
+     */
+    public function liveSetting()
+    {
+        return $this->belongsTo(LiveSetting::class);
+    }
+
+    /**
+     * Get the user who sent this message
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -37,5 +55,13 @@ class ChatMessage extends Model
     public function scopeBlocked($query)
     {
         return $query->where('is_blocked', true);
+    }
+
+    /**
+     * Scope to filter by live setting
+     */
+    public function scopeForLiveSetting($query, $liveSettingId)
+    {
+        return $query->where('live_setting_id', $liveSettingId);
     }
 }

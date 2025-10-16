@@ -27,8 +27,19 @@ class ChatController extends Controller
     public function getMessages(Request $request): JsonResponse
     {
         try {
-            $messages = ChatMessage::notBlocked()
-                ->orderBy('created_at', 'desc')
+            $query = ChatMessage::notBlocked();
+            
+            // Filter by live_setting_id if provided
+            if ($request->has('live_setting_id')) {
+                $query->where('live_setting_id', $request->input('live_setting_id'));
+            }
+            
+            // Get messages after specific ID (for polling)
+            if ($request->has('after')) {
+                $query->where('id', '>', $request->input('after'));
+            }
+            
+            $messages = $query->orderBy('created_at', 'desc')
                 ->limit(50)
                 ->get()
                 ->reverse()
@@ -66,11 +77,13 @@ class ChatController extends Controller
             }
 
             $request->validate([
-                'message' => 'required|string|max:500'
+                'message' => 'required|string|max:500',
+                'live_setting_id' => 'nullable|exists:live_settings,id'
             ]);
 
             if (Auth::check()) { $user = Auth::user(); } else { $user = (object) session("external_user"); }
             $messageContent = trim($request->input('message'));
+            $liveSettingId = $request->input('live_setting_id');
 
             // Check for blocked keywords
             $filterResult = $this->keywordFilterService->filterMessage($messageContent);
@@ -78,6 +91,8 @@ class ChatController extends Controller
             $chatMessage = ChatMessage::create([
                 'username' => $user->name ?? $user->account,
                 'message' => $messageContent,
+                'user_id' => Auth::id(),
+                'live_setting_id' => $liveSettingId,
                 'is_blocked' => $filterResult['is_blocked'],
                 'blocked_keywords' => $filterResult['blocked_keywords'],
                 'sent_at' => now()

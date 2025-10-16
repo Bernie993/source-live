@@ -97,6 +97,37 @@
         <div class="card-body">
             <form method="GET" action="{{ route('admin.chat.index') }}">
                 <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="form-group">
+                            <label for="live_setting_id">
+                                <i class="fas fa-broadcast-tower"></i> Phòng Live Stream:
+                            </label>
+                            <select class="form-control" id="live_setting_id" name="live_setting_id">
+                                <option value="">-- Tất cả phòng live --</option>
+                                @foreach($liveSettings as $live)
+                                    <option value="{{ $live->id }}" 
+                                            {{ request('live_setting_id') == $live->id ? 'selected' : '' }}>
+                                        {{ $live->live_title }} 
+                                        @if($live->live_date && $live->live_time)
+                                            - {{ $live->live_date->format('d/m/Y') }} {{ $live->live_time->format('H:i') }}
+                                        @endif
+                                        @if($live->assignedUser)
+                                            (Host: {{ $live->assignedUser->name }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">
+                                @if(Auth::user()->hasRole('Nhân viên Live'))
+                                    <i class="fas fa-info-circle"></i> Bạn chỉ thấy chat từ các phòng live được giao cho bạn
+                                @else
+                                    <i class="fas fa-info-circle"></i> Admin có thể xem tất cả chat từ mọi phòng live
+                                @endif
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="date_from">Từ ngày:</label>
@@ -174,6 +205,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Phòng Live</th>
                                 <th>Tên người dùng</th>
                                 <th>Nội dung</th>
                                 <th>Trạng thái</th>
@@ -185,6 +217,24 @@
                             @foreach($messages as $message)
                             <tr>
                                 <td>{{ $message->id }}</td>
+                                <td>
+                                    @if($message->liveSetting)
+                                        <span class="badge badge-info">
+                                            <i class="fas fa-broadcast-tower"></i>
+                                            {{ Str::limit($message->liveSetting->live_title, 30) }}
+                                        </span>
+                                        @if($message->liveSetting->live_date)
+                                            <br><small class="text-muted">
+                                                {{ $message->liveSetting->live_date->format('d/m/Y') }}
+                                                @if($message->liveSetting->live_time)
+                                                    {{ $message->liveSetting->live_time->format('H:i') }}
+                                                @endif
+                                            </small>
+                                        @endif
+                                    @else
+                                        <span class="badge badge-secondary">Chưa xác định</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <strong>{{ $message->username }}</strong>
                                 </td>
@@ -280,8 +330,8 @@ $(document).ready(function() {
                     // Update statistics
                     updateStatistics();
 
-                    // Add new message to table
-                    if (!isFiltered()) {
+                    // Add new message to table (if not filtered or matches current filter)
+                    if (!isFiltered() || matchesCurrentFilter(data)) {
                         addNewMessageToTable(data);
                     }
 
@@ -339,7 +389,38 @@ $(document).ready(function() {
     function isFiltered() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.has('date_from') || urlParams.has('date_to') ||
-               urlParams.has('status') || urlParams.has('username');
+               urlParams.has('status') || urlParams.has('username') ||
+               urlParams.has('live_setting_id');
+    }
+
+    // Check if message matches current filter
+    function matchesCurrentFilter(data) {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Check live_setting_id filter
+        if (urlParams.has('live_setting_id')) {
+            const filterLiveId = urlParams.get('live_setting_id');
+            if (filterLiveId && data.live_setting_id != filterLiveId) {
+                return false;
+            }
+        }
+        
+        // Check status filter
+        if (urlParams.has('status')) {
+            const statusFilter = urlParams.get('status');
+            if (statusFilter === 'blocked' && !data.is_blocked) return false;
+            if (statusFilter === 'active' && data.is_blocked) return false;
+        }
+        
+        // Check username filter
+        if (urlParams.has('username')) {
+            const usernameFilter = urlParams.get('username').toLowerCase();
+            if (!data.username || !data.username.toLowerCase().includes(usernameFilter)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     // Add new message to table
@@ -364,10 +445,16 @@ $(document).ready(function() {
             ? '<span class="badge badge-danger">Bị chặn</span>'
             : '<span class="badge badge-success">Hoạt động</span>';
 
+        // Create live setting badge
+        const liveSettingBadge = data.live_setting_id
+            ? '<span class="badge badge-info"><i class="fas fa-broadcast-tower"></i> Live #' + data.live_setting_id + '</span>'
+            : '<span class="badge badge-secondary">Chưa xác định</span>';
+
         // Create new row
         const newRow = `
             <tr class="new-message-row" data-id="${data.id}">
                 <td>${data.id}</td>
+                <td>${liveSettingBadge}</td>
                 <td><strong>${data.username}</strong></td>
                 <td>
                     <div style="max-width: 300px; word-wrap: break-word;">

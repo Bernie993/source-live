@@ -32,9 +32,17 @@ class NewChatMessage implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [
-            new Channel('live-chat'),
+        // Broadcast to general live-chat channel AND specific live room channel
+        $channels = [
+            new Channel('live-chat'), // For admin viewing all chats
         ];
+        
+        // If message belongs to a specific live room, also broadcast to that room's channel
+        if ($this->chatMessage->live_setting_id) {
+            $channels[] = new Channel('live-chat.' . $this->chatMessage->live_setting_id);
+        }
+        
+        return $channels;
     }
 
     /**
@@ -54,6 +62,7 @@ class NewChatMessage implements ShouldBroadcast
             'id' => $this->chatMessage->id,
             'username' => $this->chatMessage->username,
             'message' => $this->chatMessage->message,
+            'live_setting_id' => $this->chatMessage->live_setting_id,
             'sent_at' => $this->chatMessage->sent_at->toISOString(),
             'created_at' => $this->chatMessage->created_at->toISOString(),
         ];

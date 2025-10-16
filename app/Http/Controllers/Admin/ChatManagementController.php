@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\User;
+use App\Models\LiveSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ChatMessagesExport;
 
@@ -23,7 +25,34 @@ class ChatManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ChatMessage::query();
+        $query = ChatMessage::with(['liveSetting', 'user']);
+        
+        // Get all live settings for dropdown
+        $liveSettings = LiveSetting::where('is_active', true)
+            ->orderBy('live_date', 'desc')
+            ->orderBy('live_time', 'desc')
+            ->get();
+
+        // If user is Live Staff, only show chats from their assigned live settings
+        if (Auth::user()->hasRole('Nhân viên Live')) {
+            $assignedLiveIds = LiveSetting::where('assigned_to', Auth::id())
+                ->where('is_active', true)
+                ->pluck('id');
+            
+            if ($assignedLiveIds->isNotEmpty()) {
+                $query->whereIn('live_setting_id', $assignedLiveIds);
+                // Filter live settings dropdown to only show assigned ones
+                $liveSettings = $liveSettings->whereIn('id', $assignedLiveIds);
+            } else {
+                // No assigned lives, show empty
+                $query->whereRaw('1 = 0'); // No results
+            }
+        }
+
+        // Lọc theo live stream
+        if ($request->filled('live_setting_id')) {
+            $query->where('live_setting_id', $request->live_setting_id);
+        }
 
         // Lọc theo ngày
         if ($request->filled('date_from')) {
@@ -58,7 +87,7 @@ class ChatManagementController extends Controller
         // Thống kê tổng quan
         $stats = $this->getChatStats($request);
 
-        return view('admin.chat.index', compact('messages', 'stats'));
+        return view('admin.chat.index', compact('messages', 'stats', 'liveSettings'));
     }
 
     /**
@@ -81,7 +110,23 @@ class ChatManagementController extends Controller
     {
         $query = ChatMessage::query();
 
+        // If user is Live Staff, only export chats from their assigned live settings
+        if (Auth::user()->hasRole('Nhân viên Live')) {
+            $assignedLiveIds = LiveSetting::where('assigned_to', Auth::id())
+                ->where('is_active', true)
+                ->pluck('id');
+            
+            if ($assignedLiveIds->isNotEmpty()) {
+                $query->whereIn('live_setting_id', $assignedLiveIds);
+            } else {
+                $query->whereRaw('1 = 0'); // No results
+            }
+        }
+
         // Áp dụng các bộ lọc giống như index
+        if ($request->filled('live_setting_id')) {
+            $query->where('live_setting_id', $request->live_setting_id);
+        }
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
@@ -114,6 +159,24 @@ class ChatManagementController extends Controller
     private function getChatStats(Request $request)
     {
         $baseQuery = ChatMessage::query();
+
+        // If user is Live Staff, only show stats from their assigned live settings
+        if (Auth::user()->hasRole('Nhân viên Live')) {
+            $assignedLiveIds = LiveSetting::where('assigned_to', Auth::id())
+                ->where('is_active', true)
+                ->pluck('id');
+            
+            if ($assignedLiveIds->isNotEmpty()) {
+                $baseQuery->whereIn('live_setting_id', $assignedLiveIds);
+            } else {
+                $baseQuery->whereRaw('1 = 0'); // No results
+            }
+        }
+
+        // Lọc theo live stream nếu có
+        if ($request->filled('live_setting_id')) {
+            $baseQuery->where('live_setting_id', $request->live_setting_id);
+        }
 
         // Áp dụng bộ lọc ngày nếu có
         if ($request->filled('date_from')) {
