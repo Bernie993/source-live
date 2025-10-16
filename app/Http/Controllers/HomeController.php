@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\LiveSetting;
+use App\Models\Post;
 use App\Services\EligibilityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -42,6 +43,22 @@ class HomeController extends Controller
             $liveSetting = LiveSetting::with('assignedUser')->findOrFail($id);
             
             return view('live-room', compact('liveSetting'));
+        }
+
+        /**
+         * Show post detail page
+         *
+         * @param string $slug
+         * @return \Illuminate\View\View
+         */
+        public function showPost($slug)
+        {
+            $post = Post::where('slug', $slug)
+                ->active()
+                ->published()
+                ->firstOrFail();
+            
+            return view('post-detail', compact('post'));
         }
 
         /**

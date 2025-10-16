@@ -15,7 +15,10 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Custom CSS -->
     <style>
@@ -82,6 +85,18 @@
                             @endif
                         </li>
                         @endcan
+                        @role('Admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.menus.index') }}">
+                                <i class="bi bi-menu-button-wide"></i> Quản lý Menu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.posts.index') }}">
+                                <i class="bi bi-file-earmark-text"></i> Quản lý Bài viết
+                            </a>
+                        </li>
+                        @endrole
                     </ul>
 
                     <!-- Right Side Of Navbar -->

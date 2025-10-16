@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\LiveSettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KeywordController;
 use App\Http\Controllers\Admin\ChatManagementController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\LiveStaff\DashboardController as LiveStaffDashboardController;
 use App\Http\Controllers\CSKH\DashboardController as CSKHDashboardController;
@@ -14,6 +16,9 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 // Live Room (open in new tab when clicking "VÀO PHÒNG LIVE")
 Route::get('/live-room/{id}', [App\Http\Controllers\HomeController::class, 'liveRoom'])->name('live.room');
+
+// Public Post View
+Route::get('/posts/{slug}', [App\Http\Controllers\HomeController::class, 'showPost'])->name('posts.show');
 
 // Authentication routes
 Auth::routes();
@@ -47,6 +52,12 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::get('chat-stats', [ChatManagementController::class, 'stats'])->name('chat.stats');
     Route::get('chat-export', [ChatManagementController::class, 'export'])->name('chat.export');
     Route::post('chat/{message}/toggle-block', [ChatManagementController::class, 'toggleBlock'])->name('chat.toggle-block');
+    
+    // Menu management routes
+    Route::resource('menus', MenuController::class);
+    
+    // Post management routes
+    Route::resource('posts', PostController::class);
     
     // Stream management routes
     Route::get('stream', [StreamController::class, 'index'])->name('stream.index');

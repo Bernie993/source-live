@@ -1,12 +1,218 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $liveSetting->live_title ?? 'Live Stream' }} - U888</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <style>
+        body {
+            background: #000000;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
 
-@section('title', 'Phòng Live - U888')
+        /* ============ NEW U888 HEADER DESIGN ============ */
+        .header {
+            background: linear-gradient(180deg, #1F1F1F 0%, #000000 100%);
+            height: 99px;
+            box-shadow: 0px 5px 5.8px 0px rgba(0, 0, 0, 0.55);
+            position: relative;
+            z-index: 1000;
+        }
 
-@push('styles')
-<!-- Swiper CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+        .header .container-fluid {
+            max-width: 1920px;
+            height: 100%;
+            padding: 0 40px;
+        }
 
-<style>
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            gap: 40px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-u888 {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-u888:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-u888 img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .tagline {
+            color: #FF4500;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-left: 10px;
+            text-shadow: 0 0 8px rgba(255, 69, 0, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover {
+            color: #FF4500;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FF4500;
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        .nav-item.active {
+            color: #FF4500;
+        }
+
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #FF4500 0%, #FF6347 100%);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .dropdown-menu {
+            background: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #FF4500;
+            color: white;
+        }
+
+        /* ============ NOTIFICATION BANNER ============ */
+        .notification-banner {
+            background: linear-gradient(90deg, #FF4500 0%, #FF6347 100%);
+            padding: 10px 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 999;
+        }
+
+        .notification-icon {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .notification-text {
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        #notification-scroll {
+            display: inline-block;
+            animation: scroll-left 25s linear infinite;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ============ LIVE ROOM LAYOUT ============ */
         .live-room-section {
             max-width: 1920px;
             margin: 0 auto;
@@ -838,10 +1044,77 @@
                 padding: 30px 15px;
             }
         }
-</style>
-@endpush
+    </style>
+    @vite(['resources/js/app.js'])
+    <!-- HLS.js for HLS stream support -->
+    <script src="{{ asset('js/hls.min.js') }}"></script>
+</head>
+<body>
+    <!-- U888 Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="header-content">
+                <!-- Left: Logo + Menu -->
+                <div class="header-left">
+                    <div class="logo-container">
+                        <!-- U888 Logo Image -->
+                        <a href="/" class="logo-u888">
+                            <img src="{{ asset('images/u888-abcvip-(2) 1.png') }}" alt="U888 - ABC VIP">
+                        </a>
+                    </div>
 
-@section('content')
+                    <!-- Navigation Menu -->
+                    <nav class="nav-menu">
+                        <a href="/" class="nav-item">Trang chủ</a>
+                        <a href="#" class="nav-item">Quà tặng</a>
+                        <a href="#" class="nav-item">Tải APP</a>
+                        <a href="#" class="nav-item">Nhận Code</a>
+                        <a href="#" class="nav-item">Phần hồi</a>
+                    </nav>
+                </div>
+
+                <!-- Right: Login Button -->
+                <div class="header-right">
+                    @guest
+                        <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            Đăng nhập
+                        </button>
+                    @else
+                        <div class="dropdown">
+                            <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-2"></i>{{ Auth::user()->name }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Thông tin</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    @endguest
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Banner -->
+    <div class="notification-banner">
+        <img src="{{ asset('images/image_2025-07-05_16-38-07 1.png') }}" alt="Notification" class="notification-icon">
+        <div class="notification-text">
+            <span id="notification-scroll">
+                🎁 THỂ THAO BẢO HIỂM CƯỢC THUA LÊN ĐẾN 5% 🎁 THỂ THAO THẮNG LIÊN TIẾP NHẬN THƯỞNG LÊN ĐẾN 8.888K 🎁 HÃY CÙNG BẠN BÈ THAM GIA ABC8 VÀ NHẬN THƯỞNG NHÉ 🎁
+            </span>
+        </div>
+    </div>
+
+    <!-- Live Room Section (Video + Chat) -->
     <div class="live-room-section">
         <div class="live-room-grid">
             <!-- Video Player Section (Left) -->
@@ -972,13 +1245,46 @@
         </div>
     </div>
 
-@endsection
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Đăng Nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="j88-logo">J88</div>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="accountName" class="form-label">Tên tài khoản</label>
+                            <input type="text" class="form-control" id="accountName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">4 số cuối tài khoản ngân hàng</label>
+                            <div class="bank-account-inputs">
+                                <input type="text" class="bank-digit" maxlength="1" required>
+                                <input type="text" class="bank-digit" maxlength="1" required>
+                                <input type="text" class="bank-digit" maxlength="1" required>
+                                <input type="text" class="bank-digit" maxlength="1" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-confirm">
+                            <span class="btn-text">Xác Nhận</span>
+                            <span class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Đang xử lý...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-@push('scripts')
-<!-- HLS.js -->
-<script src="{{ asset('js/hls.min.js') }}"></script>
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
         // Initialize HLS Video Player
@@ -987,7 +1293,7 @@
 
         console.log('🎬 Initializing video player with URL:', playUrl);
 
-        if (Hls.isSupported() && (playUrl.includes('.m3u8') || playUrl.includes('.flv'))) {
+        if (Hls.isSupported() && playUrl.includes('.m3u8')) {
             const hls = new Hls({
                 enableWorker: true,
                 lowLatencyMode: true,
@@ -1051,18 +1357,13 @@
             // Try to use Echo for realtime
             if (typeof Echo !== 'undefined') {
                 try {
-                    const liveId = {{ $liveSetting->id }};
-                    // Listen to this specific live room's channel
-                    Echo.channel(`live-chat.${liveId}`)
+                    Echo.channel('live-chat')
                         .listen('.new-message', function(data) {
-                            console.log('📨 New message via Echo for live room ' + liveId + ':', data);
-                            // Only add message if it belongs to this live room
-                            if (data.live_setting_id == liveId) {
-                                addMessageToChat(data);
-                                isRealtimeActive = true;
-                            }
+                            console.log('📨 New message via Echo:', data);
+                            addMessageToChat(data);
+                            isRealtimeActive = true;
                         });
-                    console.log('✅ Echo realtime listener set up for live room ' + liveId);
+                    console.log('✅ Echo realtime listener set up');
                 } catch (error) {
                     console.warn('⚠️ Echo setup failed:', error);
                     startPolling();
@@ -1085,8 +1386,7 @@
         }
 
         function loadNewMessages() {
-            const liveId = {{ $liveSetting->id }};
-            fetch(`/api/chat/messages?after=${lastMessageId}&live_setting_id=${liveId}`)
+            fetch('/api/chat/messages?after=' + lastMessageId)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.messages && data.messages.length > 0) {
@@ -1101,8 +1401,7 @@
         }
 
         function loadChatMessages() {
-            const liveId = {{ $liveSetting->id }};
-            fetch(`/api/chat/messages?live_setting_id=${liveId}`)
+            fetch('/api/chat/messages')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.messages) {
@@ -1116,7 +1415,6 @@
         function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
-            const liveId = {{ $liveSetting->id }};
 
             if (!message) return;
 
@@ -1131,10 +1429,7 @@
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({
-                    message: message,
-                    live_setting_id: liveId
-                })
+                body: JSON.stringify({ message: message })
             })
                 .then(response => {
                     if (response.status === 401) {
@@ -1445,4 +1740,5 @@
             });
         });
     </script>
-@endpush
+</body>
+</html>

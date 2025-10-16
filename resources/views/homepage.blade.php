@@ -1071,51 +1071,80 @@
             </div>
         </div>
 
-        <!-- News Grid -->
+        <!-- News Grid (Dynamic from Database) -->
         <div class="news-grid">
-            <!-- Main News (Left) -->
-            <div class="news-main">
-                <img src="{{ asset('images/738x512 4.png') }}" alt="Sinh Nhật Vàng - MEGALIVE Rinh Xe Sang">
-            </div>
-
-            <!-- News List (Right) -->
-            <div class="news-list">
-                <div class="news-item">
-                    <div class="news-item-image">
-                        <img src="{{ asset('images/738x512 3.png') }}" alt="News 1">
-                    </div>
-                    <div class="news-item-content">
-                        <h3 class="news-item-title">SINH NHẬT VÀNG - MEGALIVE RINH XE SANG</h3>
-                        <p class="news-item-description">
-                            Chào mừng sinh nhật đặc biệt, chương trình MEGALIVE hoành tráng trở lại với hàng loạt quà tặng giá trị! Đừng bỏ lỡ cơ hội nhận ngay chiếc xe sang đẳng cấp, cùng hàng ngàn phần quà hấp dẫn khác. Chỉ cần tham gia livestream, bạn có thể trở thành chủ nhân may mắn tiếp theo. Hãy cùng chúng tôi đón sinh nhật tưng bừng - quà rinh liền tay!
-                        </p>
-                    </div>
+            @if(isset($mainPost) && $mainPost)
+                <!-- Main News (Left) - Latest Post -->
+                <div class="news-main">
+                    <a href="{{ route('posts.show', $mainPost->slug) }}">
+                        @if($mainPost->featured_image)
+                            <img src="{{ asset('storage/' . $mainPost->featured_image) }}" 
+                                 alt="{{ $mainPost->title }}"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        @else
+                            <img src="{{ asset('images/738x512 4.png') }}" alt="{{ $mainPost->title }}">
+                        @endif
+                    </a>
                 </div>
 
-                <div class="news-item">
-                    <div class="news-item-image">
-                        <img src="{{ asset('images/738x512 3.png') }}" alt="News 2">
-                    </div>
-                    <div class="news-item-content">
-                        <h3 class="news-item-title">SINH NHẬT VÀNG - MEGALIVE RINH XE SANG</h3>
-                        <p class="news-item-description">
-                            Chào mừng sinh nhật đặc biệt, chương trình MEGALIVE hoành tráng trở lại với hàng loạt quà tặng giá trị! Đừng bỏ lỡ cơ hội nhận ngay chiếc xe sang đẳng cấp, cùng hàng ngàn phần quà hấp dẫn khác. Chỉ cần tham gia livestream, bạn có thể trở thành chủ nhân may mắn tiếp theo. Hãy cùng chúng tôi đón sinh nhật tưng bừng - quà rinh liền tay!
-                        </p>
+                <!-- News List (Right) - Other Posts -->
+                <div class="news-list">
+                    @if(isset($sidePosts) && $sidePosts->count() > 0)
+                        @foreach($sidePosts as $post)
+                        <div class="news-item">
+                            <div class="news-item-image">
+                                <a href="{{ route('posts.show', $post->slug) }}">
+                                    @if($post->featured_image)
+                                        <img src="{{ asset('storage/' . $post->featured_image) }}" 
+                                             alt="{{ $post->title }}"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    @else
+                                        <img src="{{ asset('images/738x512 3.png') }}" alt="{{ $post->title }}">
+                                    @endif
+                                </a>
+                            </div>
+                            <div class="news-item-content">
+                                <h3 class="news-item-title">
+                                    <a href="{{ route('posts.show', $post->slug) }}" style="color: inherit; text-decoration: none;">
+                                        {{ $post->title }}
+                                    </a>
+                                </h3>
+                                <p class="news-item-description">
+                                    {{ $post->short_description ?? Str::limit(strip_tags($post->content), 200) }}
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
+                    @else
+                        <!-- Fallback if no side posts -->
+                        <div class="news-item">
+                            <div class="news-item-image">
+                                <img src="{{ asset('images/738x512 3.png') }}" alt="News">
+                            </div>
+                            <div class="news-item-content">
+                                <h3 class="news-item-title">Chưa có tin tức</h3>
+                                <p class="news-item-description">Vui lòng quay lại sau để xem tin tức mới nhất!</p>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @else
+                <!-- Fallback if no posts -->
+                <div class="news-main">
+                    <img src="{{ asset('images/738x512 4.png') }}" alt="No News">
+                </div>
+                <div class="news-list">
+                    <div class="news-item">
+                        <div class="news-item-image">
+                            <img src="{{ asset('images/738x512 3.png') }}" alt="News">
+                        </div>
+                        <div class="news-item-content">
+                            <h3 class="news-item-title">Chưa có tin tức</h3>
+                            <p class="news-item-description">Hãy tạo bài viết đầu tiên trong Admin Panel!</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="news-item">
-                    <div class="news-item-image">
-                        <img src="{{ asset('images/738x512 3.png') }}" alt="News 3">
-                    </div>
-                    <div class="news-item-content">
-                        <h3 class="news-item-title">SINH NHẬT VÀNG - MEGALIVE RINH XE SANG</h3>
-                        <p class="news-item-description">
-                            Chào mừng sinh nhật đặc biệt, chương trình MEGALIVE hoành tráng trở lại với hàng loạt quà tặng giá trị! Đừng bỏ lỡ cơ hội nhận ngay chiếc xe sang đẳng cấp, cùng hàng ngàn phần quà hấp dẫn khác. Chỉ cần tham gia livestream, bạn có thể trở thành chủ nhân may mắn tiếp theo. Hãy cùng chúng tôi đón sinh nhật tưng bừng - quà rinh liền tay!
-                        </p>
-                    </div>
-                </div>
-            </div>
+            @endif
         </div>
     </div>
 

@@ -11,13 +11,24 @@
                     </a>
                 </div>
 
-                <!-- Navigation Menu -->
+                <!-- Navigation Menu (Dynamic from Database) -->
                 <nav class="nav-menu">
-                    <a href="/" class="nav-item {{ Request::is('/') ? 'active' : '' }}">Trang chủ</a>
-                    <a href="#" class="nav-item">Quà tặng</a>
-                    <a href="#" class="nav-item">Tải APP</a>
-                    <a href="#" class="nav-item">Nhận Code</a>
-                    <a href="#" class="nav-item">Phần hồi</a>
+                    @if(isset($headerMenus) && $headerMenus->count() > 0)
+                        @foreach($headerMenus as $menu)
+                            <a href="{{ $menu->link }}" 
+                               class="nav-item {{ Request::is(trim($menu->link, '/')) ? 'active' : '' }}"
+                               @if(str_starts_with($menu->link, 'http'))
+                                   target="_blank"
+                               @endif>
+                                {{ $menu->text }}
+                            </a>
+                        @endforeach
+                    @else
+                        <!-- Fallback menu if no menus in database -->
+                        <a href="/" class="nav-item {{ Request::is('/') ? 'active' : '' }}">Trang chủ</a>
+                        <a href="#" class="nav-item">Quà tặng</a>
+                        <a href="#" class="nav-item">Tải APP</a>
+                    @endif
                 </nav>
             </div>
 

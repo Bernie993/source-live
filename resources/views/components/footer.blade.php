@@ -19,25 +19,62 @@
                 </div>
             </div>
 
-            <!-- Column 2: Menu Links (2 rows) -->
+            <!-- Column 2: Menu Links (Dynamic from Database) -->
             <div class="footer-column footer-center">
                 <nav class="footer-menu">
-                    <!-- Row 1 -->
-                    <div class="footer-menu-row">
-                        <a href="#" class="footer-menu-item">Điều khoản và điều kiện</a>
-                        <span class="footer-separator">|</span>
-                        <a href="#" class="footer-menu-item">Giới thiệu</a>
-                        <span class="footer-separator">|</span>
-                        <a href="#" class="footer-menu-item">Chơi có trách nhiệm</a>
-                        <span class="footer-separator">|</span>
-                        <a href="#" class="footer-menu-item">Miễn trừ trách nhiệm</a>
-                    </div>
-                    <!-- Row 2 -->
-                    <div class="footer-menu-row">
-                        <a href="#" class="footer-menu-item">Quyền riêng tư</a>
-                        <span class="footer-separator">|</span>
-                        <a href="#" class="footer-menu-item">Những câu hỏi thường gặp</a>
-                    </div>
+                    @if(isset($footerMenus) && $footerMenus->count() > 0)
+                        <?php
+                            // Split menus into 2 rows for better layout
+                            $half = ceil($footerMenus->count() / 2);
+                            $row1 = $footerMenus->take($half);
+                            $row2 = $footerMenus->slice($half);
+                        ?>
+                        
+                        <!-- Row 1 (First half) -->
+                        @if($row1->count() > 0)
+                        <div class="footer-menu-row">
+                            @foreach($row1 as $index => $menu)
+                                <a href="{{ $menu->link }}" 
+                                   class="footer-menu-item"
+                                   @if(str_starts_with($menu->link, 'http'))
+                                       target="_blank"
+                                   @endif>
+                                    {{ $menu->text }}
+                                </a>
+                                @if(!$loop->last)
+                                    <span class="footer-separator">|</span>
+                                @endif
+                            @endforeach
+                        </div>
+                        @endif
+                        
+                        <!-- Row 2 (Second half) -->
+                        @if($row2->count() > 0)
+                        <div class="footer-menu-row">
+                            @foreach($row2 as $index => $menu)
+                                <a href="{{ $menu->link }}" 
+                                   class="footer-menu-item"
+                                   @if(str_starts_with($menu->link, 'http'))
+                                       target="_blank"
+                                   @endif>
+                                    {{ $menu->text }}
+                                </a>
+                                @if(!$loop->last)
+                                    <span class="footer-separator">|</span>
+                                @endif
+                            @endforeach
+                        </div>
+                        @endif
+                    @else
+                        <!-- Fallback menu if no menus in database -->
+                        <div class="footer-menu-row">
+                            <a href="#" class="footer-menu-item">Điều khoản và điều kiện</a>
+                            <span class="footer-separator">|</span>
+                            <a href="#" class="footer-menu-item">Giới thiệu</a>
+                            <span class="footer-separator">|</span>
+                            <a href="#" class="footer-menu-item">Quyền riêng tư</a>
+                        </div>
+                    @endif
                 </nav>
             </div>
 
