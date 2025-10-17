@@ -751,8 +751,8 @@
         }
 
         /* Responsive */
-        /* Tablet: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .promo-banner-section {
                 padding: 30px 15px 50px;
             }
@@ -1194,8 +1194,8 @@
             }
         }
 
-        /* Tablet Portrait: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet Portrait: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .live-room-section {
                 padding: 25px 15px;
             }

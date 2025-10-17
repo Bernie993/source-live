@@ -365,8 +365,8 @@
         }
 
         /* Responsive */
-        /* Tablet: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet: 768px - 1024px (bao gồm iPad Mini) */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .header {
                 height: 80px;
             }
@@ -570,8 +570,8 @@
             display: inline-block;
         }
 
-        /* Tablet Responsive for Login Modal: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet Responsive for Login Modal: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .modal-content.login-modal-custom {
                 max-width: 480px;
                 padding: 35px;
@@ -802,8 +802,8 @@
             display: block;
         }
 
-        /* Tablet: Ensure desktop menu shows */
-        @media (min-width: 769px) {
+        /* Tablet: Ensure desktop menu shows (bao gồm iPad Mini) */
+        @media (min-width: 768px) {
             .hamburger-menu {
                 display: none !important;
             }

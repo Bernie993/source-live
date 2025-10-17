@@ -244,8 +244,8 @@
             }
         }
 
-        /* Tablet Portrait & Landscape: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet Portrait & Landscape: 768px - 1024px (bao gồm iPad Mini) */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .live-streams-section {
                 padding: 15px 15px 10px;
             }
@@ -558,8 +558,8 @@
         }
 
         /* Responsive */
-        /* Tablet: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .promo-banner-section {
                 padding: 15px 15px 30px;
             }
@@ -804,8 +804,8 @@
             }
         }
 
-        /* Tablet Portrait & Landscape: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet Portrait & Landscape: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .news-section {
                 padding: 15px 15px 10px;
             }
@@ -954,8 +954,8 @@
             display: block;
         }
 
-        /* Tablet: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .app-download-section {
                 padding: 15px 15px 20px;
             }
@@ -1307,8 +1307,8 @@
             cursor: pointer;
         }
 
-        /* Tablet Responsive for Modal and Forms: 769px - 1024px */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet Responsive for Modal and Forms: 768px - 1024px */
+        @media (min-width: 768px) and (max-width: 1024px) {
             .modal-dialog {
                 max-width: 500px;
                 margin: 1.75rem auto;
