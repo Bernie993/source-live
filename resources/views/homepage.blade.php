@@ -45,12 +45,14 @@
         }
 
         .live-overlay {
+            background: url({{ asset('images/738x512%204.png') }});
+            background-repeat: no-repeat;
+            background-size: cover;
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1075,7 +1077,13 @@
             <div class="main-live-box" id="main-live-box">
                 <div class="main-live-content" id="main-live-content">
                     <!-- Default placeholder image -->
-                    <img src="{{ asset('images/738x512 3.png') }}" alt="Live Stream" id="main-live-image">
+                    <video id="home-video-player"
+                           autoplay
+                           muted
+                           loop
+                           playsinline
+                           style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                    </video>
 
                     <!-- Overlay with button/info -->
                     <div class="live-overlay" id="main-live-overlay">
@@ -1359,8 +1367,6 @@
     let currentLiveData = null;
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Homepage initializing...');
-
         // Initialize Swiper for Promotional Banners - Always show 3 slides
         const promoSwiper = new Swiper('.promoSwiper', {
             slidesPerView: 3,
@@ -1394,7 +1400,6 @@
                 },
             },
         });
-        console.log('✅ Swiper initialized');
 
         // Initialize Bootstrap Dropdown
         if (typeof bootstrap !== 'undefined') {
@@ -1409,70 +1414,110 @@
     });
 
     function initializeApp() {
-        console.log('📱 Initializing app...');
         loadAllLiveStreams();
     }
 
     function loadAllLiveStreams() {
-        console.log('🔄 Loading live streams...');
         fetch('/api/live/all-streams')
             .then(response => response.json())
             .then(data => {
-                console.log('📺 Live streams API response:', data);
-
                 if (data.success) {
-                    // Update main live display
                     if (data.main_live) {
-                        console.log('🎯 Main live:', data.main_live);
-                        console.log('🕐 Is live now?', data.main_live.is_live_now);
-                        console.log('⏰ Minutes until live:', data.main_live.minutes_until_live);
                         updateMainLiveDisplay(data.main_live);
                     } else {
-                        console.warn('⚠️ No main live found');
+                        playAdsWhenNoLive();
                     }
 
-                    // Update side live boxes
                     if (data.other_lives && data.other_lives.length > 0) {
-                        console.log('📋 Other lives:', data.other_lives);
                         updateSideLiveBoxes(data.other_lives);
                     }
-                } else {
-                    console.error('❌ API returned success: false');
                 }
             })
             .catch(error => {
-                console.error('❌ Error loading live streams:', error);
+                playAdsWhenNoLive();
             });
     }
 
+    function playAdsWhenNoLive() {
+        const videoPlayer = document.getElementById('home-video-player');
+        const playAds = '{{ asset('images/advertise.mp4') }}';
+
+        if (videoPlayer) {
+            videoPlayer.style.display = 'block';
+            videoPlayer.src = playAds;
+            videoPlayer.loop = true;
+            videoPlayer.play().catch(e => {});
+        }
+    }
+
     function updateMainLiveDisplay(liveData) {
-        console.log('🎬 Updating main live display with data:', liveData);
         currentLiveData = liveData;
+
         const btnEnterLive = document.getElementById('btn-enter-live');
-        const mainLiveImage = document.getElementById('main-live-image');
+        const videoPlayer = document.getElementById('home-video-player');
+        const liveOverlay = document.getElementById('main-live-overlay');
+        const playAds = '{{ asset("images/advertise.mp4") }}';
 
-        console.log('🔘 Button element:', btnEnterLive);
+        if (!liveData) {
+            if (videoPlayer) {
+                videoPlayer.style.display = 'block';
+                videoPlayer.src = playAds;
+                videoPlayer.loop = true;
+                videoPlayer.play().catch(e => {});
+            }
 
-        // Always show button if there's a live setting
-        if (btnEnterLive && liveData) {
-            console.log('✅ Showing button');
-            btnEnterLive.style.display = 'block';
-            btnEnterLive.onclick = function() {
-                enterLiveRoom(liveData);
-            };
+            if (liveOverlay) {
+                liveOverlay.style.display = 'none';
+            }
 
-            // Update button text based on live status
-            if (liveData.is_live_now) {
+            return;
+        }
+
+        const now = new Date();
+        const liveDateTime = new Date(liveData.live_datetime);
+        const isActuallyLiveNow = now >= liveDateTime;
+
+        if (isActuallyLiveNow) {
+            if (videoPlayer) {
+                videoPlayer.style.display = 'none';
+                videoPlayer.pause();
+                videoPlayer.src = '';
+            }
+
+            if (liveOverlay) {
+                liveOverlay.style.display = 'flex';
+            }
+
+            if (btnEnterLive) {
+                btnEnterLive.style.display = 'block';
                 btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
                 btnEnterLive.classList.add('live-active');
-                console.log('🔴 Live is active now!');
-            } else {
-                btnEnterLive.textContent = 'VÀO PHÒNG LIVE';
-                btnEnterLive.classList.remove('live-active');
-                console.log('⏰ Live scheduled for:', liveData.live_time);
+                btnEnterLive.onclick = function() {
+                    enterLiveRoom(liveData);
+                };
             }
+
         } else {
-            console.warn('⚠️ Cannot show button - btnEnterLive:', btnEnterLive, 'liveData:', liveData);
+            if (videoPlayer) {
+                videoPlayer.style.display = 'block';
+                videoPlayer.src = playAds;
+                videoPlayer.loop = true;
+                videoPlayer.play().catch(e => {});
+            }
+
+            if (liveOverlay) {
+                liveOverlay.style.display = 'none';
+            }
+
+            const checkInterval = setInterval(() => {
+                const nowCheck = new Date();
+                const liveTimeCheck = new Date(liveData.live_datetime);
+
+                if (nowCheck >= liveTimeCheck) {
+                    clearInterval(checkInterval);
+                    updateMainLiveDisplay(liveData);
+                }
+            }, 5000);
         }
     }
 
@@ -1507,14 +1552,12 @@
                         if (badgeIcon) {
                             badgeIcon.className = 'fas fa-circle';
                         }
-                        console.log(`✅ Live ${index} is LIVE NOW!`);
                     } else {
                         badge.classList.remove('live-now');
                         badgeText.textContent = 'Sắp diễn ra';
                         if (badgeIcon) {
                             badgeIcon.className = 'fas fa-clock';
                         }
-                        console.log(`⏰ Live ${index} scheduled for:`, live.live_time);
                     }
                 }
 
@@ -1530,7 +1573,6 @@
     }
 
     function enterLiveRoom(liveData) {
-        console.log('🎬 Entering live room:', liveData);
         const liveRoomUrl = `{{ url('/live-room') }}/${liveData.id}`;
         window.location.href = liveRoomUrl;
     }

@@ -285,8 +285,8 @@
             box-shadow: 0 10px 40px rgba(255, 69, 0, 0.5);
             display: flex;
             flex-direction: column;
-            height: 100%;
             overflow: hidden;
+            height: 658px;
         }
 
         .chat-header-wrapper {
@@ -540,6 +540,11 @@
 
         .login-required .btn-login {
             margin-top: 15px;
+        }
+
+        .login-required span {
+            margin-left: 10px;
+
         }
 
         /* ============ PROMOTIONAL BANNER SLIDER ============ */
@@ -1027,11 +1032,21 @@
             }
 
             .chat-section {
-                height: 400px;
+                height: 667px;
             }
 
             .news-grid {
                 grid-template-columns: 1fr;
+            }
+            .chat-section-not-start-mobile {
+                height: 225px;
+            }
+            .login-required {
+                padding: 20px 18px;
+                text-align: center;
+                color: white;
+                background: rgba(0, 0, 0, 0.2);
+                font-size: 15px;
             }
         }
 
@@ -1236,10 +1251,10 @@
 @endsection
 
 @push('scripts')
-<!-- HLS.js for .m3u8 files -->
-<script src="{{ asset('js/hls.min.js') }}"></script>
 <!-- FLV.js for .flv files -->
 <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
+<!-- HLS.js for .m3u8 files -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
@@ -1249,16 +1264,79 @@
             const video = document.getElementById('live-video-player');
             const playUrlFlv = '{{ $liveSetting->play_url_flv ?? '' }}';
             const playUrlM3u8 = '{{ $liveSetting->play_url_m3u8 ?? '' }}';
-            
+            const playAds = '{{ asset('images/advertise.mp4') }}';
+
             let flvPlayer = null;
             let hls = null;
 
-            // Function to load M3U8 as fallback
-            function loadM3u8Fallback() {
-                if (!playUrlM3u8) return;
+            // Kiểm tra thời gian live
+            const liveStartTimeStr = '{{ $liveSetting->live_date->format('Y-m-d') }} {{ $liveSetting->live_time->format('H:i:s') }}';
+            const liveStartTime = new Date(liveStartTimeStr.replace(' ', 'T'));
+            const now = new Date();
+            const isLiveStarted = now >= liveStartTime;
+
+            function playAdvertisement() {
+                video.src = playAds;
+                video.loop = true;
+                video.play().catch(e => {});
+            }
+
+            // Function để chuyển sang live stream
+            function switchToLiveStream() {
+                video.loop = false;
+                video.src = '';
+
+                // Try M3U8 FIRST (more stable), fallback to FLV
+                if (playUrlM3u8) {
+                    loadM3u8Stream();
+                } else if (playUrlFlv && typeof flvjs !== 'undefined' && flvjs.isSupported()) {
+                    try {
+                        flvPlayer = flvjs.createPlayer({
+                            type: 'flv',
+                            url: playUrlFlv,
+                            isLive: true,
+                            hasAudio: true,
+                            hasVideo: true
+                        }, {
+                            enableWorker: true,
+                            enableStashBuffer: false,
+                            stashInitialSize: 128,
+                            lazyLoad: false,
+                            autoCleanupSourceBuffer: true
+                        });
+
+                        flvPlayer.attachMediaElement(video);
+                        flvPlayer.load();
+
+                        video.addEventListener('loadedmetadata', function() {
+                            video.play().catch(e => {});
+                        });
+
+                        flvPlayer.on(flvjs.Events.ERROR, function(errorType, errorDetail) {
+                            if (flvPlayer) {
+                                flvPlayer.destroy();
+                                flvPlayer = null;
+                            }
+                            loadM3u8Stream();
+                        });
+                    } catch (e) {
+                        if (flvPlayer) {
+                            flvPlayer.destroy();
+                            flvPlayer = null;
+                        }
+                        loadM3u8Stream();
+                    }
+                }
+            }
+
+            // Function to load M3U8 stream
+            function loadM3u8Stream() {
+                if (!playUrlM3u8) {
+                    return;
+                }
 
                 // Use HLS.js for .m3u8 files
-                if (Hls.isSupported()) {
+                if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                     hls = new Hls({
                         enableWorker: true,
                         lowLatencyMode: true,
@@ -1296,50 +1374,19 @@
                 }
             }
 
-            // Try FLV first, fallback to M3U8 if not supported
-            if (playUrlFlv && flvjs.isSupported()) {
-                try {
-                    flvPlayer = flvjs.createPlayer({
-                        type: 'flv',
-                        url: playUrlFlv,
-                        isLive: true,
-                        hasAudio: true,
-                        hasVideo: true
-                    }, {
-                        enableWorker: true,
-                        enableStashBuffer: false,
-                        stashInitialSize: 128,
-                        lazyLoad: false,
-                        autoCleanupSourceBuffer: true
-                    });
+            // Khởi chạy video player
+            if (!isLiveStarted) {
+                playAdvertisement();
 
-                    flvPlayer.attachMediaElement(video);
-                    flvPlayer.load();
-
-                    video.addEventListener('loadedmetadata', function() {
-                        video.play().catch(e => {});
-                    });
-
-                    // Listen for FLV errors and fallback to M3U8
-                    flvPlayer.on(flvjs.Events.ERROR, function(errorType, errorDetail) {
-                        if (flvPlayer) {
-                            flvPlayer.destroy();
-                            flvPlayer = null;
-                        }
-                        // Fallback to M3U8
-                        loadM3u8Fallback();
-                    });
-                } catch (e) {
-                    // If FLV fails to initialize, fallback to M3U8
-                    if (flvPlayer) {
-                        flvPlayer.destroy();
-                        flvPlayer = null;
+                const checkLiveInterval = setInterval(() => {
+                    const currentTime = new Date();
+                    if (currentTime >= liveStartTime) {
+                        clearInterval(checkLiveInterval);
+                        switchToLiveStream();
                     }
-                    loadM3u8Fallback();
-                }
+                }, 1000);
             } else {
-                // FLV not supported or no FLV URL, use M3U8
-                loadM3u8Fallback();
+                switchToLiveStream();
             }
 
         // Chat functionality - prevent double initialization
@@ -1347,19 +1394,13 @@
             return;
         }
         window.chatInitialized = true;
-        
+
         const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
         const currentUser = @json(Auth::user());
         let lastMessageId = 0;
         let isRealtimeActive = false;
         const addedMessageIds = new Set(); // Track all added message IDs to prevent duplicates
 
-        // Live stream time information - Use timestamp to avoid timezone issues
-        const liveStartTimeStr = '{{ $liveSetting->live_date->format('Y-m-d') }} {{ $liveSetting->live_time->format('H:i:s') }}';
-        // Parse as local time to match server timezone
-        const liveStartTime = new Date(liveStartTimeStr.replace(' ', 'T'));
-        const now = new Date();
-        const isLiveStarted = now >= liveStartTime;
 
         // Check if chat is allowed
         function isChatAllowed() {
@@ -1373,13 +1414,16 @@
             const chatForm = document.getElementById('chat-form');
             const sendBtn = document.querySelector('.chat-send-btn');
             const chatNotStartedMessage = document.getElementById('chat-not-started-message');
+            const chatSection = document.querySelector('.chat-section');
             const liveStartTimeSpan = document.getElementById('live-start-time');
             const allowed = isChatAllowed();
 
             if (!allowed) {
+                console.log(chatSection);
                 // Show "chat not started" message
                 if (chatNotStartedMessage) {
                     chatNotStartedMessage.style.display = 'flex';
+                    chatSection.classList.add('chat-section-not-start-mobile');
                     if (liveStartTimeSpan) {
                         liveStartTimeSpan.textContent = liveStartTime.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
                     }
@@ -1713,7 +1757,6 @@
             .then(data => {
                 if (data.success && data.viewer_count !== undefined) {
                     document.getElementById('live-viewer-count').textContent = data.viewer_count;
-                    console.log('👥 Viewers:', data.viewer_count);
                 }
             })
             .catch(error => {

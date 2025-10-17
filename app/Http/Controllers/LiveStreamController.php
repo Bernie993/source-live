@@ -188,8 +188,9 @@ class LiveStreamController extends Controller
                         $live->live_time->format('H:i:s')
                     );
                     
-                    // Check if live is happening now (30 min before to 4 hours after)
-                    $liveStartTime = $liveDateTime->copy()->subMinutes(30);
+                    // Check if live is happening now (from scheduled time to 4 hours after)
+                    // KHÔNG trừ 30 phút nữa - chỉ tính từ đúng giờ live
+                    $liveStartTime = $liveDateTime->copy(); // Bắt đầu từ ĐÚNG giờ
                     $liveEndTime = $liveDateTime->copy()->addHours(4);
                     $isLiveNow = $now->gte($liveStartTime) && $now->lte($liveEndTime);
                     
