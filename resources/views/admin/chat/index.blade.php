@@ -8,11 +8,27 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý Chat</h1>
         <div>
-            <a href="{{ route('admin.chat.export', request()->query()) }}" class="btn btn-success btn-sm">
-                <i class="fas fa-file-excel"></i> Xuất Excel
-            </a>
+            @if(Auth::user()->hasRole('Nhân viên Live'))
+                <a href="{{ route('live-staff.chat.export', request()->query()) }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel"></i> Xuất Excel (Từ lúc bắt đầu Live)
+                </a>
+            @else
+                <a href="{{ route('admin.chat.export', request()->query()) }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </a>
+            @endif
         </div>
     </div>
+
+    @if(Auth::user()->hasRole('Nhân viên Live'))
+    <!-- Info for Live Staff -->
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Lưu ý:</strong> Khi xuất Excel, bạn chỉ có thể xuất tin nhắn từ thời điểm bắt đầu live stream đến hiện tại. 
+        Vui lòng chọn phòng live trước khi xuất file.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
 
     <!-- Statistics Cards -->
     <div class="row mb-4">

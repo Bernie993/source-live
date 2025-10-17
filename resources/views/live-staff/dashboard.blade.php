@@ -34,9 +34,9 @@
                     <div class="col-md-6">
                         @if($liveSetting->isAccessible())
                             <div class="d-grid gap-2">
-                                <a href="{{ $liveSetting->live_url }}" target="_blank" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-link-45deg"></i> Link OBS/Stream
-                                </a>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="copyStreamUrl('{{ $liveSetting->live_url }}')">
+                                    <i class="bi bi-link-45deg"></i> <span id="copyBtnText">Link OBS/Stream</span>
+                                </button>
                                 <a href="{{ route('live.room', $liveSetting->id) }}" target="_blank" class="btn btn-success btn-lg">
                                     <i class="bi bi-play-circle"></i> Vào Phòng Live
                                 </a>
@@ -160,4 +160,57 @@
         </div>
     </div>
 </div>
+
+<script>
+    function copyStreamUrl(url) {
+        // Use Clipboard API if available
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(function() {
+                // Success
+                const btnText = document.getElementById('copyBtnText');
+                const originalText = btnText.innerHTML;
+                btnText.innerHTML = 'Đã Copy!';
+                btnText.parentElement.classList.add('btn-success');
+                btnText.parentElement.classList.remove('btn-primary');
+                
+                setTimeout(function() {
+                    btnText.innerHTML = originalText;
+                    btnText.parentElement.classList.remove('btn-success');
+                    btnText.parentElement.classList.add('btn-primary');
+                }, 2000);
+            }).catch(function(err) {
+                alert('Không thể copy link. Vui lòng thử lại!');
+            });
+        } else {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                const btnText = document.getElementById('copyBtnText');
+                const originalText = btnText.innerHTML;
+                btnText.innerHTML = 'Đã Copy!';
+                btnText.parentElement.classList.add('btn-success');
+                btnText.parentElement.classList.remove('btn-primary');
+                
+                setTimeout(function() {
+                    btnText.innerHTML = originalText;
+                    btnText.parentElement.classList.remove('btn-success');
+                    btnText.parentElement.classList.add('btn-primary');
+                }, 2000);
+            } catch (err) {
+                alert('Không thể copy link. Vui lòng thử lại!');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+    }
+</script>
 @endsection

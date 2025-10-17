@@ -36,8 +36,8 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                    <i class="bi bi-shield-check"></i> Admin Panel
+                <a class="navbar-brand" href="{{ auth()->user()->hasRole('Nhân viên Live') ? route('live-staff.dashboard') : route('admin.dashboard') }}">
+                    <i class="bi bi-shield-check"></i> {{ auth()->user()->hasRole('Nhân viên Live') ? 'Live Staff Panel' : 'Admin Panel' }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -47,7 +47,7 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                            <a class="nav-link" href="{{ auth()->user()->hasRole('Nhân viên Live') ? route('live-staff.dashboard') : route('admin.dashboard') }}">
                                 <i class="bi bi-speedometer2"></i> Dashboard
                             </a>
                         </li>
@@ -94,6 +94,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.posts.index') }}">
                                 <i class="bi bi-file-earmark-text"></i> Quản lý Bài viết
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.slides.index') }}">
+                                <i class="bi bi-images"></i> Quản lý Slides
                             </a>
                         </li>
                         @endrole

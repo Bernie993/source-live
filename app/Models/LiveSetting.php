@@ -8,7 +8,8 @@ class LiveSetting extends Model
 {
     protected $fillable = [
         'live_url',
-        'play_url',
+        'play_url_flv',
+        'play_url_m3u8',
         'live_date',
         'live_time',
         'is_active',

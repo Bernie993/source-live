@@ -32,12 +32,27 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="play_url" class="form-label">Link Play <span class="text-danger">*</span></label>
-                        <input type="url" class="form-control @error('play_url') is-invalid @enderror" 
-                               id="play_url" name="play_url" value="{{ old('play_url', $liveSetting->play_url) }}" required>
-                        @error('play_url')
+                        <label for="play_url_flv" class="form-label">Link Play FLV <span class="text-danger">*</span></label>
+                        <input type="url" class="form-control @error('play_url_flv') is-invalid @enderror" 
+                               id="play_url_flv" name="play_url_flv" value="{{ old('play_url_flv', $liveSetting->play_url_flv) }}" required>
+                        @error('play_url_flv')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        <small class="form-text text-muted">
+                            Link FLV sẽ được ưu tiên phát trước
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="play_url_m3u8" class="form-label">Link Play m3u8 <span class="text-danger">*</span></label>
+                        <input type="url" class="form-control @error('play_url_m3u8') is-invalid @enderror" 
+                               id="play_url_m3u8" name="play_url_m3u8" value="{{ old('play_url_m3u8', $liveSetting->play_url_m3u8) }}" required>
+                        @error('play_url_m3u8')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="form-text text-muted">
+                            Link m3u8 sẽ được dùng nếu trình duyệt không hỗ trợ FLV
+                        </small>
                     </div>
 
                     <div class="row">

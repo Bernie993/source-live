@@ -43,9 +43,16 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ $setting->play_url }}" target="_blank" class="btn btn-sm btn-outline-success">
-                                            <i class="bi bi-play-circle"></i> Play
-                                        </a>
+                                        @if($setting->play_url_flv)
+                                            <a href="{{ $setting->play_url_flv }}" target="_blank" class="btn btn-sm btn-outline-success mb-1" title="FLV">
+                                                <i class="bi bi-play-circle"></i> FLV
+                                            </a>
+                                        @endif
+                                        @if($setting->play_url_m3u8)
+                                            <a href="{{ $setting->play_url_m3u8 }}" target="_blank" class="btn btn-sm btn-outline-info mb-1" title="M3U8">
+                                                <i class="bi bi-play-circle"></i> M3U8
+                                            </a>
+                                        @endif
                                     </td>
                                     <td>{{ $setting->live_date->format('d/m/Y') }}</td>
                                     <td>{{ $setting->live_time->format('H:i') }}</td>

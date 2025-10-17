@@ -118,21 +118,39 @@ class ChatManagementController extends Controller
             
             if ($assignedLiveIds->isNotEmpty()) {
                 $query->whereIn('live_setting_id', $assignedLiveIds);
+                
+                // For Live Staff: Only export messages from live stream start time to now
+                $liveSettingId = $request->filled('live_setting_id') ? $request->live_setting_id : $assignedLiveIds->first();
+                
+                if ($liveSettingId) {
+                    $liveSetting = LiveSetting::find($liveSettingId);
+                    if ($liveSetting) {
+                        // Calculate live stream start time (live_date + live_time)
+                        $liveStartTime = \Carbon\Carbon::parse($liveSetting->live_date->format('Y-m-d') . ' ' . $liveSetting->live_time->format('H:i:s'));
+                        
+                        // Only get messages from live start time onwards
+                        $query->where('created_at', '>=', $liveStartTime);
+                    }
+                }
             } else {
                 $query->whereRaw('1 = 0'); // No results
             }
         }
 
-        // Áp dụng các bộ lọc giống như index
-        if ($request->filled('live_setting_id')) {
-            $query->where('live_setting_id', $request->live_setting_id);
+        // Áp dụng các bộ lọc giống như index (chỉ cho Admin)
+        if (!Auth::user()->hasRole('Nhân viên Live')) {
+            if ($request->filled('live_setting_id')) {
+                $query->where('live_setting_id', $request->live_setting_id);
+            }
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
         }
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
+        
+        // Common filters for both roles
         if ($request->filled('status')) {
             if ($request->status === 'blocked') {
                 $query->where('is_blocked', true);

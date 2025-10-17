@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\LiveSetting;
 use App\Models\Post;
+use App\Models\Slide;
 use App\Services\EligibilityService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +30,11 @@ class HomeController extends Controller
          */
         public function index()
         {
-            return view('homepage');
+            $slides = Slide::where('is_active', true)
+                ->orderBy('order')
+                ->get();
+            
+            return view('homepage', compact('slides'));
         }
 
         /**
@@ -42,7 +47,11 @@ class HomeController extends Controller
         {
             $liveSetting = LiveSetting::with('assignedUser')->findOrFail($id);
             
-            return view('live-room', compact('liveSetting'));
+            $slides = Slide::where('is_active', true)
+                ->orderBy('order')
+                ->get();
+            
+            return view('live-room', compact('liveSetting', 'slides'));
         }
 
         /**

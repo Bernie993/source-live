@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\NewChatMessage;
 use App\Models\ChatMessage;
 use App\Models\User;
+use App\Models\LiveSetting;
 use App\Services\KeywordFilterService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -31,7 +32,20 @@ class ChatController extends Controller
             
             // Filter by live_setting_id if provided
             if ($request->has('live_setting_id')) {
-                $query->where('live_setting_id', $request->input('live_setting_id'));
+                $liveSettingId = $request->input('live_setting_id');
+                $query->where('live_setting_id', $liveSettingId);
+                
+                // Only show messages from live stream start time onwards
+                $liveSetting = LiveSetting::find($liveSettingId);
+                if ($liveSetting) {
+                    $liveStartTime = \Carbon\Carbon::parse(
+                        $liveSetting->live_date->format('Y-m-d') . ' ' . 
+                        $liveSetting->live_time->format('H:i:s')
+                    );
+                    
+                    // Only get messages from live start time onwards
+                    $query->where('created_at', '>=', $liveStartTime);
+                }
             }
             
             // Get messages after specific ID (for polling)
@@ -84,6 +98,24 @@ class ChatController extends Controller
             if (Auth::check()) { $user = Auth::user(); } else { $user = (object) session("external_user"); }
             $messageContent = trim($request->input('message'));
             $liveSettingId = $request->input('live_setting_id');
+
+            // Check if live stream has started
+            if ($liveSettingId) {
+                $liveSetting = LiveSetting::find($liveSettingId);
+                if ($liveSetting) {
+                    $liveStartTime = \Carbon\Carbon::parse(
+                        $liveSetting->live_date->format('Y-m-d') . ' ' . 
+                        $liveSetting->live_time->format('H:i:s')
+                    );
+                    
+                    if (now()->lt($liveStartTime)) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Chat chỉ được phép khi live stream đã bắt đầu'
+                        ], 403);
+                    }
+                }
+            }
 
             // Check for blocked keywords
             $filterResult = $this->keywordFilterService->filterMessage($messageContent);

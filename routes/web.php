@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\KeywordController;
 use App\Http\Controllers\Admin\ChatManagementController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\SlideController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\LiveStaff\DashboardController as LiveStaffDashboardController;
 use App\Http\Controllers\CSKH\DashboardController as CSKHDashboardController;
@@ -58,6 +59,9 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     
     // Post management routes
     Route::resource('posts', PostController::class);
+    
+    // Slide management routes
+    Route::resource('slides', SlideController::class);
     
     // Stream management routes
     Route::get('stream', [StreamController::class, 'index'])->name('stream.index');

@@ -56,11 +56,27 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Link Play:</th>
+                                <th>Link Play FLV:</th>
                                 <td>
-                                    <a href="{{ $liveSetting->play_url }}" target="_blank" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-play-circle"></i> {{ $liveSetting->play_url }}
-                                    </a>
+                                    @if($liveSetting->play_url_flv)
+                                        <a href="{{ $liveSetting->play_url_flv }}" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-play-circle"></i> {{ $liveSetting->play_url_flv }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Chưa có</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Link Play m3u8:</th>
+                                <td>
+                                    @if($liveSetting->play_url_m3u8)
+                                        <a href="{{ $liveSetting->play_url_m3u8 }}" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-play-circle"></i> {{ $liveSetting->play_url_m3u8 }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Chưa có</span>
+                                    @endif
                                 </td>
                             </tr>
                             @if($liveSetting->default_video_url)
@@ -225,7 +241,8 @@
                         @method('PUT')
                         <input type="hidden" name="is_active" value="1">
                         <input type="hidden" name="live_url" value="{{ $liveSetting->live_url }}">
-                        <input type="hidden" name="play_url" value="{{ $liveSetting->play_url }}">
+                        <input type="hidden" name="play_url_flv" value="{{ $liveSetting->play_url_flv }}">
+                        <input type="hidden" name="play_url_m3u8" value="{{ $liveSetting->play_url_m3u8 }}">
                         <input type="hidden" name="live_date" value="{{ $liveSetting->live_date->format('Y-m-d') }}">
                         <input type="hidden" name="live_time" value="{{ $liveSetting->live_time->format('H:i') }}">
                         <button type="submit" class="btn btn-success w-100">
@@ -238,7 +255,8 @@
                         @method('PUT')
                         <input type="hidden" name="is_active" value="0">
                         <input type="hidden" name="live_url" value="{{ $liveSetting->live_url }}">
-                        <input type="hidden" name="play_url" value="{{ $liveSetting->play_url }}">
+                        <input type="hidden" name="play_url_flv" value="{{ $liveSetting->play_url_flv }}">
+                        <input type="hidden" name="play_url_m3u8" value="{{ $liveSetting->play_url_m3u8 }}">
                         <input type="hidden" name="live_date" value="{{ $liveSetting->live_date->format('Y-m-d') }}">
                         <input type="hidden" name="live_time" value="{{ $liveSetting->live_time->format('H:i') }}">
                         <button type="submit" class="btn btn-secondary w-100">

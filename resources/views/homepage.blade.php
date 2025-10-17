@@ -950,6 +950,7 @@
             font-weight: bold;
             border: 2px solid #d1d5db;
             border-radius: 8px;
+            color: #FFFFFF;
         }
 
         .bank-digit:focus {
@@ -1149,21 +1150,28 @@
         <div class="promo-swiper-container">
             <div class="swiper promoSwiper">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 77.png') }}" alt="Vui Tết Trung Thu - Phát Thưởng 15.000 Tỷ">
-                    </div>
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 78.png') }}" alt="Đua Top Đặt Cược - Thưởng Lớn Đêm Trắng">
-                    </div>
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
-                    </div>
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
-                    </div>
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
-                    </div>
+                    @forelse($slides as $slide)
+                        <div class="swiper-slide promo-slide">
+                            @if($slide->link)
+                                <a href="{{ $slide->link }}" target="_blank">
+                                    <img src="{{ asset($slide->image) }}" alt="{{ $slide->title }}">
+                                </a>
+                            @else
+                                <img src="{{ asset($slide->image) }}" alt="{{ $slide->title }}">
+                            @endif
+                        </div>
+                    @empty
+                        <!-- Fallback slides if no slides in database -->
+                        <div class="swiper-slide promo-slide">
+                            <img src="{{ asset('images/image 77.png') }}" alt="Vui Tết Trung Thu - Phát Thưởng 15.000 Tỷ">
+                        </div>
+                        <div class="swiper-slide promo-slide">
+                            <img src="{{ asset('images/image 78.png') }}" alt="Đua Top Đặt Cược - Thưởng Lớn Đêm Trắng">
+                        </div>
+                        <div class="swiper-slide promo-slide">
+                            <img src="{{ asset('images/image 79.png') }}" alt="Trúng Thưởng Đoàn Viên - Quà Tặng Cao Cấp U888">
+                        </div>
+                    @endforelse
                 </div>
 
                 <!-- Navigation buttons -->

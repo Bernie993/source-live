@@ -879,6 +879,7 @@
             font-weight: bold;
             border: 2px solid #d1d5db;
             border-radius: 8px;
+            color: #fff;
         }
 
         .bank-digit:focus {
@@ -1164,13 +1165,16 @@
                     <!-- Messages will be loaded here -->
                 </div>
                 @guest
-                <div class="login-required">
+                <div class="login-required" id="login-required-message">
                     Bạn cần đăng nhập để chat.
                     <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
                         Đăng nhập
                     </button>
                 </div>
                 @else
+                <div class="login-required" id="chat-not-started-message" style="display: none;">
+                    Chat sẽ mở khi live stream bắt đầu lúc  <span id="live-start-time"></span>
+                </div>
                 <form id="chat-form" class="chat-input-form">
                     @csrf
                     <i class="far fa-smile chat-input-icon"></i>
@@ -1193,15 +1197,28 @@
         <div class="promo-swiper-container">
             <div class="swiper promoSwiper">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 77.png') }}" alt="Vui Tết Trung Thu - Phát Thưởng 15.000 Tỷ">
-                    </div>
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 78.png') }}" alt="Đua Top Đặt Cược - Thưởng Lớn Đêm Trắng">
-                    </div>
-                    <div class="swiper-slide promo-slide">
-                        <img src="{{ asset('images/image 79.png') }}" alt="Nhận Ngay Code Ưu Đãi Khủng">
-                    </div>
+                    @forelse($slides as $slide)
+                        <div class="swiper-slide promo-slide">
+                            @if($slide->link)
+                                <a href="{{ $slide->link }}" target="_blank">
+                                    <img src="{{ asset($slide->image) }}" alt="{{ $slide->title }}">
+                                </a>
+                            @else
+                                <img src="{{ asset($slide->image) }}" alt="{{ $slide->title }}">
+                            @endif
+                        </div>
+                    @empty
+                        <!-- Fallback slides if no slides in database -->
+                        <div class="swiper-slide promo-slide">
+                            <img src="{{ asset('images/image 77.png') }}" alt="Vui Tết Trung Thu - Phát Thưởng 15.000 Tỷ">
+                        </div>
+                        <div class="swiper-slide promo-slide">
+                            <img src="{{ asset('images/image 78.png') }}" alt="Đua Top Đặt Cược - Thưởng Lớn Đêm Trắng">
+                        </div>
+                        <div class="swiper-slide promo-slide">
+                            <img src="{{ asset('images/image 79.png') }}" alt="Nhận Ngay Code Ưu Đãi Khủng">
+                        </div>
+                    @endforelse
                 </div>
                 <div class="swiper-button-next promo-button-next"></div>
                 <div class="swiper-button-prev promo-button-prev"></div>
@@ -1230,19 +1247,61 @@
         (function() {
             // Initialize Video Player
             const video = document.getElementById('live-video-player');
-            const playUrl = '{{ $liveSetting->play_url }}';
+            const playUrlFlv = '{{ $liveSetting->play_url_flv ?? '' }}';
+            const playUrlM3u8 = '{{ $liveSetting->play_url_m3u8 ?? '' }}';
+            
+            let flvPlayer = null;
+            let hls = null;
 
-            console.log('🎬 Initializing video player with URL:', playUrl);
+            // Function to load M3U8 as fallback
+            function loadM3u8Fallback() {
+                if (!playUrlM3u8) return;
 
-            // Check file type and use appropriate player
-            if (playUrl.includes('.flv')) {
-                // Use FLV.js for .flv files
-                console.log('📺 Detected FLV format, using flv.js');
-                
-                if (flvjs.isSupported()) {
-                    const flvPlayer = flvjs.createPlayer({
+                // Use HLS.js for .m3u8 files
+                if (Hls.isSupported()) {
+                    hls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 90
+                    });
+
+                    hls.loadSource(playUrlM3u8);
+                    hls.attachMedia(video);
+
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        video.play().catch(e => {});
+                    });
+
+                    hls.on(Hls.Events.ERROR, function(event, data) {
+                        if (data.fatal) {
+                            switch(data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    hls.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    hls.recoverMediaError();
+                                    break;
+                                default:
+                                    hls.destroy();
+                                    break;
+                            }
+                        }
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Native HLS support (Safari)
+                    video.src = playUrlM3u8;
+                    video.addEventListener('loadedmetadata', function() {
+                        video.play().catch(e => {});
+                    });
+                }
+            }
+
+            // Try FLV first, fallback to M3U8 if not supported
+            if (playUrlFlv && flvjs.isSupported()) {
+                try {
+                    flvPlayer = flvjs.createPlayer({
                         type: 'flv',
-                        url: playUrl,
+                        url: playUrlFlv,
                         isLive: true,
                         hasAudio: true,
                         hasVideo: true
@@ -1257,81 +1316,114 @@
                     flvPlayer.attachMediaElement(video);
                     flvPlayer.load();
 
-                    flvPlayer.on(flvjs.Events.ERROR, (errorType, errorDetail, errorInfo) => {
-                        console.error('❌ FLV error:', errorType, errorDetail, errorInfo);
-                    });
-
                     video.addEventListener('loadedmetadata', function() {
-                        console.log('✅ FLV stream loaded, starting playback');
-                        video.play().catch(e => console.log('Autoplay prevented:', e));
-                    });
-                } else {
-                    console.error('❌ FLV.js is not supported in this browser');
-                    alert('Trình duyệt của bạn không hỗ trợ phát FLV stream. Vui lòng sử dụng Chrome hoặc Firefox.');
-                }
-            } else if (playUrl.includes('.m3u8')) {
-                // Use HLS.js for .m3u8 files
-                console.log('📺 Detected M3U8 format, using hls.js');
-                
-                if (Hls.isSupported()) {
-                    const hls = new Hls({
-                        enableWorker: true,
-                        lowLatencyMode: true,
-                        backBufferLength: 90
+                        video.play().catch(e => {});
                     });
 
-                    hls.loadSource(playUrl);
-                    hls.attachMedia(video);
-
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        console.log('✅ HLS manifest parsed, starting playback');
-                        video.play().catch(e => console.log('Autoplay prevented:', e));
-                    });
-
-                    hls.on(Hls.Events.ERROR, function(event, data) {
-                        console.error('❌ HLS error:', data);
-                        if (data.fatal) {
-                            switch(data.type) {
-                                case Hls.ErrorTypes.NETWORK_ERROR:
-                                    console.log('Network error, trying to recover...');
-                                    hls.startLoad();
-                                    break;
-                                case Hls.ErrorTypes.MEDIA_ERROR:
-                                    console.log('Media error, trying to recover...');
-                                    hls.recoverMediaError();
-                                    break;
-                                default:
-                                    hls.destroy();
-                                    break;
-                            }
+                    // Listen for FLV errors and fallback to M3U8
+                    flvPlayer.on(flvjs.Events.ERROR, function(errorType, errorDetail) {
+                        if (flvPlayer) {
+                            flvPlayer.destroy();
+                            flvPlayer = null;
                         }
+                        // Fallback to M3U8
+                        loadM3u8Fallback();
                     });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    // Native HLS support (Safari)
-                    video.src = playUrl;
-                    video.addEventListener('loadedmetadata', function() {
-                        console.log('✅ Native HLS support, starting playback');
-                        video.play().catch(e => console.log('Autoplay prevented:', e));
-                    });
+                } catch (e) {
+                    // If FLV fails to initialize, fallback to M3U8
+                    if (flvPlayer) {
+                        flvPlayer.destroy();
+                        flvPlayer = null;
+                    }
+                    loadM3u8Fallback();
                 }
             } else {
-                // Direct MP4 or other format
-                console.log('📺 Using direct video source');
-                video.src = playUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.log('Autoplay prevented:', e));
-                });
+                // FLV not supported or no FLV URL, use M3U8
+                loadM3u8Fallback();
             }
 
-        // Chat functionality
+        // Chat functionality - prevent double initialization
+        if (window.chatInitialized) {
+            return;
+        }
+        window.chatInitialized = true;
+        
         const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
         const currentUser = @json(Auth::user());
         let lastMessageId = 0;
         let isRealtimeActive = false;
+        const addedMessageIds = new Set(); // Track all added message IDs to prevent duplicates
 
-        console.log('🔍 Chat init - Logged in:', isLoggedIn, 'Echo available:', typeof Echo !== 'undefined');
+        // Live stream time information - Use timestamp to avoid timezone issues
+        const liveStartTimeStr = '{{ $liveSetting->live_date->format('Y-m-d') }} {{ $liveSetting->live_time->format('H:i:s') }}';
+        // Parse as local time to match server timezone
+        const liveStartTime = new Date(liveStartTimeStr.replace(' ', 'T'));
+        const now = new Date();
+        const isLiveStarted = now >= liveStartTime;
 
-        // Load initial messages
+        // Check if chat is allowed
+        function isChatAllowed() {
+            const currentTime = new Date();
+            return currentTime >= liveStartTime;
+        }
+
+        // Update chat UI based on live status
+        function updateChatStatus() {
+            const chatInput = document.getElementById('chat-input');
+            const chatForm = document.getElementById('chat-form');
+            const sendBtn = document.querySelector('.chat-send-btn');
+            const chatNotStartedMessage = document.getElementById('chat-not-started-message');
+            const liveStartTimeSpan = document.getElementById('live-start-time');
+            const allowed = isChatAllowed();
+
+            if (!allowed) {
+                // Show "chat not started" message
+                if (chatNotStartedMessage) {
+                    chatNotStartedMessage.style.display = 'flex';
+                    if (liveStartTimeSpan) {
+                        liveStartTimeSpan.textContent = liveStartTime.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
+                    }
+                }
+                // Hide chat form
+                if (chatForm) {
+                    chatForm.style.display = 'none';
+                }
+            } else {
+                // Hide "chat not started" message
+                if (chatNotStartedMessage) {
+                    chatNotStartedMessage.style.display = 'none';
+                }
+                // Show chat form
+                if (chatForm) {
+                    chatForm.style.display = 'flex';
+                }
+                if (chatInput) {
+                    chatInput.disabled = false;
+                    chatInput.placeholder = 'Nhập nội dung trò chuyện';
+                }
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                }
+            }
+        }
+
+        // Initial status update
+        if (isLoggedIn) {
+            updateChatStatus();
+
+            // Check every second if live has started
+            if (!isLiveStarted) {
+                const checkInterval = setInterval(() => {
+                    if (isChatAllowed()) {
+                        updateChatStatus();
+                        clearInterval(checkInterval);
+                        // Don't reload all messages, polling will get new ones
+                    }
+                }, 1000);
+            }
+        }
+
+        // Load initial messages ONCE
         loadChatMessages();
 
         if (isLoggedIn) {
@@ -1351,24 +1443,18 @@
                     // Listen to this specific live room's channel
                     Echo.channel(`live-chat.${liveId}`)
                         .listen('.new-message', function(data) {
-                            console.log('📨 New message via Echo for live room ' + liveId + ':', data);
                             // Only add message if it belongs to this live room
                             if (data.live_setting_id == liveId) {
                                 addMessageToChat(data);
                                 isRealtimeActive = true;
                             }
                         });
-                    console.log('✅ Echo realtime listener set up for live room ' + liveId);
                 } catch (error) {
-                    console.warn('⚠️ Echo setup failed:', error);
                     startPolling();
                 }
             } else {
-                console.warn('⚠️ Echo not available, using polling');
                 startPolling();
             }
-        } else {
-            console.log('ℹ️ User not logged in, chat is read-only');
         }
 
         // Fallback polling if Echo doesn't work
@@ -1416,6 +1502,12 @@
 
             if (!message) return;
 
+            // Check if chat is allowed
+            if (!isChatAllowed()) {
+                alert('Chat chỉ được phép khi live stream đã bắt đầu!');
+                return;
+            }
+
             // Disable input while sending
             input.disabled = true;
 
@@ -1438,6 +1530,12 @@
                         window.location.href = '/';
                         throw new Error('Unauthorized');
                     }
+                    if (response.status === 403) {
+                        return response.json().then(data => {
+                            alert(data.message || 'Chat chỉ được phép khi live stream đã bắt đầu!');
+                            throw new Error('Forbidden');
+                        });
+                    }
                     if (!response.ok) {
                         throw new Error('HTTP error! status: ' + response.status);
                     }
@@ -1446,6 +1544,11 @@
                 .then(data => {
                     if (data.success) {
                         input.value = '';
+                        // Add the message immediately to prevent duplicate from Echo
+                        // Echo will broadcast to others, we add our own message here
+                        if (data.chat_message) {
+                            addMessageToChat(data.chat_message);
+                        }
                     } else {
                         alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
                     }
@@ -1465,15 +1568,19 @@
         function addMessageToChat(data) {
             const chatMessages = document.getElementById('chat-messages');
 
+            // Check if message already added (prevent duplicates)
+            if (data.id && addedMessageIds.has(data.id)) {
+                return;
+            }
+
             // Track last message ID
             if (data.id && data.id > lastMessageId) {
                 lastMessageId = data.id;
             }
 
-            // Check if message already exists (prevent duplicates)
-            const existingMsg = chatMessages.querySelector(`[data-message-id="${data.id}"]`);
-            if (existingMsg) {
-                return;
+            // Add message ID to set
+            if (data.id) {
+                addedMessageIds.add(data.id);
             }
 
             const messageDiv = document.createElement('div');
@@ -1626,9 +1733,6 @@
                 _token: document.querySelector('meta[name="csrf-token"]').content
             }));
         });
-
-        // Chat is ready
-        console.log('✅ Chat initialized successfully');
 
         // Initialize Swiper for promotional banners
         const promoSwiper = new Swiper('.promoSwiper', {

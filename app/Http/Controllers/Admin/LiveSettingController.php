@@ -41,7 +41,8 @@ class LiveSettingController extends Controller
     {
         $validated = $request->validate([
             'live_url' => 'required|string',
-            'play_url' => 'required|string', 
+            'play_url_flv' => 'required|string', 
+            'play_url_m3u8' => 'required|string',
             'live_date' => 'required|date|after_or_equal:today',
             'live_time' => 'required|date_format:H:i',
             'is_active' => 'boolean',
@@ -82,7 +83,8 @@ class LiveSettingController extends Controller
     {
         $validated = $request->validate([
             'live_url' => 'required|string',
-            'play_url' => 'required|string',
+            'play_url_flv' => 'required|string',
+            'play_url_m3u8' => 'required|string',
             'live_date' => 'required|date|after_or_equal:today',
             'live_time' => 'required|date_format:H:i',
             'is_active' => 'boolean',

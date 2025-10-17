@@ -183,10 +183,23 @@
                                 <i class="bi bi-link-45deg"></i> Xem Live
                             </a>
                         </p>
-                        <p><strong>Link Play:</strong> 
-                            <a href="{{ $stats['live_settings']->play_url }}" target="_blank" class="btn btn-sm btn-outline-success">
-                                <i class="bi bi-play-circle"></i> Play
-                            </a>
+                        <p><strong>Link Play FLV:</strong> 
+                            @if($stats['live_settings']->play_url_flv)
+                                <a href="{{ $stats['live_settings']->play_url_flv }}" target="_blank" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-play-circle"></i> FLV
+                                </a>
+                            @else
+                                <span class="text-muted">Chưa có</span>
+                            @endif
+                        </p>
+                        <p><strong>Link Play M3U8:</strong> 
+                            @if($stats['live_settings']->play_url_m3u8)
+                                <a href="{{ $stats['live_settings']->play_url_m3u8 }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-play-circle"></i> M3U8
+                                </a>
+                            @else
+                                <span class="text-muted">Chưa có</span>
+                            @endif
                         </p>
                     </div>
                     <div class="col-md-6">
