@@ -139,19 +139,73 @@
         }
 
 
+        .dropdown {
+            position: relative;
+            z-index: 1000;
+        }
+
         .dropdown-menu {
-            background: white;
+            position: absolute !important;
+            right: 0 !important;
+            left: auto !important;
+            background: white !important;
             border: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
             border-radius: 12px;
             padding: 10px;
             margin-top: 10px;
+            z-index: 9999 !important;
+            min-width: 200px;
+            display: none;
+            will-change: transform;
+        }
+
+        .dropdown-menu.show {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .dropdown-item {
             border-radius: 8px;
             padding: 10px 15px;
             transition: all 0.3s ease;
+            color: #333 !important;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa !important;
+            color: #FF4500 !important;
+            text-decoration: none;
+        }
+
+        .dropdown-item i {
+            color: inherit;
+        }
+
+        .dropdown-toggle::after {
+            margin-left: 0.5em;
+            vertical-align: middle;
+        }
+
+        .dropdown-divider {
+            margin: 8px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Ensure header doesn't clip dropdown */
+        .header {
+            overflow: visible !important;
+        }
+
+        .header-right {
+            overflow: visible !important;
         }
 
 
@@ -650,7 +704,7 @@
             var hamburgerMenu = document.getElementById('hamburgerMenu');
             var mobileSidebar = document.getElementById('mobileSidebar');
             var mobileOverlay = document.getElementById('mobileOverlay');
-            
+
             if (hamburgerMenu && mobileSidebar && mobileOverlay) {
                 hamburgerMenu.classList.toggle('active');
                 mobileSidebar.classList.toggle('active');
@@ -663,7 +717,7 @@
             var hamburgerMenu = document.getElementById('hamburgerMenu');
             var mobileSidebar = document.getElementById('mobileSidebar');
             var mobileOverlay = document.getElementById('mobileOverlay');
-            
+
             if (hamburgerMenu && mobileSidebar && mobileOverlay) {
                 hamburgerMenu.classList.remove('active');
                 mobileSidebar.classList.remove('active');
@@ -671,6 +725,97 @@
                 document.body.style.overflow = '';
             }
         }
+
+        // Initialize dropdowns with manual fallback
+        (function initDropdowns() {
+            function setupDropdowns() {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+                    var dropdownElementList = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+                    dropdownElementList.forEach(function(dropdownToggle) {
+                        // Check if already initialized
+                        var instance = bootstrap.Dropdown.getInstance(dropdownToggle);
+                        if (!instance) {
+                            try {
+                                instance = new bootstrap.Dropdown(dropdownToggle, {
+                                    autoClose: true,
+                                    boundary: 'viewport'
+                                });
+                                console.log('✓ Dropdown initialized successfully');
+                            } catch(e) {
+                                console.error('Failed to create dropdown:', e);
+                            }
+                        }
+
+                        // Add manual click handler as backup
+                        dropdownToggle.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            var dropdownMenu = this.nextElementSibling;
+                            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                                var isShown = dropdownMenu.classList.contains('show');
+
+                                // Close all other dropdowns
+                                document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                                    menu.classList.remove('show');
+                                    menu.style.display = 'none';
+                                });
+
+                                // Toggle current dropdown
+                                if (!isShown) {
+                                    dropdownMenu.classList.add('show');
+                                    dropdownMenu.style.display = 'block';
+                                    this.setAttribute('aria-expanded', 'true');
+                                    console.log('✓ Dropdown opened manually');
+                                } else {
+                                    dropdownMenu.classList.remove('show');
+                                    dropdownMenu.style.display = 'none';
+                                    this.setAttribute('aria-expanded', 'false');
+                                }
+                            }
+                        });
+                    });
+
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!e.target.closest('.dropdown')) {
+                            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                                menu.classList.remove('show');
+                                menu.style.display = 'none';
+                                var toggle = menu.previousElementSibling;
+                                if (toggle) {
+                                    toggle.setAttribute('aria-expanded', 'false');
+                                }
+                            });
+                        }
+                    });
+
+                    return true;
+                }
+                return false;
+            }
+
+            // Try immediately
+            if (setupDropdowns()) {
+                console.log('✓ Dropdown system ready');
+            } else {
+                // If Bootstrap not ready, wait for DOMContentLoaded
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (setupDropdowns()) {
+                        console.log('✓ Dropdown system ready (on DOMContentLoaded)');
+                    } else {
+                        // If still not ready, wait a bit more
+                        setTimeout(function() {
+                            if (setupDropdowns()) {
+                                console.log('✓ Dropdown system ready (delayed)');
+                            } else {
+                                console.error('✗ Failed to initialize dropdowns - Bootstrap not loaded');
+                            }
+                        }, 500);
+                    }
+                });
+            }
+        })();
     </script>
 
     @stack('scripts')
@@ -744,7 +889,7 @@
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.authenticated) {
-                        alert('Đăng nhập thành công!');
+                        // alert('Đăng nhập thành công!');
 
                         // Close modal using vanilla JS
                         const loginModal = document.getElementById('loginModal');
@@ -780,14 +925,6 @@
                     submitBtn.disabled = false;
                 });
         }
-
-            // Initialize Bootstrap dropdowns
-            document.addEventListener('DOMContentLoaded', function() {
-                var dropdownElementList = document.querySelectorAll('.dropdown-toggle');
-                dropdownElementList.forEach(function(dropdown) {
-                    new bootstrap.Dropdown(dropdown);
-                });
-            });
         })();
     </script>
 </body>
