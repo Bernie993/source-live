@@ -15,10 +15,23 @@
 
     <!-- Common Styles -->
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background: #000000;
             min-height: 100vh;
             font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         /* Main Content Wrapper - Max width 1422px, centered */
@@ -26,6 +39,7 @@
             max-width: 1422px;
             margin: 0 auto;
             width: 100%;
+            position: relative;
         }
 
         /* ============ HEADER STYLES ============ */
@@ -351,6 +365,64 @@
         }
 
         /* Responsive */
+        /* Tablet: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .header {
+                height: 80px;
+            }
+
+            .header .container-fluid {
+                padding: 0 12px;
+            }
+
+            .header-content {
+                gap: 15px;
+            }
+
+            .header-left {
+                gap: 20px;
+            }
+
+            .logo-u888 img {
+                height: 40px;
+            }
+
+            .nav-menu {
+                gap: 12px;
+            }
+
+            .nav-item {
+                font-size: 12px;
+                padding: 6px 0;
+            }
+
+            .btn-login {
+                padding: 8px 16px;
+                font-size: 12px;
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+            }
+
+            .notification-banner {
+                padding: 8px 12px;
+            }
+
+            .notification-banner-content {
+                padding: 8px 15px;
+                gap: 10px;
+            }
+
+            .notification-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .notification-text {
+                font-size: 13px;
+            }
+        }
+
+        /* Mobile: max-width 768px */
         @media (max-width: 768px) {
             .header-left {
                 gap: 20px;
@@ -498,6 +570,103 @@
             display: inline-block;
         }
 
+        /* Tablet Responsive for Login Modal: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .modal-content.login-modal-custom {
+                max-width: 480px;
+                padding: 35px;
+            }
+
+            .login-modal-title {
+                font-size: 20px;
+                margin-bottom: 18px;
+            }
+
+            .login-label {
+                font-size: 15px;
+                margin-bottom: 12px;
+            }
+
+            .login-input {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .btn-login-submit {
+                padding: 13px;
+                font-size: 15px;
+            }
+
+            .btn-close-custom {
+                width: 42px;
+                height: 42px;
+                bottom: -55px;
+            }
+
+            .btn-close-custom i {
+                font-size: 18px;
+            }
+
+            .login-modal-custom .bank-account-inputs {
+                gap: 12px;
+            }
+
+            .login-modal-custom .bank-digit {
+                width: 70px;
+                height: 70px;
+                font-size: 22px;
+            }
+        }
+
+        /* Mobile Responsive for Login Modal: max-width 768px */
+        @media (max-width: 768px) {
+            .modal-content.login-modal-custom {
+                max-width: calc(100% - 2rem);
+                padding: 25px;
+                margin: 1rem;
+            }
+
+            .login-modal-title {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+
+            .login-label {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .login-input {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .btn-login-submit {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .btn-close-custom {
+                width: 40px;
+                height: 40px;
+                bottom: -50px;
+            }
+
+            .btn-close-custom i {
+                font-size: 16px;
+            }
+
+            .login-modal-custom .bank-account-inputs {
+                gap: 8px;
+            }
+
+            .login-modal-custom .bank-digit {
+                width: 60px;
+                height: 60px;
+                font-size: 18px;
+            }
+        }
+
         /* Mobile Menu Styles */
         .hamburger-menu {
             display: none;
@@ -631,6 +800,21 @@
 
         .mobile-overlay.active {
             display: block;
+        }
+
+        /* Tablet: Ensure desktop menu shows */
+        @media (min-width: 769px) {
+            .hamburger-menu {
+                display: none !important;
+            }
+
+            .mobile-sidebar {
+                display: none !important;
+            }
+
+            .mobile-overlay {
+                display: none !important;
+            }
         }
 
         /* Mobile Responsive */

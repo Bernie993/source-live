@@ -9,12 +9,15 @@
 <style>
         .live-streams-section {
             padding: 30px 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .streams-grid {
             display: grid;
             grid-template-columns: 1fr 360px;
             gap: 20px;
+            width: 100%;
         }
 
         /* Main Live Stream Box */
@@ -26,6 +29,7 @@
             box-shadow: 0 10px 40px rgba(255, 69, 0, 0.4);
             aspect-ratio: 16/9;
             border: 8px solid #FF4500;
+            width: 100%;
         }
 
         .main-live-content {
@@ -118,6 +122,7 @@
             width: 100%;
             cursor: pointer;
             transition: all 0.3s ease;
+            aspect-ratio: 16/9;
         }
 
 
@@ -226,23 +231,122 @@
 
 
         /* Responsive */
-        @media (max-width: 1200px) {
+        /* Tablet Landscape: 1025px - 1200px */
+        @media (min-width: 1025px) and (max-width: 1200px) {
             .streams-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 300px;
+                gap: 15px;
             }
 
             .side-live-boxes {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
+                grid-template-rows: 1fr 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        /* Tablet Portrait & Landscape: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .live-streams-section {
+                padding: 15px 15px 10px;
+            }
+
+            .streams-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .main-live-box {
+                border-radius: 20px;
+                border: 4px solid #FF4500;
+                aspect-ratio: 16/9;
+                max-height: 380px;
+            }
+
+            .live-logo-badge {
+                padding: 8px 25px;
+                top: 15px;
+            }
+
+            .live-logo-badge img {
+                height: 35px;
+            }
+
+            .btn-enter-live {
+                padding: 12px 40px;
+                font-size: 16px;
+            }
+
+            .side-live-boxes {
+                display: flex !important;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                gap: 10px;
                 height: auto;
             }
 
             .side-live-box {
+                flex: 1;
+                min-width: 0;
+                border-radius: 14px;
                 aspect-ratio: 16/9;
+                height: auto;
+                max-height: 140px;
+                position: relative;
+            }
+
+            .side-live-content {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .side-live-content img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .side-live-host {
+                top: 4px;
+                left: 4px;
+                padding: 3px 6px;
+                border-radius: 8px;
+            }
+
+            .side-live-host-avatar {
+                width: 16px !important;
+                height: 16px !important;
+            }
+
+            .side-live-host-name {
+                font-size: 9px;
+                max-width: 60px;
+            }
+
+            .side-live-badge {
+                top: 4px;
+                right: 4px;
+                padding: 3px 6px;
+                font-size: 8px;
+                border-radius: 8px;
+            }
+
+            .side-live-badge i {
+                font-size: 7px;
+            }
+
+            .side-live-enter-btn {
+                bottom: 4px;
+                padding: 5px 12px;
+                font-size: 9px;
+                border-radius: 12px;
             }
         }
 
+        /* Mobile: max-width 768px */
         @media (max-width: 768px) {
             .live-streams-section {
                 padding: 5px 8px;
@@ -356,6 +460,8 @@
             padding: 40px 20px 60px;
             position: relative;
             background: #000;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .hot-badge {
@@ -452,6 +558,52 @@
         }
 
         /* Responsive */
+        /* Tablet: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .promo-banner-section {
+                padding: 15px 15px 30px;
+            }
+
+            .hot-badge {
+                left: 15px;
+                top: -5px;
+                max-width: 50px;
+            }
+
+            .promo-button-prev,
+            .promo-button-next {
+                width: 36px;
+                height: 36px;
+            }
+
+            .promo-button-prev::after,
+            .promo-button-next::after {
+                font-size: 16px;
+            }
+
+            .promo-slide {
+                border-radius: 12px;
+            }
+
+            .promo-slide img {
+                border-radius: 12px;
+            }
+
+            .promo-pagination {
+                bottom: -20px !important;
+            }
+
+            .promo-pagination .swiper-pagination-bullet {
+                width: 8px;
+                height: 8px;
+            }
+
+            .promo-pagination .swiper-pagination-bullet-active {
+                width: 20px;
+            }
+        }
+
+        /* Mobile: max-width 768px */
         @media (max-width: 768px) {
             .promo-banner-section {
                 padding: 15px 8px 40px;
@@ -502,6 +654,8 @@
         .news-section {
             padding: 40px 20px 60px;
             background: transparent;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .section-title {
@@ -630,16 +784,87 @@
         }
 
         /* Responsive */
-        @media (max-width: 1200px) {
+        /* Tablet Landscape: 1025px - 1200px */
+        @media (min-width: 1025px) and (max-width: 1200px) {
             .news-grid {
                 grid-template-columns: 1fr;
+                gap: 25px;
             }
 
             .news-item-image {
-                width: 150px;
+                width: 160px;
+            }
+
+            .news-item-title {
+                font-size: 15px;
+            }
+
+            .news-item-description {
+                font-size: 12px;
             }
         }
 
+        /* Tablet Portrait & Landscape: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .news-section {
+                padding: 15px 15px 10px;
+            }
+
+            .section-title-text {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+
+            .section-title {
+                margin-bottom: 15px;
+                gap: 20px;
+            }
+
+            .section-title-line img {
+                width: 50%;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 16px;
+            }
+
+            .news-main {
+                border-radius: 14px;
+            }
+
+            .news-list {
+                gap: 10px;
+            }
+
+            .news-item {
+                margin-bottom: 10px;
+                border-radius: 12px;
+            }
+
+            .news-item-image {
+                width: 130px;
+            }
+
+            .news-item-content {
+                padding: 10px 12px;
+            }
+
+            .news-item-title {
+                font-size: 13px;
+                margin-bottom: 5px;
+            }
+
+            .news-item-description {
+                font-size: 11px;
+                line-height: 1.4;
+                -webkit-line-clamp: 2;
+            }
+        }
+
+        /* Mobile: max-width 768px */
         @media (max-width: 768px) {
             .news-section {
                 padding: 20px 8px 40px;
@@ -712,6 +937,8 @@
         /* ============ APP DOWNLOAD SECTION ============ */
         .app-download-section {
             padding: 40px 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .app-download-banner {
@@ -727,6 +954,18 @@
             display: block;
         }
 
+        /* Tablet: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .app-download-section {
+                padding: 15px 15px 20px;
+            }
+
+            .app-download-banner {
+                border-radius: 16px;
+            }
+        }
+
+        /* Mobile: max-width 768px */
         @media (max-width: 768px) {
             .app-download-section {
                 padding: 20px 8px;
@@ -1067,6 +1306,102 @@
             margin-top: 10px;
             cursor: pointer;
         }
+
+        /* Tablet Responsive for Modal and Forms: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .modal-dialog {
+                max-width: 500px;
+                margin: 1.75rem auto;
+            }
+
+            .modal-content {
+                border-radius: 16px;
+            }
+
+            .modal-header {
+                padding: 18px 25px;
+            }
+
+            .modal-body {
+                padding: 25px;
+            }
+
+            .j88-logo {
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+                margin-bottom: 18px;
+            }
+
+            .form-control {
+                padding: 11px 15px;
+                font-size: 15px;
+            }
+
+            .btn-confirm {
+                padding: 11px;
+                font-size: 15px;
+            }
+
+            .bank-account-inputs {
+                gap: 12px;
+            }
+
+            .bank-digit {
+                width: 55px;
+                height: 55px;
+                font-size: 18px;
+            }
+        }
+
+        /* Mobile Responsive for Modal and Forms: max-width 768px */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                margin: 0.5rem;
+                max-width: calc(100% - 1rem);
+            }
+
+            .modal-content {
+                border-radius: 12px;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .j88-logo {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            .form-control {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            .btn-confirm {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .bank-account-inputs {
+                gap: 8px;
+                justify-content: center;
+                flex-wrap: nowrap;
+            }
+
+            .bank-digit {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+            }
+        }
 </style>
 @endpush
 
@@ -1370,7 +1705,7 @@
     let currentLiveData = null;
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Swiper for Promotional Banners - Always show 3 slides
+        // Initialize Swiper for Promotional Banners - Responsive for all devices
         const promoSwiper = new Swiper('.promoSwiper', {
             slidesPerView: 3,
             spaceBetween: 20,
@@ -1389,14 +1724,22 @@
                 prevEl: '.promo-button-prev',
             },
             breakpoints: {
+                // Mobile: 320px - 640px
                 320: {
                     slidesPerView: 2,
                     spaceBetween: 10,
                 },
+                // Mobile Landscape: 640px - 768px
                 640: {
                     slidesPerView: 2,
                     spaceBetween: 15,
                 },
+                // Tablet Portrait: 768px - 1024px
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 15,
+                },
+                // Tablet Landscape & Desktop: 1024px+
                 1024: {
                     slidesPerView: 3,
                     spaceBetween: 20,

@@ -9,6 +9,8 @@
 <style>
         .live-room-section {
             padding: 30px 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .live-room-grid {
@@ -17,6 +19,7 @@
             gap: 20px;
             margin-bottom: 40px;
             align-items: start;
+            width: 100%;
         }
 
         /* Video Column - Contains both header and player */
@@ -748,6 +751,38 @@
         }
 
         /* Responsive */
+        /* Tablet: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .promo-banner-section {
+                padding: 30px 15px 50px;
+            }
+
+            .hot-badge {
+                left: 15px;
+                top: 0px;
+                max-width: 60px;
+            }
+
+            .promo-button-prev,
+            .promo-button-next {
+                width: 40px;
+                height: 40px;
+            }
+
+            .promo-slide {
+                border-radius: 14px;
+            }
+
+            .promo-slide img {
+                border-radius: 14px;
+            }
+
+            .app-download-section {
+                padding: 30px 15px;
+            }
+        }
+
+        /* Mobile: max-width 768px */
         @media (max-width: 768px) {
             .promo-banner-section {
                 padding: 30px 20px 50px;
@@ -1130,7 +1165,156 @@
 
 
         /* Responsive */
-        @media (max-width: 1200px) {
+        /* Tablet Landscape: 1025px - 1200px */
+        @media (min-width: 1025px) and (max-width: 1200px) {
+            .live-room-grid {
+                grid-template-columns: 1fr 350px;
+                gap: 18px;
+            }
+
+            .chat-section {
+                height: 600px;
+            }
+
+            .video-header {
+                padding: 12px 20px;
+            }
+
+            .host-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .host-name {
+                font-size: 16px;
+            }
+
+            .host-description {
+                font-size: 13px;
+            }
+        }
+
+        /* Tablet Portrait: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .live-room-section {
+                padding: 25px 15px;
+            }
+
+            .live-room-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .video-header-box {
+                border-radius: 20px;
+            }
+
+            .video-section {
+                border-radius: 20px;
+                border: 5px solid #FF4500;
+            }
+
+            .video-header {
+                padding: 12px 20px;
+            }
+
+            .host-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .host-name {
+                font-size: 16px;
+            }
+
+            .host-description {
+                font-size: 13px;
+            }
+
+            .social-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .copy-button {
+                padding: 7px 18px;
+                font-size: 12px;
+            }
+
+            .stat-item {
+                font-size: 13px;
+            }
+
+            .viewer-count {
+                font-size: 15px;
+            }
+
+            .chat-section {
+                height: 600px;
+                border-radius: 20px;
+            }
+
+            .chat-header-wrapper {
+                padding: 8px;
+            }
+
+            .chat-header {
+                padding: 12px;
+                border-radius: 10px;
+            }
+
+            .chat-header-title {
+                font-size: 14px;
+            }
+
+            .chat-header-info {
+                font-size: 11px;
+            }
+
+            .chat-messages {
+                padding: 12px;
+            }
+
+            .chat-message {
+                padding: 10px 12px;
+                border-radius: 16px;
+            }
+
+            .message-username {
+                font-size: 13px;
+            }
+
+            .message-text {
+                font-size: 13px;
+            }
+
+            .chat-input-form {
+                padding: 12px;
+            }
+
+            #chat-input {
+                padding: 10px 40px 10px 15px;
+                font-size: 13px;
+            }
+
+            .chat-send-btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+
+            .login-required {
+                padding: 18px 16px;
+                font-size: 14px;
+            }
+
+            .chat-section-not-start-mobile {
+                height: 200px;
+            }
+        }
+
+        /* Mobile: max-width 768px */
+        @media (max-width: 768px) {
             .live-room-grid {
                 grid-template-columns: 1fr;
             }
