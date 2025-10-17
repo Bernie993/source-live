@@ -1219,57 +1219,109 @@
 @endsection
 
 @push('scripts')
-<!-- HLS.js -->
+<!-- HLS.js for .m3u8 files -->
 <script src="{{ asset('js/hls.min.js') }}"></script>
+<!-- FLV.js for .flv files -->
+<script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
-        // Initialize HLS Video Player
-        const video = document.getElementById('live-video-player');
-        const playUrl = '{{ $liveSetting->play_url }}';
+        (function() {
+            // Initialize Video Player
+            const video = document.getElementById('live-video-player');
+            const playUrl = '{{ $liveSetting->play_url }}';
 
-        console.log('🎬 Initializing video player with URL:', playUrl);
+            console.log('🎬 Initializing video player with URL:', playUrl);
 
-        if (Hls.isSupported() && (playUrl.includes('.m3u8') || playUrl.includes('.flv'))) {
-            const hls = new Hls({
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90
-            });
+            // Check file type and use appropriate player
+            if (playUrl.includes('.flv')) {
+                // Use FLV.js for .flv files
+                console.log('📺 Detected FLV format, using flv.js');
+                
+                if (flvjs.isSupported()) {
+                    const flvPlayer = flvjs.createPlayer({
+                        type: 'flv',
+                        url: playUrl,
+                        isLive: true,
+                        hasAudio: true,
+                        hasVideo: true
+                    }, {
+                        enableWorker: true,
+                        enableStashBuffer: false,
+                        stashInitialSize: 128,
+                        lazyLoad: false,
+                        autoCleanupSourceBuffer: true
+                    });
 
-            hls.loadSource(playUrl);
-            hls.attachMedia(video);
+                    flvPlayer.attachMediaElement(video);
+                    flvPlayer.load();
 
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                console.log('✅ HLS manifest parsed, starting playback');
-                video.play().catch(e => console.log('Autoplay prevented:', e));
-            });
+                    flvPlayer.on(flvjs.Events.ERROR, (errorType, errorDetail, errorInfo) => {
+                        console.error('❌ FLV error:', errorType, errorDetail, errorInfo);
+                    });
 
-            hls.on(Hls.Events.ERROR, function(event, data) {
-                console.error('❌ HLS error:', data);
-                if (data.fatal) {
-                    switch(data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            console.log('Network error, trying to recover...');
-                            hls.startLoad();
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            console.log('Media error, trying to recover...');
-                            hls.recoverMediaError();
-                            break;
-                        default:
-                            hls.destroy();
-                            break;
-                    }
+                    video.addEventListener('loadedmetadata', function() {
+                        console.log('✅ FLV stream loaded, starting playback');
+                        video.play().catch(e => console.log('Autoplay prevented:', e));
+                    });
+                } else {
+                    console.error('❌ FLV.js is not supported in this browser');
+                    alert('Trình duyệt của bạn không hỗ trợ phát FLV stream. Vui lòng sử dụng Chrome hoặc Firefox.');
                 }
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = playUrl;
-            video.addEventListener('loadedmetadata', function() {
-                video.play();
-            });
-        }
+            } else if (playUrl.includes('.m3u8')) {
+                // Use HLS.js for .m3u8 files
+                console.log('📺 Detected M3U8 format, using hls.js');
+                
+                if (Hls.isSupported()) {
+                    const hls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 90
+                    });
+
+                    hls.loadSource(playUrl);
+                    hls.attachMedia(video);
+
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        console.log('✅ HLS manifest parsed, starting playback');
+                        video.play().catch(e => console.log('Autoplay prevented:', e));
+                    });
+
+                    hls.on(Hls.Events.ERROR, function(event, data) {
+                        console.error('❌ HLS error:', data);
+                        if (data.fatal) {
+                            switch(data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    console.log('Network error, trying to recover...');
+                                    hls.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    console.log('Media error, trying to recover...');
+                                    hls.recoverMediaError();
+                                    break;
+                                default:
+                                    hls.destroy();
+                                    break;
+                            }
+                        }
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Native HLS support (Safari)
+                    video.src = playUrl;
+                    video.addEventListener('loadedmetadata', function() {
+                        console.log('✅ Native HLS support, starting playback');
+                        video.play().catch(e => console.log('Autoplay prevented:', e));
+                    });
+                }
+            } else {
+                // Direct MP4 or other format
+                console.log('📺 Using direct video source');
+                video.src = playUrl;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play().catch(e => console.log('Autoplay prevented:', e));
+                });
+            }
 
         // Chat functionality
         const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
@@ -1715,12 +1767,6 @@
                 });
         }
 
-        // Initialize Bootstrap dropdowns
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
-            dropdownElementList.forEach(dropdown => {
-                new bootstrap.Dropdown(dropdown);
-            });
-        });
+        })(); // End of IIFE
     </script>
 @endpush

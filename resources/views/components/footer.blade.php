@@ -1,10 +1,10 @@
 <!-- Footer -->
 <footer class="footer">
     <div class="footer-container">
-        <!-- Footer Top Section -->
-        <div class="footer-top">
-            <!-- Column 1: Logo & Description -->
-            <div class="footer-column footer-left">
+        <!-- Row 1: Logo + Description | Brand Ambassador -->
+        <div class="footer-row-1">
+            <!-- Left: Logo & Description -->
+            <div class="footer-left-content">
                 <div class="footer-logo">
                     <img src="{{ asset('images/U888-LOGO-NET-slogan 2.png') }}" alt="U888 Logo">
                 </div>
@@ -12,85 +12,63 @@
                     U888 là một công ty giải trí được đăng ký hợp pháp ở Costa Rica, tất cả các hoạt động kinh doanh cá cược đều tuân theo hiệp ước cá cược quốc tế của Costa Rica. Trong thị trường cá cược trực tuyến ngày càng sôi nổi, ABC8 được đông đảo người chơi lựa chọn, chúng tôi không ngừng tìm kiếm những đổi mới để thay đổi, luôn đem lại cho người chơi chất lượng phục vụ tốt nhất.
                 </p>
                 <a href="#" class="footer-read-more">... Xem thêm</a>
-                
-                <!-- Certificates & Awards -->
-                <div class="footer-certificates">
-                    <img src="{{ asset('images/Frame 2147223976.png') }}" alt="Certificates & Awards">
-                </div>
             </div>
 
-            <!-- Column 2: Menu Links (Dynamic from Database) -->
-            <div class="footer-column footer-center">
-                <nav class="footer-menu">
-                    @if(isset($footerMenus) && $footerMenus->count() > 0)
-                        <?php
-                            // Split menus into 2 rows for better layout
-                            $half = ceil($footerMenus->count() / 2);
-                            $row1 = $footerMenus->take($half);
-                            $row2 = $footerMenus->slice($half);
-                        ?>
-                        
-                        <!-- Row 1 (First half) -->
-                        @if($row1->count() > 0)
-                        <div class="footer-menu-row">
-                            @foreach($row1 as $index => $menu)
-                                <a href="{{ $menu->link }}" 
-                                   class="footer-menu-item"
-                                   @if(str_starts_with($menu->link, 'http'))
-                                       target="_blank"
-                                   @endif>
-                                    {{ $menu->text }}
-                                </a>
-                                @if(!$loop->last)
-                                    <span class="footer-separator">|</span>
-                                @endif
-                            @endforeach
-                        </div>
-                        @endif
-                        
-                        <!-- Row 2 (Second half) -->
-                        @if($row2->count() > 0)
-                        <div class="footer-menu-row">
-                            @foreach($row2 as $index => $menu)
-                                <a href="{{ $menu->link }}" 
-                                   class="footer-menu-item"
-                                   @if(str_starts_with($menu->link, 'http'))
-                                       target="_blank"
-                                   @endif>
-                                    {{ $menu->text }}
-                                </a>
-                                @if(!$loop->last)
-                                    <span class="footer-separator">|</span>
-                                @endif
-                            @endforeach
-                        </div>
-                        @endif
-                    @else
-                        <!-- Fallback menu if no menus in database -->
-                        <div class="footer-menu-row">
-                            <a href="#" class="footer-menu-item">Điều khoản và điều kiện</a>
-                            <span class="footer-separator">|</span>
-                            <a href="#" class="footer-menu-item">Giới thiệu</a>
-                            <span class="footer-separator">|</span>
-                            <a href="#" class="footer-menu-item">Quyền riêng tư</a>
-                        </div>
-                    @endif
-                </nav>
-            </div>
-
-            <!-- Column 3: Brand Ambassador -->
-            <div class="footer-column footer-right">
-                <div class="footer-brand-section">
-                    <h3 class="footer-title">Giám đốc thương hiệu ABCVIP</h3>
-                    <div class="footer-brand-image">
-                        <img src="{{ asset('images/Frame 2147224093.png') }}" alt="Kevin Phillips & ABCVIP">
-                    </div>
+            <!-- Right: Brand Ambassador -->
+            <div class="footer-right-content">
+                <h3 class="footer-title">Giám đốc thương hiệu ABCVIP</h3>
+                <div class="footer-brand-image">
+                    <img src="{{ asset('images/Frame 2147224093.png') }}" alt="Kevin Phillips & ABCVIP">
                 </div>
             </div>
         </div>
 
-        <!-- Footer Middle Section (Payment & Social) -->
-        <div class="footer-middle">
+        <!-- Row 2: Certificates & Awards -->
+        <div class="footer-row-2">
+            <div class="footer-certificates">
+                <img src="{{ asset('images/Frame 2147223976.png') }}" alt="Certificates & Awards">
+            </div>
+        </div>
+
+        <!-- Row 3: Menu Navigation -->
+        <div class="footer-row-3">
+            <nav class="footer-menu">
+                @if(isset($footerMenus) && $footerMenus->count() > 0)
+                    <div class="footer-menu-row">
+                        @foreach($footerMenus as $menu)
+                            <a href="{{ $menu->link }}"
+                               class="footer-menu-item"
+                               @if(str_starts_with($menu->link, 'http'))
+                                   target="_blank"
+                               @endif>
+                                {{ $menu->text }}
+                            </a>
+                            @if(!$loop->last)
+                                <span class="footer-separator">|</span>
+                            @endif
+                        @endforeach
+                    </div>
+                @else
+                    <!-- Fallback menu if no menus in database -->
+                    <div class="footer-menu-row">
+                        <a href="#" class="footer-menu-item">Điều khoản và điều kiện</a>
+                        <span class="footer-separator">|</span>
+                        <a href="#" class="footer-menu-item">Giới thiệu</a>
+                        <span class="footer-separator">|</span>
+                        <a href="#" class="footer-menu-item">Chơi có trách nhiệm</a>
+                        <span class="footer-separator">|</span>
+                        <a href="#" class="footer-menu-item">Miễn trừ trách nhiệm</a>
+                        <span class="footer-separator">|</span>
+                        <a href="#" class="footer-menu-item">Quyền riêng tư</a>
+                        <span class="footer-separator">|</span>
+                        <a href="#" class="footer-menu-item">Những câu hỏi thường gặp</a>
+                    </div>
+                @endif
+            </nav>
+        </div>
+
+        <!-- Row 4: Payment & Social -->
+        <div class="footer-row-4">
             <!-- Payment Methods -->
             <div class="footer-payment-section">
                 <h3 class="footer-title">Phương Thức Thanh Toán</h3>
@@ -132,28 +110,25 @@
         padding: 0 20px;
     }
 
-    /* Footer Top - 3 Columns */
-    .footer-top {
+    /* Row 1: Logo + Description | Brand Ambassador */
+    .footer-row-1 {
         display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-        gap: 50px;
-        padding-bottom: 40px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        grid-template-columns: 524px 1fr 320px;
+        gap: 40px;
+        padding-bottom: 30px;
         align-items: start;
     }
 
-    .footer-column {
-        display: flex;
-        flex-direction: column;
+    .footer-left-content {
+        grid-column: 1 / 2;
     }
 
-    /* Left Column - Logo & Description */
-    .footer-left {
-        gap: 15px;
+    .footer-right-content {
+        grid-column: 3 / 4;
     }
 
     .footer-logo {
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
 
     .footer-logo img {
@@ -164,87 +139,29 @@
 
     .footer-description {
         color: #B8B8B8;
-        font-size: 13px;
-        line-height: 1.8;
-        margin: 0 0 5px 0;
+        font-size: 12px;
+        line-height: 1.7;
+        margin: 0 0 8px 0;
         text-align: justify;
     }
 
     .footer-read-more {
-        color: #FF4500;
-        font-size: 13px;
-        font-weight: 600;
+        color: #888888;
+        font-size: 12px;
+        font-weight: 400;
         text-decoration: none;
         transition: color 0.3s ease;
-        margin-bottom: 15px;
         display: inline-block;
     }
 
-
-    .footer-certificates {
-        margin-top: 10px;
-    }
-
-    .footer-certificates img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-    }
-
-    /* Center Column - Menu (2 rows) */
-    .footer-center {
-        justify-content: center;
-        align-items: center;
-    }
-
-    .footer-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-        align-items: center;
-    }
-
-    .footer-menu-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .footer-menu-item {
-        color: #FFFFFF;
-        font-size: 14px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: color 0.3s ease;
-        white-space: nowrap;
-    }
-
-
-    .footer-separator {
-        color: rgba(255, 255, 255, 0.3);
-        font-size: 14px;
-        margin: 0 5px;
-    }
-
-    /* Right Column - Brand Ambassador */
-    .footer-right {
-        align-items: center;
-    }
-
     .footer-title {
-        color: #FF4500;
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 18px;
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 15px;
         text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .footer-brand-section {
-        width: 100%;
+        text-transform: none;
+        letter-spacing: 0.3px;
     }
 
     .footer-brand-image {
@@ -254,16 +171,63 @@
     .footer-brand-image img {
         max-width: 100%;
         height: auto;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        border-radius: 8px;
     }
 
-    /* Footer Middle - Payment & Social */
-    .footer-middle {
+    /* Row 2: Certificates & Awards */
+    .footer-row-2 {
+        padding: 30px 0;
+        text-align: center;
+    }
+
+    .footer-certificates img {
+        max-width: 100%;
+        height: auto;
+        display: inline-block;
+    }
+
+    /* Row 3: Menu Navigation */
+    .footer-row-3 {
+        padding: 30px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-menu {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .footer-menu-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-menu-item {
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 400;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .footer-separator {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 13px;
+        margin: 0 3px;
+    }
+
+    /* Row 4: Payment & Social */
+    .footer-row-4 {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 60px;
-        padding: 35px 0;
+        padding: 35px 0 25px;
         align-items: start;
     }
 
@@ -300,14 +264,18 @@
 
     /* Responsive Design */
     @media (max-width: 1200px) {
-        .footer-top {
+        .footer-row-1 {
             grid-template-columns: 1fr;
-            gap: 35px;
+            gap: 30px;
+        }
+
+        .footer-left-content {
+            grid-column: 1;
             text-align: center;
         }
 
-        .footer-left {
-            align-items: center;
+        .footer-right-content {
+            grid-column: 1;
         }
 
         .footer-description {
@@ -315,15 +283,18 @@
         }
 
         .footer-menu-row {
-            flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .footer-menu-item {
+            font-size: 12px;
         }
 
         .footer-separator {
-            display: none;
+            font-size: 12px;
         }
 
-        .footer-middle {
+        .footer-row-4 {
             grid-template-columns: 1fr;
             gap: 30px;
         }
@@ -338,9 +309,9 @@
             padding: 0 15px;
         }
 
-        .footer-top {
-            gap: 30px;
-            padding-bottom: 30px;
+        .footer-row-1 {
+            padding-bottom: 25px;
+            gap: 25px;
         }
 
         .footer-logo img {
@@ -348,21 +319,42 @@
         }
 
         .footer-description {
-            font-size: 12px;
-            line-height: 1.7;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .footer-read-more {
+            font-size: 11px;
+        }
+
+        .footer-row-2 {
+            padding: 25px 0;
+        }
+
+        .footer-row-3 {
+            padding: 25px 0;
+        }
+
+        .footer-menu-row {
+            flex-direction: column;
+            gap: 10px;
         }
 
         .footer-menu-item {
-            font-size: 13px;
+            font-size: 12px;
+        }
+
+        .footer-separator {
+            display: none;
         }
 
         .footer-title {
-            font-size: 13px;
+            font-size: 12px;
             margin-bottom: 12px;
         }
 
-        .footer-middle {
-            padding: 25px 0;
+        .footer-row-4 {
+            padding: 25px 0 20px;
             gap: 25px;
         }
 
@@ -371,7 +363,7 @@
         }
 
         .footer-copyright {
-            font-size: 12px;
+            font-size: 11px;
         }
     }
 </style>

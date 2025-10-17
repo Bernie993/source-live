@@ -641,6 +641,7 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Mobile Menu Functions - MUST be defined before @stack('scripts') -->
     <script>
@@ -676,8 +677,9 @@
 
     <!-- Common Login Script -->
     <script>
-        // Bank digit auto-focus
-        const bankDigits = document.querySelectorAll('.bank-digit');
+        (function() {
+            // Bank digit auto-focus
+            const bankDigits = document.querySelectorAll('.bank-digit');
         bankDigits.forEach((digit, index) => {
             digit.addEventListener('input', function(e) {
                 const value = e.target.value;
@@ -779,13 +781,14 @@
                 });
         }
 
-        // Initialize Bootstrap dropdowns
-        document.addEventListener('DOMContentLoaded', function() {
-            var dropdownElementList = document.querySelectorAll('.dropdown-toggle');
-            dropdownElementList.forEach(function(dropdown) {
-                new bootstrap.Dropdown(dropdown);
+            // Initialize Bootstrap dropdowns
+            document.addEventListener('DOMContentLoaded', function() {
+                var dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+                dropdownElementList.forEach(function(dropdown) {
+                    new bootstrap.Dropdown(dropdown);
+                });
             });
-        });
+        })();
     </script>
 </body>
 </html>
