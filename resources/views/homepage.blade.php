@@ -1361,7 +1361,8 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
-    // Global variables
+(function() {
+    // Global variables (scoped to this IIFE)
     let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
     let currentUser = @json(Auth::user());
     let currentLiveData = null;
@@ -1584,5 +1585,6 @@
         const minutes = String(date.getMinutes()).padStart(2, '0');
         return `${hours}:${minutes}`;
     }
+})(); // End of IIFE
 </script>
 @endpush
