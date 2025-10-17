@@ -919,11 +919,13 @@
             background-color: #2d2d2d !important;
             padding: 12px 16px;
             font-size: 16px;
+            color: #FFFFFF;
         }
 
         .form-control:focus {
             border-color: #dc2626;
             box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+            color: #FFFFFF;
         }
 
         .btn-confirm {
