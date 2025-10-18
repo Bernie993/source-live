@@ -475,12 +475,10 @@
         }
 
         .chat-message-time {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 10px;
-            position: absolute;
-            bottom: 8px;
-            right: 12px;
-            font-weight: 500;
+            margin-top: 2px;
+            font-weight: 400;
         }
 
         .chat-input-form {
@@ -1994,7 +1992,7 @@
                         startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
                         throw new Error('Throttled');
                     }
-                    
+
                     // Handle error responses (400, etc) - show server error message
                     if (!ok) {
                         showErrorNotification(
@@ -2003,7 +2001,7 @@
                         );
                         throw new Error('Request failed');
                     }
-                    
+
                     // Success case
                     if (data.success) {
                         input.value = '';
@@ -2126,15 +2124,20 @@
             const userLevel = data.level || (Math.floor(Math.random() * 5) + 1);
             const initial = data.username ? data.username.charAt(0).toUpperCase() : 'U';
 
+            // Mask username for display (show only first 3 chars + ***)
+            const displayUsername = maskUsername(data.username || 'User');
+
             messageDiv.innerHTML = `
                 <div class="chat-message-header">
                     <div class="chat-message-avatar level-${userLevel}" data-level="${userLevel}">
                         ${initial}
                     </div>
-                    <div class="chat-message-username">${escapeHtml(data.username || 'User')} ${data.user_id || '1'}:</div>
+                    <div style="flex: 1;">
+                        <div class="chat-message-username">${escapeHtml(displayUsername)}</div>
+                        <div class="chat-message-time">${formatTime(data.created_at)}</div>
+                    </div>
                 </div>
                 <div class="chat-message-text">${escapeHtml(data.message)}</div>
-                <div class="chat-message-time">${formatTime(data.created_at)}</div>
             `;
 
             chatMessages.appendChild(messageDiv);
@@ -2150,6 +2153,13 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function maskUsername(username) {
+            if (!username || username.length <= 3) {
+                return username;
+            }
+            return username.substring(0, 3) + '***';
         }
 
         function formatTime(timestamp) {
