@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\LiveSettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KeywordController;
 use App\Http\Controllers\Admin\ChatManagementController;
+use App\Http\Controllers\Admin\ChatSettingController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\SlideController;
@@ -53,6 +54,10 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::get('chat-stats', [ChatManagementController::class, 'stats'])->name('chat.stats');
     Route::get('chat-export', [ChatManagementController::class, 'export'])->name('chat.export');
     Route::post('chat/{message}/toggle-block', [ChatManagementController::class, 'toggleBlock'])->name('chat.toggle-block');
+    
+    // Chat settings routes (Admin only)
+    Route::get('chat/settings/config', [ChatSettingController::class, 'index'])->name('chat.settings');
+    Route::put('chat/settings/config', [ChatSettingController::class, 'update'])->name('chat.settings.update');
     
     // Menu management routes
     Route::resource('menus', MenuController::class);

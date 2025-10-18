@@ -8,6 +8,11 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý Chat</h1>
         <div>
+            @if(!Auth::user()->hasRole('Nhân viên Live'))
+                <a href="{{ route('admin.chat.settings') }}" class="btn btn-info btn-sm me-2">
+                    <i class="fas fa-cog"></i> Cài đặt Chat
+                </a>
+            @endif
             @if(Auth::user()->hasRole('Nhân viên Live'))
                 <a href="{{ route('live-staff.chat.export', request()->query()) }}" class="btn btn-success btn-sm">
                     <i class="fas fa-file-excel"></i> Xuất Excel (Từ lúc bắt đầu Live)
@@ -473,6 +478,8 @@ $(document).ready(function() {
     let lastMessageId = 0;
     const currentUsername = '{{ Auth::user()->name ?? Auth::user()->account }}';
     const isLiveStaff = {{ Auth::user()->hasRole('Nhân viên Live') ? 'true' : 'false' }};
+    let throttleCountdown = null;
+    let chatThrottleSettings = { enabled: false, seconds: 0 };
     
     // Auto-submit form when date inputs change
     $('#date_from, #date_to').on('change', function() {
@@ -638,6 +645,13 @@ $(document).ready(function() {
                 window.location.href = '/login';
                 throw new Error('Unauthorized');
             }
+            if (response.status === 429) {
+                // Rate limit exceeded
+                return response.json().then(data => {
+                    startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
+                    throw new Error('Throttled');
+                });
+            }
             return response.json();
         })
         .then(data => {
@@ -649,21 +663,82 @@ $(document).ready(function() {
                     scrollChatToBottom();
                 }
             } else {
-                alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
+                if (data.throttle_enabled) {
+                    startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
+                }
             }
         })
         .catch(error => {
             console.error('Error sending message:', error);
-            if (error.message !== 'Unauthorized') {
+            if (error.message !== 'Unauthorized' && error.message !== 'Throttled') {
                 alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
             }
         })
         .finally(() => {
-            input.prop('disabled', false);
-            $('#admin-chat-send-btn').prop('disabled', false);
+            if (!throttleCountdown) {
+                input.prop('disabled', false);
+                $('#admin-chat-send-btn').prop('disabled', false);
+            }
             input.focus();
         });
     }
+    
+    function startThrottleCountdown(seconds) {
+        if (throttleCountdown) {
+            clearInterval(throttleCountdown);
+        }
+        
+        let remaining = seconds;
+        const input = $('#admin-chat-input');
+        const button = $('#admin-chat-send-btn');
+        const statusText = $('#chat-status-text');
+        
+        // Disable input and button
+        input.prop('disabled', true);
+        button.prop('disabled', true);
+        
+        // Update status text
+        statusText.text(`Vui lòng đợi ${remaining} giây...`).removeClass('text-success').addClass('text-warning');
+        button.html(`<i class="fas fa-clock"></i> ${remaining}s`);
+        
+        throttleCountdown = setInterval(() => {
+            remaining--;
+            
+            if (remaining <= 0) {
+                clearInterval(throttleCountdown);
+                throttleCountdown = null;
+                
+                // Re-enable input and button
+                input.prop('disabled', false);
+                button.prop('disabled', false);
+                button.html('<i class="fas fa-paper-plane"></i> Gửi');
+                statusText.text('Đã kết nối với phòng live. Bạn có thể chat ngay!').removeClass('text-warning').addClass('text-success');
+                input.focus();
+            } else {
+                statusText.text(`Vui lòng đợi ${remaining} giây...`);
+                button.html(`<i class="fas fa-clock"></i> ${remaining}s`);
+            }
+        }, 1000);
+    }
+    
+    function loadChatSettings() {
+        fetch('/api/chat/settings')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    chatThrottleSettings = {
+                        enabled: data.throttle_enabled,
+                        seconds: data.throttle_seconds
+                    };
+                }
+            })
+            .catch(error => console.error('Error loading chat settings:', error));
+    }
+    
+    // Load chat settings on page load
+    loadChatSettings();
     
     function addMessageToChat(data) {
         // Remove placeholder if exists

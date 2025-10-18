@@ -20,6 +20,7 @@ Route::prefix('chat')->middleware(['web', 'disable.csrf.api'])->group(function (
     Route::post('/send', [ChatController::class, 'sendMessage']);
     Route::get('/messages', [ChatController::class, 'getMessages']);
     Route::get('/online-count', [ChatController::class, 'getOnlineCount']);
+    Route::get('/settings', [ChatController::class, 'getSettings']);
 });
 
 // Feedback API routes

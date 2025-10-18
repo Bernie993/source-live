@@ -1704,6 +1704,8 @@
         let lastMessageId = 0;
         let isRealtimeActive = false;
         const addedMessageIds = new Set(); // Track all added message IDs to prevent duplicates
+        let throttleCountdown = null;
+        let chatThrottleSettings = { enabled: false, seconds: 0 };
 
 
         // Check if chat is allowed
@@ -1969,6 +1971,13 @@
                             throw new Error('Forbidden');
                         });
                     }
+                    if (response.status === 429) {
+                        // Rate limit exceeded
+                        return response.json().then(data => {
+                            startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
+                            throw new Error('Throttled');
+                        });
+                    }
                     if (!response.ok) {
                         throw new Error('HTTP error! status: ' + response.status);
                     }
@@ -1983,19 +1992,84 @@
                             addMessageToChat(data.chat_message);
                         }
                     } else {
-                        alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
+                        if (data.throttle_enabled) {
+                            startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
+                        } else {
+                            alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
+                        }
                     }
                 })
                 .catch(error => {
                     console.error('Error sending message:', error);
-                    if (error.message !== 'Unauthorized') {
+                    if (error.message !== 'Unauthorized' && error.message !== 'Forbidden' && error.message !== 'Throttled') {
                         alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
                     }
                 })
                 .finally(() => {
-                    input.disabled = false;
+                    if (!throttleCountdown) {
+                        input.disabled = false;
+                        const sendBtn = document.querySelector('.chat-send-btn');
+                        if (sendBtn) sendBtn.disabled = false;
+                    }
                     input.focus();
                 });
+        }
+        
+        function startThrottleCountdown(seconds) {
+            if (throttleCountdown) {
+                clearInterval(throttleCountdown);
+            }
+            
+            let remaining = seconds;
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.querySelector('.chat-send-btn');
+            
+            // Disable input and button
+            input.disabled = true;
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.textContent = `Chờ ${remaining}s`;
+            }
+            
+            throttleCountdown = setInterval(() => {
+                remaining--;
+                
+                if (remaining <= 0) {
+                    clearInterval(throttleCountdown);
+                    throttleCountdown = null;
+                    
+                    // Re-enable input and button
+                    input.disabled = false;
+                    if (sendBtn) {
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = 'Gửi đi';
+                    }
+                    input.focus();
+                } else {
+                    if (sendBtn) {
+                        sendBtn.textContent = `Chờ ${remaining}s`;
+                    }
+                }
+            }, 1000);
+        }
+        
+        function loadChatSettings() {
+            fetch('/api/chat/settings')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        chatThrottleSettings = {
+                            enabled: data.throttle_enabled,
+                            seconds: data.throttle_seconds
+                        };
+                    }
+                })
+                .catch(error => console.error('Error loading chat settings:', error));
+        }
+        
+        // Load chat settings on page load
+        if (isLoggedIn) {
+            loadChatSettings();
         }
 
         function addMessageToChat(data) {

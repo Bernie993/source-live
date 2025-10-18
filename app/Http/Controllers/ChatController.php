@@ -90,12 +90,108 @@ class ChatController extends Controller
                 ], 401);
             }
 
+            if (Auth::check()) { $user = Auth::user(); } else { $user = (object) session("external_user"); }
+
+            // Check rate limit (throttle) - Apply to all users except Admin and Live Staff
+            $throttleEnabled = \App\Models\ChatSetting::isThrottleEnabled();
+            Log::info('Throttle check START', [
+                'throttle_enabled' => $throttleEnabled,
+                'user_id' => Auth::id(),
+                'username' => $user->name ?? $user->account ?? 'unknown'
+            ]);
+            
+            if ($throttleEnabled) {
+                // Check if user should bypass throttle (only for authenticated Admin/Live Staff)
+                $shouldBypassThrottle = false;
+                if (Auth::check()) {
+                    $shouldBypassThrottle = $user->hasRole('Admin') || $user->hasRole('Nhân viên Live');
+                }
+                
+                Log::info('Bypass check', [
+                    'should_bypass' => $shouldBypassThrottle,
+                    'is_authenticated' => Auth::check()
+                ]);
+                
+                if (!$shouldBypassThrottle) {
+                    $throttleSeconds = \App\Models\ChatSetting::getThrottleSeconds();
+                    
+                    Log::info('Throttle settings', [
+                        'throttle_seconds' => $throttleSeconds
+                    ]);
+                    
+                    // Build query to find last message
+                    $query = ChatMessage::query();
+                    
+                    // For authenticated users, search by user_id
+                    if (Auth::check()) {
+                        $query->where('user_id', Auth::id());
+                    } else {
+                        // For external users, search by username (session-based)
+                        $username = $user->name ?? $user->account ?? null;
+                        if ($username) {
+                            $query->where('username', $username)
+                                  ->whereNull('user_id'); // Only check messages without user_id (external users)
+                        } else {
+                            // No way to track this user, skip throttle
+                            goto skipThrottle;
+                        }
+                    }
+                    
+                    // Get user's last message (within reasonable time - last 24 hours)
+                    $lastMessage = $query->where('created_at', '>=', now()->subDay())
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                    
+                    Log::info('Last message check', [
+                        'has_last_message' => $lastMessage ? true : false,
+                        'last_message_id' => $lastMessage ? $lastMessage->id : null,
+                        'last_message_time' => $lastMessage ? $lastMessage->created_at : null
+                    ]);
+                    
+                    // Only apply throttle if user has sent a message recently
+                    if ($lastMessage) {
+                        // Calculate time elapsed since last message (use absolute value to handle timezone issues)
+                        $secondsSinceLastMessage = abs(now()->diffInSeconds($lastMessage->created_at, false));
+                        
+                        Log::info('Time check', [
+                            'seconds_since_last' => $secondsSinceLastMessage,
+                            'throttle_seconds' => $throttleSeconds,
+                            'should_throttle' => $secondsSinceLastMessage < $throttleSeconds
+                        ]);
+                        
+                        if ($secondsSinceLastMessage < $throttleSeconds) {
+                            // User is sending too fast, apply throttle
+                            $remainingSeconds = $throttleSeconds - $secondsSinceLastMessage;
+                            
+                            Log::warning('THROTTLE APPLIED', [
+                                'user_id' => Auth::id(),
+                                'remaining_seconds' => $remainingSeconds
+                            ]);
+                            
+                            return response()->json([
+                                'success' => false,
+                                'message' => "Vui lòng đợi {$remainingSeconds} giây trước khi gửi tin nhắn tiếp theo",
+                                'remaining_seconds' => $remainingSeconds,
+                                'throttle_enabled' => true
+                            ], 429); // 429 Too Many Requests
+                        } else {
+                            Log::info('Throttle passed - enough time elapsed');
+                        }
+                        // If secondsSinceLastMessage >= throttleSeconds, allow sending (no throttle)
+                    } else {
+                        Log::info('No last message found - first message or old messages, allow sending');
+                    }
+                    // If no lastMessage found (first message or old messages), allow sending
+                }
+            }
+            
+            skipThrottle:
+
             $request->validate([
                 'message' => 'required|string|max:500',
                 'live_setting_id' => 'nullable|exists:live_settings,id'
             ]);
 
-            if (Auth::check()) { $user = Auth::user(); } else { $user = (object) session("external_user"); }
             $messageContent = trim($request->input('message'));
             $liveSettingId = $request->input('live_setting_id');
 
@@ -185,6 +281,38 @@ class ChatController extends Controller
             return response()->json([
                 'success' => true,
                 'count' => 0
+            ]);
+        }
+    }
+
+    /**
+     * Get chat settings (throttle info)
+     */
+    public function getSettings(): JsonResponse
+    {
+        try {
+            $throttleEnabled = \App\Models\ChatSetting::isThrottleEnabled();
+            $throttleSeconds = \App\Models\ChatSetting::getThrottleSeconds();
+            
+            // Check if current user bypasses throttle
+            $bypassThrottle = false;
+            if (Auth::check()) {
+                $user = Auth::user();
+                $bypassThrottle = $user->hasRole('Admin') || $user->hasRole('Nhân viên Live');
+            }
+
+            return response()->json([
+                'success' => true,
+                'throttle_enabled' => $throttleEnabled && !$bypassThrottle,
+                'throttle_seconds' => $throttleSeconds,
+                'bypass_throttle' => $bypassThrottle
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'throttle_enabled' => false,
+                'throttle_seconds' => 0,
+                'bypass_throttle' => true
             ]);
         }
     }
