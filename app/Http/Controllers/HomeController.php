@@ -195,18 +195,27 @@ class HomeController extends Controller
             }
         }
 
-        /**
-         * Logout user
-         *
-         * @return JsonResponse
-         */
-        public function logout(): JsonResponse
-        {
-            Auth::logout();
+    /**
+     * Logout user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        Auth::logout();
+        
+        // Invalidate the session
+        $request->session()->invalidate();
+        
+        // Regenerate the CSRF token
+        $request->session()->regenerateToken();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Đăng xuất thành công!'
-            ]);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Đăng xuất thành công!'
+        ])->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+          ->header('Pragma', 'no-cache')
+          ->header('Expires', '0');
     }
+}

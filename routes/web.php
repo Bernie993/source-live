@@ -38,10 +38,10 @@ Route::get('/home', function () {
     }
     
     return redirect('/');
-})->middleware('auth')->name('home');
+})->middleware(['auth', 'prevent.back'])->name('home');
 
 // Admin routes
-Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:Admin', 'prevent.back'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('live-settings', LiveSettingController::class);
     Route::resource('users', UserController::class);
@@ -84,7 +84,7 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Live Staff routes
-Route::middleware(['auth', 'role:Nhân viên Live'])->prefix('live-staff')->name('live-staff.')->group(function () {
+Route::middleware(['auth', 'role:Nhân viên Live', 'prevent.back'])->prefix('live-staff')->name('live-staff.')->group(function () {
     Route::get('/dashboard', [LiveStaffDashboardController::class, 'index'])->name('dashboard');
     
     // Chat management routes for Live Staff (reuse Admin ChatManagementController)
@@ -97,7 +97,7 @@ Route::middleware(['auth', 'role:Nhân viên Live'])->prefix('live-staff')->name
 });
 
 // CSKH routes
-Route::middleware(['auth', 'role:CSKH'])->prefix('cskh')->name('cskh.')->group(function () {
+Route::middleware(['auth', 'role:CSKH', 'prevent.back'])->prefix('cskh')->name('cskh.')->group(function () {
     Route::get('/dashboard', [CSKHDashboardController::class, 'index'])->name('dashboard');
     Route::resource('keywords', KeywordController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::post('keywords/{keyword}/toggle', [KeywordController::class, 'toggle'])->name('keywords.toggle');
