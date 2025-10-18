@@ -58,4 +58,20 @@ class ChatSetting extends Model
     {
         return (bool) self::get('throttle_enabled', true);
     }
+
+    /**
+     * Check if link blocking is enabled
+     */
+    public static function isLinkBlockingEnabled(): bool
+    {
+        return (bool) self::get('block_links_enabled', true);
+    }
+
+    /**
+     * Get max message length
+     */
+    public static function getMaxMessageLength(): int
+    {
+        return (int) self::get('max_message_length', 200);
+    }
 }

@@ -640,21 +640,31 @@ $(document).ready(function() {
             })
         })
         .then(response => {
-            if (response.status === 401) {
+            // Always parse JSON first
+            return response.json().then(data => ({ status: response.status, ok: response.ok, data }));
+        })
+        .then(({ status, ok, data }) => {
+            if (status === 401) {
                 alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
                 window.location.href = '/login';
                 throw new Error('Unauthorized');
             }
-            if (response.status === 429) {
+            if (status === 429) {
                 // Rate limit exceeded
-                return response.json().then(data => {
-                    startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
-                    throw new Error('Throttled');
-                });
+                startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
+                throw new Error('Throttled');
             }
-            return response.json();
-        })
-        .then(data => {
+            
+            // Handle error responses (400, etc) - show server error message
+            if (!ok) {
+                showErrorNotification(
+                    'Không gửi được tin nhắn!',
+                    data.message || 'Có lỗi xảy ra khi gửi tin nhắn'
+                );
+                throw new Error('Request failed');
+            }
+            
+            // Success case
             if (data.success) {
                 input.val('');
                 // Add the message immediately
@@ -666,7 +676,6 @@ $(document).ready(function() {
                 if (data.throttle_enabled) {
                     startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
                 } else {
-                    // Show notification modal instead of alert
                     showErrorNotification(
                         'Không gửi được tin nhắn!',
                         data.message || 'Có lỗi xảy ra khi gửi tin nhắn'
@@ -676,10 +685,11 @@ $(document).ready(function() {
         })
         .catch(error => {
             console.error('Error sending message:', error);
-            if (error.message !== 'Unauthorized' && error.message !== 'Throttled') {
+            // Only show generic error if not already handled
+            if (error.message !== 'Unauthorized' && error.message !== 'Throttled' && error.message !== 'Request failed') {
                 showErrorNotification(
                     'Không thể gửi tin nhắn!',
-                    'Tin nhắn của bạn chứa từ khóa hoặc ký tự bị cấm.'
+                    'Vui lòng thử lại sau.'
                 );
             }
         })
@@ -697,7 +707,8 @@ $(document).ready(function() {
             clearInterval(throttleCountdown);
         }
 
-        let remaining = seconds;
+        // Round to integer for display
+        let remaining = Math.ceil(parseFloat(seconds));
         const input = $('#admin-chat-input');
         const button = $('#admin-chat-send-btn');
         const statusText = $('#chat-status-text');

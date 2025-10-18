@@ -32,11 +32,15 @@ class ChatSettingController extends Controller
         $request->validate([
             'message_throttle_seconds' => 'required|integer|min:0|max:300',
             'throttle_enabled' => 'nullable|in:0,1',
+            'block_links_enabled' => 'nullable|in:0,1',
+            'max_message_length' => 'required|integer|min:50|max:1000',
         ]);
 
         ChatSetting::set('message_throttle_seconds', $request->message_throttle_seconds);
         // Checkbox returns null when unchecked, so default to 0
         ChatSetting::set('throttle_enabled', $request->input('throttle_enabled', 0));
+        ChatSetting::set('block_links_enabled', $request->input('block_links_enabled', 0));
+        ChatSetting::set('max_message_length', $request->max_message_length);
 
         return redirect()->route('admin.chat.settings')
             ->with('success', 'Cài đặt chat đã được cập nhật thành công!');

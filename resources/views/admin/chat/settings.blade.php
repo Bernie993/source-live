@@ -149,6 +149,66 @@
                             </ul>
                         </div>
 
+                        <hr class="my-5">
+
+                        <!-- Block Links Setting -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <strong>Chặn gửi link:</strong>
+                            </label>
+                            <div class="form-check form-switch">
+                                <input type="hidden" name="block_links_enabled" value="0">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       role="switch" 
+                                       id="block_links_enabled" 
+                                       name="block_links_enabled" 
+                                       value="1"
+                                       {{ ($settings['block_links_enabled']->value ?? true) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="block_links_enabled">
+                                    {{ ($settings['block_links_enabled']->value ?? true) ? 'Đang bật' : 'Đang tắt' }} - Chặn người dùng gửi link/URL
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Khi bật, người dùng thường không thể gửi tin nhắn chứa link. Admin và Nhân viên Live vẫn có thể gửi link.
+                            </small>
+                        </div>
+
+                        <hr class="my-5">
+
+                        <!-- Max Message Length Setting -->
+                        <div class="mb-4">
+                            <label for="max_message_length" class="form-label">
+                                <strong>Giới hạn số ký tự tin nhắn:</strong>
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="number" 
+                                           class="form-control form-control-lg" 
+                                           id="max_message_length" 
+                                           name="max_message_length" 
+                                           value="{{ $settings['max_message_length']->value ?? 200 }}"
+                                           min="50" 
+                                           max="1000"
+                                           required
+                                           oninput="updateLengthPreview(this.value)">
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <div class="alert alert-info mb-0 w-100">
+                                        <i class="fas fa-text-width"></i> 
+                                        <strong id="length_preview_text">
+                                            Giới hạn: {{ $settings['max_message_length']->value ?? 200 }} ký tự
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Số ký tự tối đa cho mỗi tin nhắn. Giá trị từ 50 đến 1000 ký tự. Admin và Nhân viên Live không bị giới hạn.
+                            </small>
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
@@ -247,6 +307,10 @@ function updatePreview(seconds) {
     document.getElementById('preview_text').textContent = `Người dùng phải chờ ${seconds} giây`;
     document.getElementById('wait_time_text').textContent = `Chờ ${seconds} giây`;
     document.getElementById('seconds_text').textContent = String(seconds).padStart(2, '0');
+}
+
+function updateLengthPreview(length) {
+    document.getElementById('length_preview_text').textContent = `Giới hạn: ${length} ký tự`;
 }
 
 function toggleThrottleSettings(checkbox) {

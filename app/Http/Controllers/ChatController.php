@@ -187,10 +187,36 @@ class ChatController extends Controller
             
             skipThrottle:
 
-            $request->validate([
-                'message' => 'required|string|max:500',
-                'live_setting_id' => 'nullable|exists:live_settings,id'
-            ]);
+            // Check if user is admin or live staff (exempt from restrictions)
+            $isExemptUser = Auth::check() && (
+                Auth::user()->hasRole('Admin') || 
+                Auth::user()->hasRole('Nhân viên Live')
+            );
+            
+            // Get message length setting
+            $maxLength = \App\Models\ChatSetting::getMaxMessageLength();
+            
+            // Validate with different rules based on user role
+            if ($isExemptUser) {
+                // Admin and live staff: no length limit
+                $request->validate([
+                    'message' => 'required|string',
+                    'live_setting_id' => 'nullable|exists:live_settings,id'
+                ], [
+                    'message.required' => 'Vui lòng nhập tin nhắn.',
+                    'live_setting_id.exists' => 'Phòng live không tồn tại.'
+                ]);
+            } else {
+                // Regular users: apply length limit
+                $request->validate([
+                    'message' => "required|string|max:$maxLength",
+                    'live_setting_id' => 'nullable|exists:live_settings,id'
+                ], [
+                    'message.required' => 'Vui lòng nhập tin nhắn.',
+                    'message.max' => "Tin nhắn không được vượt quá {$maxLength} ký tự.",
+                    'live_setting_id.exists' => 'Phòng live không tồn tại.'
+                ]);
+            }
 
             $messageContent = trim($request->input('message'));
             $liveSettingId = $request->input('live_setting_id');
@@ -213,8 +239,11 @@ class ChatController extends Controller
                 }
             }
 
-            // Check for blocked keywords
-            $filterResult = $this->keywordFilterService->filterMessage($messageContent);
+            // Check for blocked keywords and links
+            // Regular users: check both keywords and links (if enabled)
+            // Admin/Live Staff: only check keywords, can send links
+            $checkLinks = !$isExemptUser && \App\Models\ChatSetting::isLinkBlockingEnabled();
+            $filterResult = $this->keywordFilterService->filterMessage($messageContent, $checkLinks);
 
             $chatMessage = ChatMessage::create([
                 'username' => $user->name ?? $user->account,
@@ -237,17 +266,31 @@ class ChatController extends Controller
                     'chat_message' => $chatMessage
                 ]);
             } else {
+                // Customize message based on reason
+                $message = 'Không gửi được tin nhắn. Tin nhắn của bạn chứa từ khóa hoặc ký tự bị cấm.';
+                if (isset($filterResult['reason']) && $filterResult['reason'] === 'contains_link') {
+                    $message = 'Không gửi được tin nhắn. Tin nhắn của bạn chứa link không được phép.';
+                }
+                
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không gửi được tin nhắn. Tin nhắn của bạn chứa từ khóa hoặc ký tự bị cấm.',
-                    'blocked' => true
+                    'message' => $message,
+                    'blocked' => true,
+                    'reason' => $filterResult['reason'] ?? 'unknown'
                 ], 400);
             }
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = [];
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errors[] = $message;
+                }
+            }
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Tin nhắn không hợp lệ: ' . implode(', ', array_flatten($e->errors()))
+                'message' => !empty($errors) ? $errors[0] : 'Tin nhắn không hợp lệ'
             ], 422);
         } catch (\Exception $e) {
             Log::error('Error sending chat message', [
