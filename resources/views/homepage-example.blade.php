@@ -8,7 +8,7 @@
 
 <style>
     /* ============ PAGE-SPECIFIC STYLES (bỏ header/notification/modal vì đã có trong layout) ============ */
-    
+
     /* ============ LIVE STREAMS SECTION ============ */
     .live-streams-section {
         max-width: 1920px;
@@ -177,7 +177,7 @@
 
     /* ... Copy all other page-specific styles here ... */
     /* Bao gồm: Promo Banner, News Section, App Download styles */
-    
+
     @media (max-width: 1200px) {
         .streams-grid {
             grid-template-columns: 1fr;
@@ -259,7 +259,7 @@
 
     <!-- Copy các sections khác từ file cũ:
          - Promotional Banner Slider
-         - News Section  
+         - News Section
          - App Download Section
     -->
 @endsection
@@ -273,7 +273,7 @@
 <script>
     // Copy all page-specific JavaScript from old file
     // Bao gồm: initializeApp, loadAllLiveStreams, enterLiveRoom, Swiper init, etc.
-    
+
     console.log('Homepage initialized');
 </script>
 @endpush

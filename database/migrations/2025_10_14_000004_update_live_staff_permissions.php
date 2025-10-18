@@ -20,7 +20,7 @@ return new class extends Migration
         if ($liveStaffRole) {
             // Remove manage-keywords permission
             $liveStaffRole->revokePermissionTo('manage-keywords');
-            
+
             // Add manage-chat permission if not exists
             $liveStaffRole->givePermissionTo('manage-chat');
         }
