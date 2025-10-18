@@ -132,6 +132,7 @@
                             </button>
                         </form>
 
+                        @if(!Auth::user()->hasRole('Nhân viên Live'))
                         <form method="POST" action="{{ route('admin.chat.destroy', $message) }}">
                             @csrf
                             @method('DELETE')
@@ -141,6 +142,7 @@
                                 Xóa tin nhắn
                             </button>
                         </form>
+                        @endif
 
                         <a href="{{ route('admin.chat.index') }}" class="btn btn-secondary btn-block">
                             <i class="fas fa-arrow-left"></i>

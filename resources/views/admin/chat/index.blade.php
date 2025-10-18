@@ -356,6 +356,7 @@
                                                 <i class="fas fa-{{ $message->is_blocked ? 'unlock' : 'ban' }}"></i>
                                             </button>
                                         </form>
+                                        @if(!Auth::user()->hasRole('Nhân viên Live'))
                                         <form method="POST" action="{{ route('admin.chat.destroy', $message) }}"
                                               style="display: inline;">
                                             @csrf
@@ -365,6 +366,7 @@
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -470,6 +472,7 @@ $(document).ready(function() {
     let echoChannel = null;
     let lastMessageId = 0;
     const currentUsername = '{{ Auth::user()->name ?? Auth::user()->account }}';
+    const isLiveStaff = {{ Auth::user()->hasRole('Nhân viên Live') ? 'true' : 'false' }};
     
     // Auto-submit form when date inputs change
     $('#date_from, #date_to').on('change', function() {
@@ -876,6 +879,7 @@ $(document).ready(function() {
                                 <i class="fas fa-${data.is_blocked ? 'unlock' : 'ban'}"></i>
                             </button>
                         </form>
+                        ${!isLiveStaff ? `
                         <form method="POST" action="/admin/chat/${data.id}" style="display: inline;">
                             @csrf
                             <input type="hidden" name="_method" value="DELETE">
@@ -884,6 +888,7 @@ $(document).ready(function() {
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
+                        ` : ''}
                     </div>
                 </td>
             </tr>

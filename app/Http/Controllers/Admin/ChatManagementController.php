@@ -266,6 +266,12 @@ class ChatManagementController extends Controller
      */
     public function destroy($id)
     {
+        // Only Admin can delete messages, Live Staff cannot
+        if (Auth::user()->hasRole('Nhân viên Live')) {
+            return redirect()->route('admin.chat.index')
+                ->with('error', 'Bạn không có quyền xóa tin nhắn. Chỉ Admin mới có quyền này.');
+        }
+        
         $message = ChatMessage::find($id);
         
         if (!$message) {
