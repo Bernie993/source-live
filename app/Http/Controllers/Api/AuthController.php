@@ -32,12 +32,38 @@ class AuthController extends Controller
                 'platform' => $validated['platform'] ?? 'u888',
                 'account' => $validated['account'],
                 'bank_account' => $validated['bank_account'],
-                'start_time' => now()->subDays(30)->format('Y-m-d H:i:s'),
-                'end_time' => now()->format('Y-m-d H:i:s')
+                'start_time' => now()->format('Y-m-d H:i:s'),
+                'end_time' => now()->addDays(5)->format('Y-m-d H:i:s')
             ]);
 
             if ($response->successful() && $response->json()) {
                 $apiData = $response->json();
+                
+                // IMPORTANT: API always returns HTTP 200, but uses 'Code' field to indicate success/failure
+                // Code 200 = Success, other codes = Error
+                $responseCode = $apiData['Code'] ?? null;
+                $responseError = $apiData['Error'] ?? null;
+                
+                if ($responseCode !== 200) {
+                    // Invalid account or error
+                    $errorMessage = 'Tài khoản không hợp lệ hoặc không đủ điều kiện';
+                    
+                    if (is_array($responseError) && !empty($responseError)) {
+                        $firstError = $responseError[0] ?? [];
+                        $errorDetail = $firstError['Message'] ?? '';
+                        
+                        if (strpos($errorDetail, '會員帳號不存在') !== false || strpos($errorDetail, 'not found') !== false) {
+                            $errorMessage = 'Tài khoản không tồn tại hoặc không hợp lệ';
+                        } elseif (strpos($errorDetail, 'Invalid request') !== false) {
+                            $errorMessage = 'Thông tin không hợp lệ';
+                        }
+                    }
+                    
+                    return response()->json([
+                        'success' => false,
+                        'message' => $errorMessage
+                    ], 401);
+                }
                 
                 // Check if user already exists
                 $user = User::where('account', $validated['account'])
@@ -80,8 +106,8 @@ class AuthController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Thông tin không hợp lệ hoặc không tìm thấy dữ liệu'
-                ], 401);
+                    'message' => 'Không thể kết nối đến máy chủ xác thực'
+                ], 500);
             }
 
         } catch (\Exception $e) {

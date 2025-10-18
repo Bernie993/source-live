@@ -239,7 +239,8 @@ class ChatController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tin nhắn chứa từ khóa không được phép: ' . implode(', ', $filterResult['blocked_keywords'])
+                    'message' => 'Không gửi được tin nhắn. Tin nhắn của bạn chứa từ khóa hoặc ký tự bị cấm.',
+                    'blocked' => true
                 ], 400);
             }
 

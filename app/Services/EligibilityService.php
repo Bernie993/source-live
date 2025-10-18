@@ -77,20 +77,46 @@ class EligibilityService
             if ($response->successful()) {
                 $data = $response->json();
                 
-                return [
-                    'success' => true,
-                    'data' => $data,
-                    'message' => 'Tài khoản hợp lệ'
-                ];
+                // IMPORTANT: API always returns HTTP 200, but uses 'Code' field to indicate success/failure
+                // Code 200 = Success
+                // Code 20002 = Member account not found
+                // Code 10001 = Invalid request format
+                $responseCode = $data['Code'] ?? null;
+                $responseError = $data['Error'] ?? null;
+                
+                if ($responseCode === 200) {
+                    // Valid account - has Result data
+                    return [
+                        'success' => true,
+                        'data' => $data,
+                        'message' => 'Tài khoản hợp lệ'
+                    ];
+                } else {
+                    // Invalid account or error - Simple message
+                    $errorMessage = 'Thông tin tài khoản không đúng';
+                    
+                    Log::warning('Eligibility API returned error code', [
+                        'account' => $account,
+                        'bank_account' => $bankAccount,
+                        'response_code' => $responseCode,
+                        'error' => $responseError,
+                    ]);
+                    
+                    return [
+                        'success' => false,
+                        'message' => $errorMessage,
+                        'error_code' => $responseCode
+                    ];
+                }
             } else {
-                Log::warning('Eligibility API returned error', [
+                Log::warning('Eligibility API HTTP request failed', [
                     'status_code' => $response->status(),
                     'response_body' => $response->body(),
                 ]);
                 
                 return [
                     'success' => false,
-                    'message' => 'Tài khoản không hợp lệ hoặc không đủ điều kiện',
+                    'message' => 'Không thể kết nối đến máy chủ xác thực',
                     'error_code' => $response->status()
                 ];
             }

@@ -880,6 +880,9 @@
     <!-- Feedback Modal Component -->
     @include('components.feedback-modal')
 
+    <!-- Notification Modal Component -->
+    @include('components.notification-modal')
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -927,7 +930,7 @@
                                     autoClose: true,
                                     boundary: 'viewport'
                                 });
-                                console.log('✓ Dropdown initialized successfully');
+                                // console.log('✓ Dropdown initialized successfully');
                             } catch(e) {
                                 console.error('Failed to create dropdown:', e);
                             }
@@ -984,19 +987,19 @@
 
             // Try immediately
             if (setupDropdowns()) {
-                console.log('✓ Dropdown system ready');
+                // console.log('✓ Dropdown system ready');
             } else {
                 // If Bootstrap not ready, wait for DOMContentLoaded
                 document.addEventListener('DOMContentLoaded', function() {
                     if (setupDropdowns()) {
-                        console.log('✓ Dropdown system ready (on DOMContentLoaded)');
+                        // console.log('✓ Dropdown system ready (on DOMContentLoaded)');
                     } else {
                         // If still not ready, wait a bit more
                         setTimeout(function() {
                             if (setupDropdowns()) {
-                                console.log('✓ Dropdown system ready (delayed)');
+                                // console.log('✓ Dropdown system ready (delayed)');
                             } else {
-                                console.error('✗ Failed to initialize dropdowns - Bootstrap not loaded');
+                                // console.error('✗ Failed to initialize dropdowns - Bootstrap not loaded');
                             }
                         }, 500);
                     }
@@ -1066,22 +1069,16 @@
                     bank_account: bankAccount
                 })
             })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.authenticated) {
-                        // alert('Đăng nhập thành công!');
+                        // Show success notification
+                        showSuccessNotification('Đăng nhập thành công!', 'Bạn đã đăng nhập thành công!');
 
-                        // Close modal using vanilla JS
+                        // Close login modal
                         const loginModal = document.getElementById('loginModal');
                         if (loginModal) {
-                            // Remove backdrop manually
                             const backdrop = document.querySelector('.modal-backdrop');
                             if (backdrop) {
                                 backdrop.remove();
@@ -1093,17 +1090,24 @@
                             document.body.style.removeProperty('padding-right');
                         }
 
-                        // Wait a bit for session to be saved, then reload
+                        // Wait a bit then reload
                         setTimeout(() => {
                             window.location.reload();
-                        }, 500);
+                        }, 1500);
                     } else {
-                        alert(data.message || 'Tài khoản không hợp lệ!');
+                        // Show simple error notification
+                        showErrorNotification(
+                            'Đăng nhập thất bại!',
+                            'Thông tin tài khoản không đúng, vui lòng kiểm tra lại.'
+                        );
                     }
                 })
                 .catch(error => {
-                    console.error('Detailed error:', error);
-                    alert('Có lỗi xảy ra, vui lòng thử lại! Chi tiết: ' + error.message);
+                    console.error('Error:', error);
+                    showErrorNotification(
+                        'Có lỗi xảy ra!',
+                        'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.'
+                    );
                 })
                 .finally(() => {
                     // Reset loading state

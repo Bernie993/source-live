@@ -154,6 +154,9 @@
         </main>
     </div>
 
+        <!-- Notification Modal Component -->
+        @include('components.notification-modal')
+
         <!-- Vite - Load Bootstrap + Laravel Echo (MUST load FIRST) -->
         @vite(['resources/js/app.js'])
         

@@ -176,7 +176,7 @@ class HomeController extends Controller
 
                 return response()->json([
                     'success' => false,
-                    'message' => 'Dữ liệu không hợp lệ: ' . implode(', ', array_flatten($e->errors()))
+                    'message' => 'Thông tin không hợp lệ'
                 ], 422);
 
             } catch (\Exception $e) {

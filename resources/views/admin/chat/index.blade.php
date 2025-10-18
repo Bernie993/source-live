@@ -28,8 +28,8 @@
     @if(Auth::user()->hasRole('Nhân viên Live'))
     <!-- Info for Live Staff -->
     <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="fas fa-info-circle"></i> 
-        <strong>Lưu ý:</strong> Khi xuất Excel, bạn chỉ có thể xuất tin nhắn từ thời điểm bắt đầu live stream đến hiện tại. 
+        <i class="fas fa-info-circle"></i>
+        <strong>Lưu ý:</strong> Khi xuất Excel, bạn chỉ có thể xuất tin nhắn từ thời điểm bắt đầu live stream đến hiện tại.
         Vui lòng chọn phòng live trước khi xuất file.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -54,7 +54,7 @@
                             <option value="">-- Chọn phòng live để chat --</option>
                             @foreach($liveSettings as $live)
                                 <option value="{{ $live->id }}">
-                                    {{ $live->live_title }} 
+                                    {{ $live->live_title }}
                                     @if($live->live_date && $live->live_time)
                                         - {{ $live->live_date->format('d/m/Y') }} {{ $live->live_time->format('H:i') }}
                                     @endif
@@ -76,15 +76,15 @@
                                     <p>Chọn phòng live để bắt đầu chat</p>
                                 </div>
                             </div>
-                            
+
                             <!-- Chat Input Form -->
                             <form id="admin-chat-form">
                                 @csrf
                                 <div class="input-group">
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="admin-chat-input" 
-                                           placeholder="Chọn phòng live để chat..." 
+                                    <input type="text"
+                                           class="form-control"
+                                           id="admin-chat-input"
+                                           placeholder="Chọn phòng live để chat..."
                                            maxlength="500"
                                            disabled>
                                     <button class="btn btn-primary" type="submit" id="admin-chat-send-btn" disabled>
@@ -193,9 +193,9 @@
                             <select class="form-control" id="live_setting_id" name="live_setting_id">
                                 <option value="">-- Tất cả phòng live --</option>
                                 @foreach($liveSettings as $live)
-                                    <option value="{{ $live->id }}" 
+                                    <option value="{{ $live->id }}"
                                             {{ request('live_setting_id') == $live->id ? 'selected' : '' }}>
-                                        {{ $live->live_title }} 
+                                        {{ $live->live_title }}
                                         @if($live->live_date && $live->live_time)
                                             - {{ $live->live_date->format('d/m/Y') }} {{ $live->live_time->format('H:i') }}
                                         @endif
@@ -406,62 +406,62 @@
         word-wrap: break-word;
         animation: fadeIn 0.3s ease-in;
     }
-    
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    
+
     .chat-message.own-message {
         background-color: #4e73df;
         color: white;
         margin-left: auto;
         text-align: right;
     }
-    
+
     .chat-message.other-message {
         background-color: #e3e6f0;
         color: #5a5c69;
     }
-    
+
     .chat-message .message-username {
         font-weight: bold;
         font-size: 0.85em;
         margin-bottom: 3px;
     }
-    
+
     .chat-message .message-content {
         font-size: 0.95em;
     }
-    
+
     .chat-message .message-time {
         font-size: 0.75em;
         opacity: 0.8;
         margin-top: 3px;
     }
-    
+
     .chat-message.own-message .message-username {
         color: #ffd700;
     }
-    
+
     .chat-message.other-message .message-username {
         color: #4e73df;
     }
-    
+
     #admin-chat-messages::-webkit-scrollbar {
         width: 8px;
     }
-    
+
     #admin-chat-messages::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 10px;
     }
-    
+
     #admin-chat-messages::-webkit-scrollbar-thumb {
         background: #888;
         border-radius: 10px;
     }
-    
+
     #admin-chat-messages::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
@@ -480,17 +480,17 @@ $(document).ready(function() {
     const isLiveStaff = {{ Auth::user()->hasRole('Nhân viên Live') ? 'true' : 'false' }};
     let throttleCountdown = null;
     let chatThrottleSettings = { enabled: false, seconds: 0 };
-    
+
     // Auto-submit form when date inputs change
     $('#date_from, #date_to').on('change', function() {
         $(this).closest('form').submit();
     });
-    
+
     // Toggle chat box
     $('#toggle-chat-box').on('click', function() {
         const content = $('#chat-box-content');
         const icon = $(this).find('i');
-        
+
         if (content.is(':visible')) {
             content.slideUp();
             icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
@@ -499,11 +499,11 @@ $(document).ready(function() {
             icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
         }
     });
-    
+
     // Handle live room selection
     $('#chat-live-select').on('change', function() {
         selectedLiveId = $(this).val();
-        
+
         if (selectedLiveId) {
             enableChat();
             loadChatMessages(selectedLiveId);
@@ -513,13 +513,13 @@ $(document).ready(function() {
             clearChat();
         }
     });
-    
+
     // Handle chat form submission
     $('#admin-chat-form').on('submit', function(e) {
         e.preventDefault();
         sendChatMessage();
     });
-    
+
     // Enable enter key to send
     $('#admin-chat-input').on('keypress', function(e) {
         if (e.which === 13 && !e.shiftKey) {
@@ -527,7 +527,7 @@ $(document).ready(function() {
             sendChatMessage();
         }
     });
-    
+
     function enableChat() {
         $('#admin-chat-input').prop('disabled', false).attr('placeholder', 'Nhập tin nhắn...');
         $('#admin-chat-send-btn').prop('disabled', false);
@@ -535,21 +535,21 @@ $(document).ready(function() {
         $('#chat-status-indicator').show().removeClass('bg-secondary').addClass('bg-success').html('<i class="fas fa-circle" style="font-size: 8px;"></i> Đã kết nối');
         $('#message-counter').show();
     }
-    
+
     function disableChat() {
         $('#admin-chat-input').prop('disabled', true).attr('placeholder', 'Chọn phòng live để chat...').val('');
         $('#admin-chat-send-btn').prop('disabled', true);
         $('#chat-status-text').text('Chọn phòng live để bắt đầu chat').removeClass('text-success').addClass('text-muted');
         $('#chat-status-indicator').hide();
         $('#message-counter').hide();
-        
+
         // Leave Echo channel
         if (echoChannel && typeof Echo !== 'undefined') {
             Echo.leave(echoChannel);
             echoChannel = null;
         }
     }
-    
+
     function clearChat() {
         $('#admin-chat-messages').html(`
             <div class="text-center text-muted" id="chat-placeholder">
@@ -560,16 +560,16 @@ $(document).ready(function() {
         lastMessageId = 0;
         updateMessageCounter();
     }
-    
+
     function loadChatMessages(liveId) {
         $('#chat-placeholder').remove();
         $('#admin-chat-messages').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải tin nhắn...</div>');
-        
+
         fetch(`/api/chat/messages?live_setting_id=${liveId}`)
             .then(response => response.json())
             .then(data => {
                 $('#admin-chat-messages').empty();
-                
+
                 if (data.success && data.messages && data.messages.length > 0) {
                     data.messages.forEach(msg => {
                         addMessageToChat(msg);
@@ -585,47 +585,47 @@ $(document).ready(function() {
                 $('#admin-chat-messages').html('<div class="text-center text-danger"><p>Không thể tải tin nhắn. Vui lòng thử lại!</p></div>');
             });
     }
-    
+
     function setupRealtimeChat(liveId) {
         if (typeof Echo === 'undefined') {
             console.warn('Echo is not available. Real-time chat will not work.');
             return;
         }
-        
+
         // Leave previous channel if exists
         if (echoChannel) {
             Echo.leave(echoChannel);
         }
-        
+
         // Listen to this specific live room's channel
         echoChannel = `live-chat.${liveId}`;
-        
+
         Echo.channel(echoChannel)
             .listen('.new-message', function(data) {
                 if (data.live_setting_id == liveId && data.id > lastMessageId) {
                     addMessageToChat(data);
                     scrollChatToBottom();
-                    
+
                     // Play notification sound if message from others
                     if (data.username !== currentUsername) {
                         playNotificationSound();
                     }
                 }
             });
-        
+
         console.log('✅ Connected to chat channel:', echoChannel);
     }
-    
+
     function sendChatMessage() {
         const input = $('#admin-chat-input');
         const message = input.val().trim();
-        
+
         if (!message || !selectedLiveId) return;
-        
+
         // Disable input while sending
         input.prop('disabled', true);
         $('#admin-chat-send-btn').prop('disabled', true);
-        
+
         fetch('/api/chat/send', {
             method: 'POST',
             headers: {
@@ -666,14 +666,21 @@ $(document).ready(function() {
                 if (data.throttle_enabled) {
                     startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
                 } else {
-                    alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
+                    // Show notification modal instead of alert
+                    showErrorNotification(
+                        'Không gửi được tin nhắn!',
+                        data.message || 'Có lỗi xảy ra khi gửi tin nhắn'
+                    );
                 }
             }
         })
         .catch(error => {
             console.error('Error sending message:', error);
             if (error.message !== 'Unauthorized' && error.message !== 'Throttled') {
-                alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
+                showErrorNotification(
+                    'Không thể gửi tin nhắn!',
+                    'Tin nhắn của bạn chứa từ khóa hoặc ký tự bị cấm.'
+                );
             }
         })
         .finally(() => {
@@ -684,32 +691,32 @@ $(document).ready(function() {
             input.focus();
         });
     }
-    
+
     function startThrottleCountdown(seconds) {
         if (throttleCountdown) {
             clearInterval(throttleCountdown);
         }
-        
+
         let remaining = seconds;
         const input = $('#admin-chat-input');
         const button = $('#admin-chat-send-btn');
         const statusText = $('#chat-status-text');
-        
+
         // Disable input and button
         input.prop('disabled', true);
         button.prop('disabled', true);
-        
+
         // Update status text
         statusText.text(`Vui lòng đợi ${remaining} giây...`).removeClass('text-success').addClass('text-warning');
         button.html(`<i class="fas fa-clock"></i> ${remaining}s`);
-        
+
         throttleCountdown = setInterval(() => {
             remaining--;
-            
+
             if (remaining <= 0) {
                 clearInterval(throttleCountdown);
                 throttleCountdown = null;
-                
+
                 // Re-enable input and button
                 input.prop('disabled', false);
                 button.prop('disabled', false);
@@ -722,7 +729,7 @@ $(document).ready(function() {
             }
         }, 1000);
     }
-    
+
     function loadChatSettings() {
         fetch('/api/chat/settings')
             .then(response => response.json())
@@ -736,27 +743,27 @@ $(document).ready(function() {
             })
             .catch(error => console.error('Error loading chat settings:', error));
     }
-    
+
     // Load chat settings on page load
     loadChatSettings();
-    
+
     function addMessageToChat(data) {
         // Remove placeholder if exists
         $('#chat-placeholder').remove();
-        
+
         // Update last message ID
         if (data.id > lastMessageId) {
             lastMessageId = data.id;
         }
-        
+
         const isOwnMessage = data.username === currentUsername;
         const messageClass = isOwnMessage ? 'own-message' : 'other-message';
-        
+
         const messageTime = new Date(data.created_at || data.sent_at).toLocaleTimeString('vi-VN', {
             hour: '2-digit',
             minute: '2-digit'
         });
-        
+
         const messageHtml = `
             <div class="chat-message ${messageClass}">
                 <div class="message-username">${data.username}</div>
@@ -764,29 +771,29 @@ $(document).ready(function() {
                 <div class="message-time">${messageTime}</div>
             </div>
         `;
-        
+
         $('#admin-chat-messages').append(messageHtml);
         updateMessageCounter();
     }
-    
+
     function updateMessageCounter() {
         const count = $('#admin-chat-messages .chat-message').length;
         $('#message-count').text(count);
     }
-    
+
     function scrollChatToBottom() {
         const chatBox = document.getElementById('admin-chat-messages');
         if (chatBox) {
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     }
-    
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
+
     function playNotificationSound() {
         // Simple beep notification
         try {
@@ -876,7 +883,7 @@ $(document).ready(function() {
     // Check if message matches current filter
     function matchesCurrentFilter(data) {
         const urlParams = new URLSearchParams(window.location.search);
-        
+
         // Check live_setting_id filter
         if (urlParams.has('live_setting_id')) {
             const filterLiveId = urlParams.get('live_setting_id');
@@ -884,14 +891,14 @@ $(document).ready(function() {
                 return false;
             }
         }
-        
+
         // Check status filter
         if (urlParams.has('status')) {
             const statusFilter = urlParams.get('status');
             if (statusFilter === 'blocked' && !data.is_blocked) return false;
             if (statusFilter === 'active' && data.is_blocked) return false;
         }
-        
+
         // Check username filter
         if (urlParams.has('username')) {
             const usernameFilter = urlParams.get('username').toLowerCase();
@@ -899,7 +906,7 @@ $(document).ready(function() {
                 return false;
             }
         }
-        
+
         return true;
     }
 

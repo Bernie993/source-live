@@ -1834,12 +1834,12 @@
                 const textBefore = chatInput.value.substring(0, cursorPos);
                 const textAfter = chatInput.value.substring(cursorPos);
                 chatInput.value = textBefore + emoji + textAfter;
-                
+
                 // Move cursor after emoji
                 const newCursorPos = cursorPos + emoji.length;
                 chatInput.setSelectionRange(newCursorPos, newCursorPos);
                 chatInput.focus();
-                
+
                 // Close emoji picker
                 emojiPicker.classList.remove('show');
             }
@@ -1952,7 +1952,10 @@
 
             // Check if chat is allowed
             if (!isChatAllowed()) {
-                alert('Chat chỉ được phép khi live stream đã bắt đầu!');
+                showErrorNotification(
+                    'Không thể gửi tin nhắn!',
+                    'Chat chỉ được phép khi live stream đã bắt đầu!'
+                );
                 return;
             }
 
@@ -2008,14 +2011,21 @@
                         if (data.throttle_enabled) {
                             startThrottleCountdown(data.remaining_seconds || chatThrottleSettings.seconds);
                         } else {
-                            alert(data.message || 'Có lỗi xảy ra khi gửi tin nhắn');
+                            // Show notification modal for blocked message or other errors
+                            showErrorNotification(
+                                'Không gửi được tin nhắn!',
+                                data.message || 'Có lỗi xảy ra khi gửi tin nhắn'
+                            );
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error sending message:', error);
                     if (error.message !== 'Unauthorized' && error.message !== 'Forbidden' && error.message !== 'Throttled') {
-                        alert('Không thể gửi tin nhắn. Vui lòng thử lại!');
+                        showErrorNotification(
+                            'Không thể gửi tin nhắn!',
+                            'Tin nhắn của bạn chứa từ khóa hoặc ký tự bị cấm.'
+                        );
                     }
                 })
                 .finally(() => {
@@ -2027,30 +2037,30 @@
                     input.focus();
                 });
         }
-        
+
         function startThrottleCountdown(seconds) {
             if (throttleCountdown) {
                 clearInterval(throttleCountdown);
             }
-            
+
             let remaining = seconds;
             const input = document.getElementById('chat-input');
             const sendBtn = document.querySelector('.chat-send-btn');
-            
+
             // Disable input and button
             input.disabled = true;
             if (sendBtn) {
                 sendBtn.disabled = true;
                 sendBtn.textContent = `Chờ ${remaining}s`;
             }
-            
+
             throttleCountdown = setInterval(() => {
                 remaining--;
-                
+
                 if (remaining <= 0) {
                     clearInterval(throttleCountdown);
                     throttleCountdown = null;
-                    
+
                     // Re-enable input and button
                     input.disabled = false;
                     if (sendBtn) {
@@ -2065,7 +2075,7 @@
                 }
             }, 1000);
         }
-        
+
         function loadChatSettings() {
             fetch('/api/chat/settings')
                 .then(response => response.json())
@@ -2079,7 +2089,7 @@
                 })
                 .catch(error => console.error('Error loading chat settings:', error));
         }
-        
+
         // Load chat settings on page load
         if (isLoggedIn) {
             loadChatSettings();
@@ -2343,22 +2353,16 @@
                     bank_account: bankAccount
                 })
             })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     console.log('Response data:', data);
                     if (data.success && data.authenticated) {
-                        // alert('Đăng nhập thành công!');
+                        // Show success notification
+                        showSuccessNotification('Đăng nhập thành công!', 'Bạn đã đăng nhập thành công!');
 
-                        // Close modal using vanilla JS
+                        // Close login modal
                         const loginModal = document.getElementById('loginModal');
                         if (loginModal) {
-                            // Remove backdrop manually
                             const backdrop = document.querySelector('.modal-backdrop');
                             if (backdrop) {
                                 backdrop.remove();
@@ -2370,17 +2374,24 @@
                             document.body.style.removeProperty('padding-right');
                         }
 
-                        // Wait a bit for session to be saved, then reload
+                        // Wait a bit then reload
                         setTimeout(() => {
                             window.location.reload();
-                        }, 500);
+                        }, 1500);
                     } else {
-                        alert(data.message || 'Tài khoản không hợp lệ!');
+                        // Show simple error notification
+                        showErrorNotification(
+                            'Đăng nhập thất bại!',
+                            'Thông tin tài khoản không đúng, vui lòng kiểm tra lại.'
+                        );
                     }
                 })
                 .catch(error => {
-                    console.error('Detailed error:', error);
-                    alert('Có lỗi xảy ra, vui lòng thử lại! Chi tiết: ' + error.message);
+                    console.error('Error:', error);
+                    showErrorNotification(
+                        'Có lỗi xảy ra!',
+                        'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.'
+                    );
                 })
                 .finally(() => {
                     // Reset loading state
