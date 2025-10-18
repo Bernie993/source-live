@@ -63,6 +63,12 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     // Slide management routes
     Route::resource('slides', SlideController::class);
     
+    // Feedback management routes
+    Route::get('feedbacks', [\App\Http\Controllers\Admin\FeedbackController::class, 'index'])->name('feedbacks.index');
+    Route::get('feedbacks/{feedback}', [\App\Http\Controllers\Admin\FeedbackController::class, 'show'])->name('feedbacks.show');
+    Route::patch('feedbacks/{feedback}/status', [\App\Http\Controllers\Admin\FeedbackController::class, 'updateStatus'])->name('feedbacks.updateStatus');
+    Route::delete('feedbacks/{feedback}', [\App\Http\Controllers\Admin\FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
+    
     // Stream management routes
     Route::get('stream', [StreamController::class, 'index'])->name('stream.index');
     Route::post('stream/start-file', [StreamController::class, 'startFileStream'])->name('stream.start-file');

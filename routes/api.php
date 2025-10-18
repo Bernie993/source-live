@@ -22,6 +22,9 @@ Route::prefix('chat')->middleware(['web', 'disable.csrf.api'])->group(function (
     Route::get('/online-count', [ChatController::class, 'getOnlineCount']);
 });
 
+// Feedback API routes
+Route::post('/feedbacks', [\App\Http\Controllers\FeedbackController::class, 'store'])->middleware('web');
+
 // Live Stream API routes
 Route::prefix('live')->group(function () {
     Route::get('/status', [LiveStreamController::class, 'getStreamStatus']);

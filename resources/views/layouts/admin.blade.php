@@ -101,6 +101,11 @@
                                 <i class="bi bi-images"></i> Quản lý Slides
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.feedbacks.index') }}">
+                                <i class="bi bi-chat-square-text"></i> Quản lý Phản hồi
+                            </a>
+                        </li>
                         @endrole
                     </ul>
 

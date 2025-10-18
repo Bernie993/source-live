@@ -22,19 +22,29 @@
                 <nav class="nav-menu desktop-menu">
                     @if(isset($headerMenus) && $headerMenus->count() > 0)
                         @foreach($headerMenus as $menu)
-                            <a href="{{ $menu->link }}"
-                               class="nav-item {{ Request::is(trim($menu->link, '/')) ? 'active' : '' }}"
-                               @if(str_starts_with($menu->link, 'http'))
-                                   target="_blank"
-                               @endif>
-                                {{ $menu->text }}
-                            </a>
+                            @if(in_array($menu->link, ['#formphanhoi', '#feedback', '#phanhoi']))
+                                <a href="#" 
+                                   class="nav-item" 
+                                   data-bs-toggle="modal" 
+                                   data-bs-target="#feedbackModal">
+                                    {{ $menu->text }}
+                                </a>
+                            @else
+                                <a href="{{ $menu->link }}"
+                                   class="nav-item {{ Request::is(trim($menu->link, '/')) ? 'active' : '' }}"
+                                   @if(str_starts_with($menu->link, 'http'))
+                                       target="_blank"
+                                   @endif>
+                                    {{ $menu->text }}
+                                </a>
+                            @endif
                         @endforeach
                     @else
                         <!-- Fallback menu if no menus in database -->
                         <a href="/" class="nav-item {{ Request::is('/') ? 'active' : '' }}">Trang chủ</a>
                         <a href="#" class="nav-item">Quà tặng</a>
                         <a href="#" class="nav-item">Tải APP</a>
+                        <a href="#" class="nav-item" data-bs-toggle="modal" data-bs-target="#feedbackModal">Phản hồi</a>
                     @endif
                 </nav>
             </div>
@@ -77,21 +87,31 @@
     <nav class="mobile-menu">
         @if(isset($headerMenus) && $headerMenus->count() > 0)
             @foreach($headerMenus as $menu)
-                <a href="{{ $menu->link }}"
-                   class="mobile-menu-item {{ Request::is(trim($menu->link, '/')) ? 'active' : '' }}"
-                   onclick="setTimeout(closeMobileMenu, 300)"
-                   @if(str_starts_with($menu->link, 'http'))
-                       target="_blank"
-                   @endif>
-                    {{ $menu->text }}
-                </a>
+                @if(in_array($menu->link, ['#formphanhoi', '#feedback', '#phanhoi']))
+                    <a href="#" 
+                       class="mobile-menu-item" 
+                       data-bs-toggle="modal" 
+                       data-bs-target="#feedbackModal"
+                       onclick="closeMobileMenu()">
+                        {{ $menu->text }}
+                    </a>
+                @else
+                    <a href="{{ $menu->link }}"
+                       class="mobile-menu-item {{ Request::is(trim($menu->link, '/')) ? 'active' : '' }}"
+                       onclick="setTimeout(closeMobileMenu, 300)"
+                       @if(str_starts_with($menu->link, 'http'))
+                           target="_blank"
+                       @endif>
+                        {{ $menu->text }}
+                    </a>
+                @endif
             @endforeach
         @else
             <a href="/" class="mobile-menu-item {{ Request::is('/') ? 'active' : '' }}" onclick="setTimeout(closeMobileMenu, 300)">TRANG CHỦ</a>
             <a href="#" class="mobile-menu-item" onclick="setTimeout(closeMobileMenu, 300)">QUÀ TẶNG</a>
             <a href="#" class="mobile-menu-item" onclick="setTimeout(closeMobileMenu, 300)">TẢI APP</a>
             <a href="#" class="mobile-menu-item" onclick="setTimeout(closeMobileMenu, 300)">NHẬN CODE</a>
-            <a href="#" class="mobile-menu-item" onclick="setTimeout(closeMobileMenu, 300)">PHẢN HỒI</a>
+            <a href="#" class="mobile-menu-item" data-bs-toggle="modal" data-bs-target="#feedbackModal" onclick="closeMobileMenu()">PHẢN HỒI</a>
         @endif
     </nav>
 
