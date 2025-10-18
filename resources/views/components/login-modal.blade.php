@@ -53,19 +53,63 @@
         ease;
     }
 
-.login-modal-close-btn:hover {
-    transform: translateX(-50%) scale(1.1);
-}
+    .login-modal-close-btn:hover {
+        transform: translateX(-50%) scale(1.1);
+    }
 
-.login-modal-close-btn img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
+    .login-modal-close-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 
-#loginModal .modal-dialog {
-    margin-bottom: 80px;
-}
+    #loginModal .modal-dialog {
+        margin-bottom: 80px;
+    }
+
+    #loginModal .bank-account-inputs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: nowrap;
+    }
+
+    #loginModal .bank-digit {
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        border: 2px solid #d1d5db;
+        border-radius: 8px;
+        color: #fff;
+        background: transparent;
+    }
+
+    #loginModal .bank-digit:focus {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        outline: none;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        #loginModal .bank-account-inputs {
+            gap: 8px;
+            justify-content: center;
+        }
+
+        #loginModal .bank-digit {
+            width: 50px;
+            height: 50px;
+            font-size: 16px;
+        }
+
+        #loginModal .modal-dialog {
+            margin: 0.5rem;
+            margin-bottom: 80px;
+        }
+    }
 </style>
 
 

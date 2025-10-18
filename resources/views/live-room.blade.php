@@ -1013,6 +1013,8 @@
         .bank-account-inputs {
             display: flex;
             gap: 10px;
+            justify-content: center;
+            flex-wrap: nowrap;
         }
 
         .bank-digit {
@@ -1358,6 +1360,17 @@
 
             .live-room-section {
                 padding: 20px 15px;
+            }
+
+            .bank-account-inputs {
+                gap: 8px;
+                justify-content: center;
+            }
+
+            .bank-digit {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
             }
 
             .promo-banner-section,
